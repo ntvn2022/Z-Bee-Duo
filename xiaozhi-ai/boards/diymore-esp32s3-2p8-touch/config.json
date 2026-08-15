@@ -1,0 +1,9 @@
+{
+    "type": "diymore-esp32s3-2p8-touch",
+    "target": "esp32s3",
+    "builds": [
+        {
+            "name": "diymore-esp32s3-2p8-touch"
+        }
+    ]
+}
