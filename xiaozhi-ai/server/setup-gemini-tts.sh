@@ -8,7 +8,7 @@
 set -uo pipefail
 C="xiaozhi-esp32-server"
 RAW="https://raw.githubusercontent.com/ntvn2022/z-bee-duo/claude/esp32-s3-touch-screen-wwelt1/xiaozhi-ai/server/providers/gemini_tts.py"
-TTS_MODEL="${TTS_MODEL:-gemini-3.1-flash-tts}"
+TTS_MODEL="${TTS_MODEL:-gemini-2.5-flash-preview-tts}"
 TTS_VOICE="${TTS_VOICE:-Kore}"
 
 echo "==> Tai provider Gemini TTS ..."
