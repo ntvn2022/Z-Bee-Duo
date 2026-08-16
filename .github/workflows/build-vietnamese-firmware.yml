@@ -37,6 +37,49 @@ jobs:
           print(p.read_text())
           PY
 
+      - name: Show AI answer above the icon (question stays below)
+        run: |
+          python3 - <<'PY'
+          import pathlib
+          hp = pathlib.Path("xz/main/display/lcd_display.h"); h = hp.read_text()
+          cp = pathlib.Path("xz/main/display/lcd_display.cc"); c = cp.read_text()
+
+          h_anchor = "    lv_obj_t* chat_message_label_ = nullptr;"
+          assert h.count(h_anchor) == 1
+          h = h.replace(h_anchor, h_anchor + "\n    lv_obj_t* answer_label_ = nullptr;  // AI answer shown above the icon")
+          hp.write_text(h)
+
+          setup_anchor = ("    emoji_image_ = lv_img_create(emoji_box_);\n"
+                          "    lv_obj_center(emoji_image_);\n"
+                          "    lv_obj_add_flag(emoji_image_, LV_OBJ_FLAG_HIDDEN);\n")
+          assert c.count(setup_anchor) == 1
+          c = c.replace(setup_anchor, setup_anchor +
+              "\n    // [custom] AI answer label, above the centered icon\n"
+              "    answer_label_ = lv_label_create(screen);\n"
+              "    lv_obj_set_width(answer_label_, LV_HOR_RES * 9 / 10);\n"
+              "    lv_label_set_long_mode(answer_label_, LV_LABEL_LONG_WRAP);\n"
+              "    lv_obj_set_style_text_align(answer_label_, LV_TEXT_ALIGN_CENTER, 0);\n"
+              "    lv_obj_set_style_text_color(answer_label_, lvgl_theme->text_color(), 0);\n"
+              "    lv_obj_align(answer_label_, LV_ALIGN_TOP_MID, 0, text_font->line_height * 2);\n"
+              "    lv_label_set_text(answer_label_, \"\");\n")
+
+          msg_anchor = ("    lv_anim_delete(chat_message_label_, nullptr);\n"
+                        "    lv_label_set_text(chat_message_label_, content);\n")
+          assert c.count(msg_anchor) == 1
+          c = c.replace(msg_anchor,
+              "    lv_anim_delete(chat_message_label_, nullptr);\n"
+              "    if (answer_label_ != nullptr && role != nullptr && strcmp(role, \"assistant\") == 0) {\n"
+              "        lv_label_set_text(answer_label_, content);\n"
+              "    } else {\n"
+              "        lv_label_set_text(chat_message_label_, content);\n"
+              "        if (answer_label_ != nullptr && role != nullptr && strcmp(role, \"user\") == 0) {\n"
+              "            lv_label_set_text(answer_label_, \"\");\n"
+              "        }\n"
+              "    }\n")
+          cp.write_text(c)
+          print("Patched: AI answer above icon, question below.")
+          PY
+
       - name: Build firmware (Vietnamese UI)
         shell: bash
         working-directory: xz
