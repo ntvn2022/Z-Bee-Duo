@@ -168,10 +168,14 @@ jobs:
           if [ -z "$SRC" ]; then echo "ERROR: font component not found" >&2; exit 1; fi
           echo "Font src dir: $SRC"
 
-          # Unicode ranges for complete Vietnamese:
-          #  ASCII, Latin-1, Latin Ext-A, Latin Ext-B (Ơ Ư), combining marks,
-          #  Latin Extended Additional (all tone-marked vowels), punctuation, ₫.
-          VN='0x20-0x7F,0xA0-0x17F,0x1A0-0x1B0,0x300-0x36F,0x1EA0-0x1EFF,0x2000-0x206F,0x20AB'
+          # Unicode ranges for complete Vietnamese (precomposed / NFC):
+          #  ASCII, Latin-1, Latin Ext-A, Latin Ext-B (Ơ Ư),
+          #  Latin Extended Additional (all tone-marked vowels),
+          #  visible general punctuation (0x2010-0x2027: dashes, curly quotes,
+          #  bullet, ellipsis), and ₫ (0x20AB).
+          # NOTE: must NOT include bidi control chars (U+202A-202E, U+2066-2069)
+          # or GCC 15 fails the build with -Werror=bidi-chars.
+          VN='0x20-0x7F,0xA0-0x17F,0x1A0-0x1B0,0x1EA0-0x1EFF,0x2010-0x2027,0x20AB'
 
           # Rebuild each basic size/bpp as a drop-in (same symbol names, --no-compress
           # to match the component's uncompressed format).
@@ -185,7 +189,7 @@ jobs:
             # was ~tens of KB. Guard against an empty/failed generation.
             bytes="$(wc -c < "$SRC/${name}.c")"
             echo "Regenerated $name (${bytes} bytes)"
-            if [ "$size" = "16" ] && [ "$bytes" -lt 80000 ]; then
+            if [ "$size" = "20" ] && [ "$bytes" -lt 80000 ]; then
               echo "ERROR: $name too small ($bytes) - Vietnamese range likely missing" >&2
               exit 1
             fi
