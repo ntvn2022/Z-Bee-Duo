@@ -32,10 +32,10 @@ jobs:
           cfg = json.loads(p.read_text())
           cfg["builds"][0]["sdkconfig_append"] = [
               'CONFIG_OTA_URL="http://42.112.26.67:8003/ruanqinghe/ota/"',
-              # Wake word = "Alexa" (offline WakeNet, most robustly trained model).
+              # Wake word = "Hi Andy" (offline WakeNet, wn9_hiandy_tts2).
               # AFE path on S3+PSRAM.
               'CONFIG_USE_AFE_WAKE_WORD=y',
-              'CONFIG_SR_WN_WN9_ALEXA=y',
+              'CONFIG_SR_WN_WN9_HIANDY_TTS2=y',
               # Turn OFF the Chinese defaults so only "Jarvis" is packed (no ambiguity).
               # NOTE: the actual default is the _TTS variant.
               'CONFIG_SR_WN_WN9_NIHAOXIAOZHI_TTS=n',
@@ -138,7 +138,7 @@ jobs:
           source "$IDF_PATH/export.sh"
           python scripts/build.py freenove-esp32s3-display-2.8-lcd --language vi-VN
 
-      - name: Verify wake word = Alexa only (fail fast before font rebuild)
+      - name: Verify wake word = Hi Andy only (fail fast before font rebuild)
         shell: bash
         working-directory: xz
         run: |
@@ -148,9 +148,9 @@ jobs:
             echo "ERROR: a Chinese wake word is still enabled" >&2
             exit 1
           fi
-          grep -qE '^CONFIG_SR_WN_WN9_ALEXA=y' sdkconfig \
-            && echo "OK: Alexa wake word packed" \
-            || { echo "ERROR: Alexa wake word NOT packed" >&2; exit 1; }
+          grep -qE '^CONFIG_SR_WN_WN9_HIANDY_TTS2=y' sdkconfig \
+            && echo "OK: Hi Andy wake word packed" \
+            || { echo "ERROR: Hi Andy wake word NOT packed" >&2; exit 1; }
 
       - name: Regenerate basic fonts with FULL Vietnamese coverage
         shell: bash
