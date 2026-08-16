@@ -1,0 +1,52 @@
+name: Build Vietnamese Firmware (DIYMORE 2.8 touch)
+
+# Builds xiaozhi-esp32 for the DIYMORE / Freenove ES3C28P 2.8" ESP32-S3 board
+# with a Vietnamese on-screen UI and the OTA server pointing at the VPS.
+# Output: an artifact "diymore-vietnamese-firmware" containing merged-binary.bin,
+# which is flashed at offset 0x0 with a phone flasher app (ESP32-S3, compression off).
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - claude/esp32-s3-touch-screen-wwelt1
+    paths:
+      - .github/workflows/build-vietnamese-firmware.yml
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: espressif/idf:v6.0.2
+    steps:
+      - name: Clone xiaozhi-esp32 v2.4.2
+        run: |
+          git config --global --add safe.directory '*'
+          git clone --depth 1 --branch v2.4.2 https://github.com/78/xiaozhi-esp32.git xz
+
+      - name: Point default OTA server to the VPS
+        run: |
+          python3 - <<'PY'
+          import json, pathlib
+          p = pathlib.Path("xz/main/boards/freenove-esp32s3-display-2.8-lcd/config.json")
+          cfg = json.loads(p.read_text())
+          cfg["builds"][0]["sdkconfig_append"] = [
+              'CONFIG_OTA_URL="http://42.112.26.67:8003/xiaozhi/ota/"'
+          ]
+          p.write_text(json.dumps(cfg, indent=4))
+          print(p.read_text())
+          PY
+
+      - name: Build firmware (Vietnamese UI)
+        shell: bash
+        working-directory: xz
+        run: |
+          source "$IDF_PATH/export.sh"
+          python scripts/build.py freenove-esp32s3-display-2.8-lcd --language vi-VN
+
+      - name: Upload firmware artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: diymore-vietnamese-firmware
+          path: xz/build/merged-binary.bin
+          if-no-files-found: error
