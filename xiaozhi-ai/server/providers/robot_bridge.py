@@ -40,6 +40,9 @@ _ENTER = re.compile(
     r"|[txy]\d{1,3}|sp\d{1,2}|sg\d|al\d|es\d|ej\d)\b"
 )
 _EXIT = re.compile(r"(ket thuc robot|thoat robot|dung robot|ket thuc may)")
+# When the device wakes, it sends the wake word ("Alexa") as a message; reply
+# with a short Vietnamese prompt instead of a long/foreign greeting.
+_WAKE = re.compile(r"^(alexa|hi|hey|hello|ok|chao|xin chao|a ?lo)[ !,.?]*$")
 
 
 def _clean(text):
@@ -98,15 +101,27 @@ class LLMProvider(GeminiLLM):
         reply = self._ask_n8n(query)
         return reply or None  # fall through to normal chat if n8n failed
 
+    def _wake_reply(self, text):
+        """Short Vietnamese prompt when the input is just the wake word."""
+        if _WAKE.match(_norm(text)):
+            return "Dạ, bạn cần gì ạ?"
+        return None
+
     def response(self, session_id, dialogue, **kwargs):
-        reply = self._robot_reply(session_id, self._last_user(dialogue))
+        text = self._last_user(dialogue)
+        reply = self._robot_reply(session_id, text)
+        if reply is None:
+            reply = self._wake_reply(text)
         if reply is not None:
             yield reply
             return
         yield from super().response(session_id, dialogue, **kwargs)
 
     def response_with_functions(self, session_id, dialogue, functions=None):
-        reply = self._robot_reply(session_id, self._last_user(dialogue))
+        text = self._last_user(dialogue)
+        reply = self._robot_reply(session_id, text)
+        if reply is None:
+            reply = self._wake_reply(text)
         if reply is not None:
             yield reply, None
             return
