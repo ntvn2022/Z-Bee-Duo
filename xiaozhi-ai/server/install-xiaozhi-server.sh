@@ -82,8 +82,8 @@ services:
       - ./models/SenseVoiceSmall/model.pt:/opt/xiaozhi-esp32-server/models/SenseVoiceSmall/model.pt
 EOF
 
-# ---- Ghi cau hinh Gemini (data/.config.yaml) ----
-echo "==> Ghi data/.config.yaml (LLM = Gemini)"
+# ---- Ghi cau hinh Gemini + tieng Viet (data/.config.yaml) ----
+echo "==> Ghi data/.config.yaml (LLM = Gemini, tra loi tieng Viet)"
 cat > "$INSTALL_DIR/data/.config.yaml" <<EOF
 server:
   ip: 0.0.0.0
@@ -92,8 +92,17 @@ server:
   # Dia chi WebSocket ma OTA tra ve cho thiet bi (dung IP cong khai VPS)
   websocket: ws://${PUBLIC_IP}:8000/xiaozhi/v1/
 
+# Ten tro ly
+assistant_name: "ruanqinghe"
+
+# Prompt: dat ten + bat buoc tra loi bang TIENG VIET
+prompt: |
+  Ban ten la ruanqinghe, mot tro ly AI than thien, noi chuyen tu nhien va ngan gon.
+  QUAN TRONG: Luon luon tra loi bang TIENG VIET, du nguoi dung noi ngon ngu nao.
+
 selected_module:
   LLM: GeminiLLM
+  TTS: EdgeTTS
 
 LLM:
   GeminiLLM:
@@ -102,6 +111,13 @@ LLM:
     model_name: "${GEMINI_MODEL}"
     http_proxy: ""
     https_proxy: ""
+
+TTS:
+  EdgeTTS:
+    type: edge
+    voice: vi-VN-HoaiMyNeural   # giong nu tieng Viet; nam: vi-VN-NamMinhNeural
+    output_dir: tmp/
+    language: "Vietnamese"
 EOF
 
 # ---- Mo cong tuong lua (neu dung ufw) ----
