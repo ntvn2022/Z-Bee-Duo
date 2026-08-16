@@ -93,6 +93,24 @@ jobs:
           print("Patched: AI answer above icon, question below.")
           PY
 
+      - name: Add on-device settings screen (3-tap, password, screen-off slider)
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/ntvn2022/z-bee-duo/claude/esp32-s3-touch-screen-wwelt1/xiaozhi-ai/firmware/settings_ui.inc \
+            -o xz/main/display/settings_ui.inc
+          python3 - <<'PY'
+          import pathlib
+          p = pathlib.Path("xz/main/display/lcd_display.cc")
+          s = p.read_text()
+          if '#include "nvs.h"' not in s:
+              s = s.replace('#include "lcd_display.h"',
+                            '#include "lcd_display.h"\n#include "nvs.h"', 1)
+          anchor = 'lv_label_set_text(answer_label_, "");'
+          assert s.count(anchor) == 1
+          s = s.replace(anchor, anchor + '\n#include "settings_ui.inc"')
+          p.write_text(s)
+          print("Patched: settings screen included into SetupUI")
+          PY
+
       - name: Show weekday + date + time (Vietnamese) in the status bar
         run: |
           python3 - <<'PY'
@@ -145,6 +163,9 @@ jobs:
           if '#include "application.h"' not in s:
               s = s.replace("#include <esp_timer.h>",
                             '#include <esp_timer.h>\n#include "application.h"', 1)
+          if '#include "nvs.h"' not in s:
+              s = s.replace('#include "application.h"',
+                            '#include "application.h"\n#include "nvs.h"', 1)
 
           # 1) call it at the end of the constructor (do this FIRST, while
           #    SetBrightness(100) still appears exactly once).
@@ -158,14 +179,24 @@ jobs:
               "    esp_timer_handle_t bl_timer_ = nullptr;\n"
               "    int bl_idle_ = 0;\n"
               "    bool bl_on_ = true;\n"
+              "    int ReadScreenOffSec() {\n"
+              "        int v = 5;\n"
+              "        nvs_handle_t h;\n"
+              "        if (nvs_open(\"ruanqinghe\", NVS_READONLY, &h) == ESP_OK) {\n"
+              "            int32_t x; if (nvs_get_i32(h, \"scr_off_s\", &x) == ESP_OK) v = (int)x;\n"
+              "            nvs_close(h);\n"
+              "        }\n"
+              "        return v;\n"
+              "    }\n"
               "    void BacklightTick() {\n"
               "        bool idle = (Application::GetInstance().GetDeviceState() == kDeviceStateIdle);\n"
-              "        if (idle) {\n"
-              "            if (bl_on_ && ++bl_idle_ >= 5) { GetBacklight()->SetBrightness(0); bl_on_ = false; }\n"
-              "        } else {\n"
+              "        int off = ReadScreenOffSec();\n"
+              "        if (!idle || off <= 0) {\n"
               "            bl_idle_ = 0;\n"
               "            if (!bl_on_) { GetBacklight()->SetBrightness(100); bl_on_ = true; }\n"
+              "            return;\n"
               "        }\n"
+              "        if (bl_on_ && ++bl_idle_ >= off) { GetBacklight()->SetBrightness(0); bl_on_ = false; }\n"
               "    }\n"
               "    void InitializeBacklightTimeout() {\n"
               "        esp_timer_create_args_t args = {};\n"

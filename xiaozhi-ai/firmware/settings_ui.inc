@@ -1,0 +1,225 @@
+// [custom] On-device settings UI (included inside LcdDisplay::SetupUI).
+// 3-tap bottom-right corner -> password 12345 -> slider 0..600s (0 = never off).
+// Value stored in NVS namespace "ruanqinghe" key "scr_off_s" (read by the board
+// backlight timer). Uses only lv_obj + lv_label so it always compiles.
+{
+    struct SUI {
+        lv_obj_t* win;
+        lv_obj_t* pass;
+        lv_obj_t* cfg;
+        lv_obj_t* pdisp;
+        char buf[8];
+        int blen;
+        lv_obj_t* track;
+        lv_obj_t* fill;
+        lv_obj_t* val;
+        int value;
+        int track_w;
+    };
+    static SUI* g = new SUI();
+    g->blen = 0;
+    g->buf[0] = 0;
+    g->value = 5;
+    g->track_w = 200;
+
+    // read current value from NVS
+    {
+        nvs_handle_t h;
+        if (nvs_open("ruanqinghe", NVS_READONLY, &h) == ESP_OK) {
+            int32_t x;
+            if (nvs_get_i32(h, "scr_off_s", &x) == ESP_OK) g->value = (int)x;
+            nvs_close(h);
+        }
+    }
+
+    // full-screen overlay on the top layer (hidden by default)
+    g->win = lv_obj_create(lv_layer_top());
+    lv_obj_set_size(g->win, LV_HOR_RES, LV_VER_RES);
+    lv_obj_set_style_bg_color(g->win, lv_color_white(), 0);
+    lv_obj_set_style_bg_opa(g->win, LV_OPA_COVER, 0);
+    lv_obj_set_style_pad_all(g->win, 4, 0);
+    lv_obj_set_style_border_width(g->win, 0, 0);
+    lv_obj_remove_flag(g->win, LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_add_flag(g->win, LV_OBJ_FLAG_HIDDEN);
+
+    // ---------- password panel ----------
+    g->pass = lv_obj_create(g->win);
+    lv_obj_set_size(g->pass, lv_pct(100), lv_pct(100));
+    lv_obj_set_style_pad_all(g->pass, 2, 0);
+    lv_obj_set_style_border_width(g->pass, 0, 0);
+    lv_obj_remove_flag(g->pass, LV_OBJ_FLAG_SCROLLABLE);
+
+    lv_obj_t* pt = lv_label_create(g->pass);
+    lv_label_set_text(pt, "Password:");
+    lv_obj_align(pt, LV_ALIGN_TOP_LEFT, 6, 4);
+    g->pdisp = lv_label_create(g->pass);
+    lv_label_set_text(g->pdisp, "");
+    lv_obj_align(g->pdisp, LV_ALIGN_TOP_RIGHT, -8, 4);
+
+    static const char* keys[12] = {"1","2","3","4","5","6","7","8","9","C","0","OK"};
+    for (int i = 0; i < 12; i++) {
+        lv_obj_t* b = lv_obj_create(g->pass);
+        lv_obj_set_size(b, 66, 40);
+        int col = i % 3, row = i / 3;
+        lv_obj_align(b, LV_ALIGN_TOP_LEFT, 10 + col * 74, 34 + row * 46);
+        lv_obj_set_style_pad_all(b, 0, 0);
+        lv_obj_add_flag(b, LV_OBJ_FLAG_CLICKABLE);
+        lv_obj_set_user_data(b, (void*)keys[i]);
+        lv_obj_t* bl = lv_label_create(b);
+        lv_label_set_text(bl, keys[i]);
+        lv_obj_center(bl);
+        lv_obj_add_event_cb(b, [](lv_event_t* e) {
+            SUI* u = (SUI*)lv_event_get_user_data(e);
+            lv_obj_t* t = (lv_obj_t*)lv_event_get_target(e);
+            const char* k = (const char*)lv_obj_get_user_data(t);
+            if (strcmp(k, "C") == 0) {
+                u->blen = 0; u->buf[0] = 0;
+            } else if (strcmp(k, "OK") == 0) {
+                if (strcmp(u->buf, "12345") == 0) {
+                    lv_obj_add_flag(u->pass, LV_OBJ_FLAG_HIDDEN);
+                    lv_obj_remove_flag(u->cfg, LV_OBJ_FLAG_HIDDEN);
+                } else {
+                    u->blen = 0; u->buf[0] = 0;
+                }
+            } else if (u->blen < 6) {
+                u->buf[u->blen++] = k[0];
+                u->buf[u->blen] = 0;
+            }
+            char d[8]; int j;
+            for (j = 0; j < u->blen; j++) d[j] = '*';
+            d[j] = 0;
+            lv_label_set_text(u->pdisp, d);
+        }, LV_EVENT_CLICKED, g);
+    }
+
+    // ---------- config panel (slider) ----------
+    g->cfg = lv_obj_create(g->win);
+    lv_obj_set_size(g->cfg, lv_pct(100), lv_pct(100));
+    lv_obj_set_style_pad_all(g->cfg, 2, 0);
+    lv_obj_set_style_border_width(g->cfg, 0, 0);
+    lv_obj_remove_flag(g->cfg, LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_add_flag(g->cfg, LV_OBJ_FLAG_HIDDEN);
+
+    lv_obj_t* ct = lv_label_create(g->cfg);
+    lv_label_set_text(ct, "Screen off (sec)");
+    lv_obj_align(ct, LV_ALIGN_TOP_MID, 0, 6);
+    g->val = lv_label_create(g->cfg);
+    lv_obj_align(g->val, LV_ALIGN_TOP_MID, 0, 30);
+
+    g->track = lv_obj_create(g->cfg);
+    lv_obj_set_size(g->track, g->track_w, 26);
+    lv_obj_align(g->track, LV_ALIGN_CENTER, 0, 0);
+    lv_obj_set_style_pad_all(g->track, 0, 0);
+    lv_obj_set_style_radius(g->track, 4, 0);
+    lv_obj_set_style_bg_color(g->track, lv_color_hex(0xDDDDDD), 0);
+    lv_obj_add_flag(g->track, LV_OBJ_FLAG_CLICKABLE);
+    g->fill = lv_obj_create(g->track);
+    lv_obj_set_style_pad_all(g->fill, 0, 0);
+    lv_obj_set_style_border_width(g->fill, 0, 0);
+    lv_obj_set_style_radius(g->fill, 4, 0);
+    lv_obj_set_style_bg_color(g->fill, lv_color_hex(0x2196F3), 0);
+    lv_obj_align(g->fill, LV_ALIGN_LEFT_MID, 0, 0);
+    lv_obj_remove_flag(g->fill, LV_OBJ_FLAG_CLICKABLE);
+
+    // initial fill + label
+    {
+        int fw = g->track_w * g->value / 600;
+        lv_obj_set_size(g->fill, fw, 26);
+        if (g->value == 0) lv_label_set_text(g->val, "Never off");
+        else lv_label_set_text_fmt(g->val, "%d sec", g->value);
+    }
+
+    // tap / drag on the track to set the value
+    lv_obj_add_event_cb(g->track, [](lv_event_t* e) {
+        SUI* u = (SUI*)lv_event_get_user_data(e);
+        lv_indev_t* indev = lv_indev_active();
+        if (!indev) return;
+        lv_point_t p; lv_indev_get_point(indev, &p);
+        lv_area_t a; lv_obj_get_coords(u->track, &a);
+        int w = a.x2 - a.x1; if (w < 1) w = 1;
+        int rel = p.x - a.x1; if (rel < 0) rel = 0; if (rel > w) rel = w;
+        int v = rel * 600 / w;
+        u->value = v;
+        lv_obj_set_size(u->fill, w * v / 600, 26);
+        if (v == 0) lv_label_set_text(u->val, "Never off");
+        else lv_label_set_text_fmt(u->val, "%d sec", v);
+    }, LV_EVENT_PRESSING, g);
+
+    // - / + buttons for fine steps (10s)
+    lv_obj_t* minus = lv_obj_create(g->cfg);
+    lv_obj_set_size(minus, 48, 38);
+    lv_obj_align(minus, LV_ALIGN_CENTER, -140, 0);
+    lv_obj_add_flag(minus, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_t* ml = lv_label_create(minus); lv_label_set_text(ml, "-"); lv_obj_center(ml);
+    lv_obj_add_event_cb(minus, [](lv_event_t* e) {
+        SUI* u = (SUI*)lv_event_get_user_data(e);
+        u->value -= 10; if (u->value < 0) u->value = 0;
+        lv_obj_set_size(u->fill, u->track_w * u->value / 600, 26);
+        if (u->value == 0) lv_label_set_text(u->val, "Never off");
+        else lv_label_set_text_fmt(u->val, "%d sec", u->value);
+    }, LV_EVENT_CLICKED, g);
+
+    lv_obj_t* plus = lv_obj_create(g->cfg);
+    lv_obj_set_size(plus, 48, 38);
+    lv_obj_align(plus, LV_ALIGN_CENTER, 140, 0);
+    lv_obj_add_flag(plus, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_t* pl = lv_label_create(plus); lv_label_set_text(pl, "+"); lv_obj_center(pl);
+    lv_obj_add_event_cb(plus, [](lv_event_t* e) {
+        SUI* u = (SUI*)lv_event_get_user_data(e);
+        u->value += 10; if (u->value > 600) u->value = 600;
+        lv_obj_set_size(u->fill, u->track_w * u->value / 600, 26);
+        if (u->value == 0) lv_label_set_text(u->val, "Never off");
+        else lv_label_set_text_fmt(u->val, "%d sec", u->value);
+    }, LV_EVENT_CLICKED, g);
+
+    // Save / Close
+    lv_obj_t* save = lv_obj_create(g->cfg);
+    lv_obj_set_size(save, 90, 38);
+    lv_obj_align(save, LV_ALIGN_BOTTOM_LEFT, 12, -6);
+    lv_obj_add_flag(save, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_t* svl = lv_label_create(save); lv_label_set_text(svl, "Save"); lv_obj_center(svl);
+    lv_obj_add_event_cb(save, [](lv_event_t* e) {
+        SUI* u = (SUI*)lv_event_get_user_data(e);
+        nvs_handle_t h;
+        if (nvs_open("ruanqinghe", NVS_READWRITE, &h) == ESP_OK) {
+            nvs_set_i32(h, "scr_off_s", u->value);
+            nvs_commit(h);
+            nvs_close(h);
+        }
+        lv_obj_add_flag(u->win, LV_OBJ_FLAG_HIDDEN);
+    }, LV_EVENT_CLICKED, g);
+
+    lv_obj_t* close = lv_obj_create(g->cfg);
+    lv_obj_set_size(close, 90, 38);
+    lv_obj_align(close, LV_ALIGN_BOTTOM_RIGHT, -12, -6);
+    lv_obj_add_flag(close, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_t* cll = lv_label_create(close); lv_label_set_text(cll, "Close"); lv_obj_center(cll);
+    lv_obj_add_event_cb(close, [](lv_event_t* e) {
+        SUI* u = (SUI*)lv_event_get_user_data(e);
+        lv_obj_add_flag(u->win, LV_OBJ_FLAG_HIDDEN);
+    }, LV_EVENT_CLICKED, g);
+
+    // ---------- 3-tap bottom-right corner to open ----------
+    lv_obj_t* corner = lv_obj_create(screen);
+    lv_obj_set_size(corner, 56, 56);
+    lv_obj_align(corner, LV_ALIGN_BOTTOM_RIGHT, 0, 0);
+    lv_obj_set_style_bg_opa(corner, LV_OPA_TRANSP, 0);
+    lv_obj_set_style_border_width(corner, 0, 0);
+    lv_obj_add_flag(corner, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_add_event_cb(corner, [](lv_event_t* e) {
+        SUI* u = (SUI*)lv_event_get_user_data(e);
+        static uint32_t last = 0;
+        static int cnt = 0;
+        uint32_t now = lv_tick_get();
+        if (now - last < 1500) cnt++; else cnt = 1;
+        last = now;
+        if (cnt >= 3) {
+            cnt = 0;
+            u->blen = 0; u->buf[0] = 0;
+            lv_label_set_text(u->pdisp, "");
+            lv_obj_remove_flag(u->pass, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_add_flag(u->cfg, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_remove_flag(u->win, LV_OBJ_FLAG_HIDDEN);
+        }
+    }, LV_EVENT_CLICKED, g);
+}
