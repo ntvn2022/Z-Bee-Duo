@@ -31,7 +31,7 @@ jobs:
           p = pathlib.Path("xz/main/boards/freenove-esp32s3-display-2.8-lcd/config.json")
           cfg = json.loads(p.read_text())
           cfg["builds"][0]["sdkconfig_append"] = [
-              'CONFIG_OTA_URL="http://42.112.26.67:8003/xiaozhi/ota/"'
+              'CONFIG_OTA_URL="http://42.112.26.67:8003/ruanqinghe/ota/"'
           ]
           p.write_text(json.dumps(cfg, indent=4))
           print(p.read_text())
