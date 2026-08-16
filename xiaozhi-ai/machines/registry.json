@@ -1,0 +1,26 @@
+[
+  {
+    "id": "takeout_robot",
+    "name_vi": "Robot gắp sản phẩm (cho máy ép nhựa)",
+    "aliases": [
+      "robot",
+      "robot gắp",
+      "robot gap",
+      "gắp sản phẩm",
+      "take-out",
+      "takeout",
+      "tay máy"
+    ],
+    "tables_url": "https://raw.githubusercontent.com/ntvn2022/z-bee-duo/claude/esp32-s3-touch-screen-wwelt1/xiaozhi-ai/machines/takeout-robot/tables.json",
+    "error_types": [
+      "operation_error",
+      "setting_error",
+      "inappropriate_home"
+    ],
+    "alarm_types": [
+      "system_alarm",
+      "axis_alarm",
+      "alarm"
+    ]
+  }
+]

@@ -22,6 +22,12 @@ echo "==> Tao volume du lieu (giu workflow qua cac lan restart) ..."
 docker volume create n8n_data >/dev/null
 
 echo "==> Khoi dong n8n ..."
+# Tuy chon: truyen Gemini key de workflow goi Gemini duoc:
+#   GEMINI_API_KEY=xxxx bash install-n8n.sh
+GEMINI_API_KEY="${GEMINI_API_KEY:-}"
+if [ -z "$GEMINI_API_KEY" ]; then
+  echo "  (Chua co GEMINI_API_KEY -> bot se tra loi tho. Chay lai voi GEMINI_API_KEY=... de bat Gemini.)"
+fi
 docker run -d --name "$C" --restart unless-stopped \
   -p ${PORT}:5678 \
   -e N8N_SECURE_COOKIE=false \
@@ -31,6 +37,8 @@ docker run -d --name "$C" --restart unless-stopped \
   -e WEBHOOK_URL="http://${IP}:${PORT}/" \
   -e GENERIC_TIMEZONE="Asia/Ho_Chi_Minh" \
   -e TZ="Asia/Ho_Chi_Minh" \
+  -e GEMINI_API_KEY="$GEMINI_API_KEY" \
+  -e N8N_RUNNERS_ENABLED=true \
   -v n8n_data:/home/node/.n8n \
   docker.n8n.io/n8nio/n8n >/dev/null
 

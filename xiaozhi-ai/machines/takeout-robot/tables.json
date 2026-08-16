@@ -1,0 +1,1347 @@
+[
+ {
+  "type": "alarm",
+  "code": "01",
+  "content": "Limit switch is ascent limit of Sub-arm is ON. Please check the work status and wiring of X11 abnormal ascent limit of Sub-arm (X11) limit. is not OFF. X11 is abnormal."
+ },
+ {
+  "type": "alarm",
+  "code": "02",
+  "content": "Limit switch is ascent limit of main arm is ON. Please check the work status and wiring of X03 abnormal ascent limit of main arm (X03) limit. is not OFF. X03 is abnormal."
+ },
+ {
+  "type": "alarm",
+  "code": "03",
+  "content": "Limit switch is ascent limit, it is OFF when the Please check the work status and wiring of ascent abnormal mould is opened limit and input (MO) of forming machine. It is OFF when ascent limit (X03,X11) and mould is opened (MO/X33)"
+ },
+ {
+  "type": "alarm",
+  "code": "04",
+  "content": "Limit switch is ascent limit of Sub-arm is OFF. Please check the work status and wiring of X11 abnormal X11 is OFF under the limit. circumstance that (FCS) mode for Sub-arm take-out is not used"
+ },
+ {
+  "type": "alarm",
+  "code": "05",
+  "content": "Limit switch is ascent limit of main arm is Please check the work status and wiring of X03 abnormal OFF. limit. X03 is OFF under the circumstance that (FCW) mode for main arm take-out is not used"
+ },
+ {
+  "type": "alarm",
+  "code": "06",
+  "content": "Limit switch is ascent limit of Sub-arm is OFF Please check the work status and wiring of X11 abnormal ascent limit of Sub-arm (X11) limit. is not ON when the movement of upper and lower axis of Sub-arm at ascent position is completed"
+ },
+ {
+  "type": "alarm",
+  "code": "07",
+  "content": "Limit switch is ascent limit of main arm is OFF Please check the work status and wiring of X03 abnormal ascent limit of main arm (X03) limit. is not ON when the movement of upper and lower axis of main arm at ascent position is completed"
+ },
+ {
+  "type": "alarm",
+  "code": "08",
+  "content": "Limit switch is ascent limit of Sub-arm is ON Please check the work status and wiring of X11 abnormal The decline of upper and lower limit, as well as the set value of the clamp position axis of Sub-arm is completed for take-out of upper and lower axis of Sub-arm. when the ascent limit of Sub-arm (X11) is ON"
+ },
+ {
+  "type": "alarm",
+  "code": "09",
+  "content": "Limit switch is ascent limit of main arm is ON Please check the work status and wiring of X03 abnormal The decline of upper and lower limit, as well as the set value of the clamp position axis of main arm is completed for take-out of upper and lower axis of main arm. when the ascent limit of main arm (X03) is ON"
+ },
+ {
+  "type": "alarm",
+  "code": "10",
+  "content": "Limit switch is Circulation starts, it is OFF Please check the work status of output and relay abnormal when mould is opened circuit when circulation starts; and the wiring of Circulation start (RY-3) is not interlocking signal of circuit and between output knockout machine~ injection molding machine But it is OFF when mould is when mould is opened. opened (MO/X33)"
+ },
+ {
+  "type": "alarm",
+  "code": "11",
+  "content": "Limit switch is Pulling limit OFF@ Please check the work status and wiring of limit. abnormal"
+ },
+ {
+  "type": "alarm",
+  "code": "12",
+  "content": "Limit switch is Take-out side, release side area, Please check the work status and wiring of ascent abnormal ascent limit is OFF limit. Program limit of take-out side Please check the set value of program limit of area, ascent limit (X03, X11) take-out side area and program limit of release side and program limit of release area side area is OFF"
+ },
+ {
+  "type": "alarm",
+  "code": "13",
+  "content": "Setting is abnormal The take-out side area and Please check the set value of program limit of release side area is ON take-out side area and program limit of release side Program limit of take-out side area area and program limit of release side area is ON"
+ },
+ {
+  "type": "alarm",
+  "code": "14",
+  "content": "Setting is abnormal Program limit of take-out side Please check the set value of program limit of area is OFF take-out side area and the set value of take-out side Program limit of take-out side of traveling axis. area is not ON when the movement of travelling body at the standby position of take-out side is completed"
+ },
+ {
+  "type": "alarm",
+  "code": "15",
+  "content": "Setting is abnormal Program limit of release side Please check the set value of program limit of area is OFF release side area and the set value of release side of Program limit of release side traveling axis. area is not ON when the movement of travelling body is completed"
+ },
+ {
+  "type": "alarm",
+  "code": "16",
+  "content": "Limit switch is Posture return limit amd Please check posture return, action limit and the abnormal action limit is ON work status and wiring. Posture return limit (X08) and posture action limit (X09) is ON"
+ },
+ {
+  "type": "alarm",
+  "code": "17",
+  "content": "Limit switch is Interference prevention limit Please change the interference set value of front abnormal (X16) is ON and rear axis of main arm and front and rear axis of Sub-arm Please avoid it when free operation."
+ },
+ {
+  "type": "alarm",
+  "code": "18",
+  "content": "Limit switch is Air pressure switch is OFF. Please check the work status of vacuum gauge, the abnormal Air pressure is abnormal (low). pressure of air device, the work status and wiring of air pressure switch."
+ },
+ {
+  "type": "alarm",
+  "code": "19",
+  "content": "Limit switch is Safety (OD) of release side is Please make the safety door at release side closed abnormal OFF reliably. Safety door of release side is Please check the wiring of interlocking signal open when OD is not ON. The decline action of arm at traveling and release side cannot be performed."
+ },
+ {
+  "type": "alarm",
+  "code": "20",
+  "content": "Input of injection Safety door (MD) is OFF Please check whether the safety door of injection molding machine is The safety door of injection molding machine at operation side and abnormal molding machine is open. anti-operation side is closed completely; and check The decline action of arm at the wiring of interlocking signal between knockout take-out side cannot be machine ~ injection molding machine when MD is performed. not ON."
+ },
+ {
+  "type": "alarm",
+  "code": "21",
+  "content": "Mould open limit is (MO) is ON when mould of Please check the work status of output and relay overtime injection molding machine is circuit of circulation start signal; and the wiring of opened interlocking signal of circuit and between knockout (MO) is not OFF when mould machine~ injection molding machine when mould of injection molding machine is is opened. opened from start of output circulation of knockout machine."
+ },
+ {
+  "type": "alarm",
+  "code": "22",
+  "content": "Input of injection It is simultaneously ON when Input of injection molding machine is abnormal. molding machine is mould is opened and closed Please check the wiring of interlocking signal of abnormal It is simultaneously ON when circuit and between between knockout machine~ mould of injection molding injection molding machine when mould is opened/ machine is opened (MO) and closed. closed (MC)."
+ },
+ {
+  "type": "alarm",
+  "code": "23",
+  "content": "Product release Product confirmation (X04) Please perform point inspection for the action OFF status and wiring of X04 limit switch. Product falls off when the product is transported to release side."
+ },
+ {
+  "type": "alarm",
+  "code": "24",
+  "content": "Product release In-clamp product confirmation Please perform point inspection for the action (X06) OFF status and wiring of X06 limit switch. Product falls off when the product is transported to release side."
+ },
+ {
+  "type": "alarm",
+  "code": "25",
+  "content": "Product release vacuum confirmation (X05) After point inspection is performed for sucker and OFF tubing, perform point inspection for the set value Product falls off when the action status and wiring of vacuum generation unit product is transported to release and vacuum confirming pressure. side."
+ },
+ {
+  "type": "alarm",
+  "code": "26",
+  "content": "runner release runner confirmation (X12) OFF Please perform point inspection for the action runner falls off when status and wiring of X12 limit switch. transporting to Sub-arm open position."
+ },
+ {
+  "type": "alarm",
+  "code": "27",
+  "content": "Product release vacuum confirmation 2(X13) After point inspection is performed for sucker and OFF tubing, perform point inspection for the set value Product falls off when the action status and wiring of vacuum generation unit product is transported to release and vacuum confirming pressure. side."
+ },
+ {
+  "type": "alarm",
+  "code": "28",
+  "content": "Setting is abnormal Take-out side limit (X19) OFF Please perform point inspection for the action Take-out side limit (X19) is not status and wiring of X19 limit switch, and change ON when travelling body is at the set value of traveling axis. standby position of take-out side."
+ },
+ {
+  "type": "alarm",
+  "code": "29",
+  "content": "Clamp error Product confirmation (X04) Please perform point inspection for the action OFF status and wiring of X04 limit switch. Product confirmation (X04) OFF Clamp error"
+ },
+ {
+  "type": "alarm",
+  "code": "30",
+  "content": "Clamp error In-clamp product confirmation Please perform point inspection for the action (X06) OFF status and wiring of X06 limit switch. In-clamp product confirmation (X06) OFF Clamp error"
+ },
+ {
+  "type": "alarm",
+  "code": "31",
+  "content": "Clamp error vacuum confirmation (X05) Please perform point inspection for the set value OFF and wiring of vacuum generation unit and vacuum vacuum confirmation (X05) confirmation after point inspection for sucker and OFF Clamp error tubing."
+ },
+ {
+  "type": "alarm",
+  "code": "32",
+  "content": "Clamp error runner confirmation (X12) OFF Please perform point inspection for the error status runner confirmation (X12) OFF and wiring of X12 limit Clamp error"
+ },
+ {
+  "type": "alarm",
+  "code": "33",
+  "content": "Clamp error vacuum confirmation 2(X13) Please perform point inspection for the set value OFF Clamp error and wiring of vacuum generation unit and vacuum confirmation after point inspection for sucker and tubing."
+ },
+ {
+  "type": "alarm",
+  "code": "35",
+  "content": "Product open error Product confirmation (X04) is Please perform point inspection for the action not OFF status and wiring of X04 limit switch Product open error"
+ },
+ {
+  "type": "alarm",
+  "code": "36",
+  "content": "Product open error In-clamp product confirmation Please perform point inspection for the action (X06) is not OFF status and wiring of X06 limit switch Product open error"
+ },
+ {
+  "type": "alarm",
+  "code": "37",
+  "content": "Product open error vacuum confirmation (X05) is The set value action status and wiring of vacuum not OFF confirmation (X05) Product open error"
+ },
+ {
+  "type": "alarm",
+  "code": "38",
+  "content": "runner open error runner confirmation (X12) is Please perform point inspection for the action not OFF status and wiring of X12 limit switch runner open error"
+ },
+ {
+  "type": "alarm",
+  "code": "39",
+  "content": "Product open error vacuum confirmation 2(X13) is The set value action status and wiring of vacuum not OFF confirmation 2(X13) Product open error"
+ },
+ {
+  "type": "alarm",
+  "code": "41",
+  "content": "Limit switch is Swinging return limit (X17) Please perform point inspection for the action abnormal and swinging action limit (X18) status and wiring of X17, X18 limit switch is on simultaneously"
+ },
+ {
+  "type": "alarm",
+  "code": "42",
+  "content": "Limit switch is Program limit of release side Input of injection molding machine is abnormal. abnormal area is OFF simultaneously Please perform point inspection for the wiring of when mould is opened interlocking signal when mould of injection When program limit of release molding machine is opened and between the side area is OFF, mould is knockout machine and injection molding machine. opened (MO/X33) OFF"
+ },
+ {
+  "type": "alarm",
+  "code": "43",
+  "content": "Limit switch is Clamp installation confirmation Please confirm that the clamp is installed. abnormal OFF Please confirm the installation wiring on clamp exchange unit (OX)."
+ },
+ {
+  "type": "alarm",
+  "code": "44",
+  "content": "Limit switch is Posture return limit (X08) is not Check the switching status when output of posture abnormal ON return electromagnetic valve (Y07) and the work status and wiring of X08 limit switch."
+ },
+ {
+  "type": "alarm",
+  "code": "49",
+  "content": "Limit switch is ascent limit (X03, X11) and Please perform point inspection for the action abnormal posture return limit (X08) status and wiring of posture return limit switch."
+ },
+ {
+  "type": "alarm",
+  "code": "50",
+  "content": "Setting is abnormal Program limit of take-out side Please check the set value of program limit of area is not ON when the take-out side area and the set value of traveling movement of travelling body to axis at slide and take-out position. take-out side is completed"
+ },
+ {
+  "type": "alarm",
+  "code": "51",
+  "content": "Offside switch is Traveling offside switch Please check whether the traveling offside switch abnormal POT1 OFF POT1 is abnormal. Machine position exceeds the safe area Please enter into the free operation screen to execute free operation to make the machine moved to safe area"
+ },
+ {
+  "type": "alarm",
+  "code": "52",
+  "content": "Offside switch is Offside switch in front and Please check whether the offside switch in front abnormal behind main arm POT2 is OFF and behind main arm POT2 is abnormal. Machine position exceeds the safe area Please enter into the free operation screen to execute free operation to make the machine moved to safe area"
+ },
+ {
+  "type": "alarm",
+  "code": "53",
+  "content": "Offside switch is Offside switch in front and Please check whether the offside switch in front abnormal behind Sub-arm POT3 is OFF and behind Sub-arm POT3 is abnormal. Machine position exceeds the safe area Please enter into the free operation screen to execute free operation to make the machine moved to safe area"
+ },
+ {
+  "type": "alarm",
+  "code": "54",
+  "content": "Offside switch is Offside switch in upper and Please check whether the offside switch in upper abnormal lower main arm POT4 is OFF and lower main arm POT4 is abnormal. Machine position exceeds the safe area Please enter into the free operation screen to execute free operation to make the machine moved to safe area"
+ },
+ {
+  "type": "alarm",
+  "code": "55",
+  "content": "Offside switch is Offside switch in upper and Please check whether the offside switch in upper abnormal lower Sub-arm POT5 is OFF and lower Sub-arm POT5 is abnormal. Machine position exceeds the safe area Please enter into the free operation screen to execute free operation to make the machine moved to safe area"
+ },
+ {
+  "type": "alarm",
+  "code": "60",
+  "content": "Cycle overtime Traveling axis does not move to Please confirm the overall speed and the speed the set value. setting of the points. Please confirm the set value of cycle monitoring timer (T23)."
+ },
+ {
+  "type": "alarm",
+  "code": "61",
+  "content": "Cycle overtime The front and rear position of Please confirm the overall speed and the speed main arm does not move to the setting of the points. set value. Please confirm the set value of cycle monitoring timer (T23)."
+ },
+ {
+  "type": "alarm",
+  "code": "62",
+  "content": "Cycle overtime The upper and lower axis of Please confirm the overall speed and the speed main arm does not move to the setting of the points. set value. Please confirm the set value of cycle monitoring timer (T23)."
+ },
+ {
+  "type": "alarm",
+  "code": "63",
+  "content": "Cycle overtime The front and rear position of Please confirm the overall speed and the speed Sub-arm does not move to the setting of the points. set value. Please confirm the set value of cycle monitoring timer (T23)."
+ },
+ {
+  "type": "alarm",
+  "code": "64",
+  "content": "Cycle overtime The upper and lower axis of Please confirm the overall speed and the speed Sub-arm does not move to the setting of the points. set value. Please confirm the set value of cycle monitoring timer (T23)."
+ },
+ {
+  "type": "alarm",
+  "code": "65",
+  "content": "Cycle overtime Posture axis does not move to Please confirm the overall speed and the speed the set value. setting of the points. Please confirm the set value of cycle monitoring timer (T23)."
+ },
+ {
+  "type": "alarm",
+  "code": "66",
+  "content": "Cycle overtime Revolving axis does not move Please confirm the overall speed and the speed to the set value. setting of the points. Please confirm the set value of cycle monitoring timer (T23)."
+ },
+ {
+  "type": "alarm",
+  "code": "68",
+  "content": "Cycle overtime Posture return limit (X08) is not Confirm the action of posture cylinder by manual ON operation. Please adjust the speed of speed control valvefor posture return and perform point inspection for the action status and wiring of X08 limit switch."
+ },
+ {
+  "type": "alarm",
+  "code": "69",
+  "content": "Cycle overtime Posture action limit (X09) is Confirm the action of posture cylinder by manual not ON operation. Please adjust the speed of speed control valvefor posture return and perform point inspection for the action status and wiring of X09 limit switch."
+ },
+ {
+  "type": "alarm",
+  "code": "70",
+  "content": "Cycle overtime Decline command of release Decline action cannot be performed at release side. side (RD) is not ON Please confirm the signal of linking device, and the"
+ },
+ {
+  "type": "alarm",
+  "code": "71",
+  "content": "Cycle overtime Centre forward limit (ME) is Please confirm the action of centre by manual not ON operation. wiring between point inspection device and knockout machine. Perform point inspection for the action status and wiring of ME limit switch. When the injection molding machine side has no abnormal phenomenon, please perform point inspection for the signal interlocking wiring between injection molding machine and knockout machine."
+ },
+ {
+  "type": "alarm",
+  "code": "72",
+  "content": "not ON operation. Cycle overtime Swinging return limit (X17) is Confirm the action of posture cylinder by manual"
+ },
+ {
+  "type": "alarm",
+  "code": "73",
+  "content": ""
+ },
+ {
+  "type": "alarm",
+  "code": "74",
+  "content": ""
+ },
+ {
+  "type": "alarm",
+  "code": "75",
+  "content": ""
+ },
+ {
+  "type": "alarm",
+  "code": "080",
+  "content": ""
+ },
+ {
+  "type": "alarm",
+  "code": "081",
+  "content": "Please adjust the speed of speed control valvefor swinging return and perform point inspection for the action status and wiring of X17 limit switch. Cycle overtime Swinging action limit (X18) is Confirm the action of posture cylinder by manual not ON operation. Please adjust the speed of speed control valvefor action return limit and perform point inspection for the action status and wiring of X18 limit switch. Cycle overtime Mould open signal is not OFF Detect whether the mould open signal is abnormal within the set time Or whether the program instruction signal is abnormal and it make the program not continue Cycle overtime Mould open signal is not ON Detect whether the mould open signal is abnormal within the set time Or whether the program instruction signal is abnormal and it make the program not continue Forming machine Full-automatic signal MA of Running status and interlocking wiring of forming automatic abnormal forming machine is abnormal machine Forming machine exists from automatic status Centre forward No mould open completion Please check the mould open completion signal or abnormal signal the set cycle period is too short Centre forward cannot be executed Program instruction Before the product is Please check whether product confirmation"
+ },
+ {
+  "type": "alarm",
+  "code": "082",
+  "content": "abnormal confirmed@ detection command is omitted before mould close Mould close output is allowed signal is output in the instruction program. Point setting is Interference prevention Please confirm the set value of front and rear axis"
+ },
+ {
+  "type": "alarm",
+  "code": "91",
+  "content": "abnormal memory ON of main arm, and the front and rear axis of"
+ },
+ {
+  "type": "alarm",
+  "code": "100",
+  "content": ""
+ },
+ {
+  "type": "alarm",
+  "code": "101",
+  "content": ""
+ },
+ {
+  "type": "alarm",
+  "code": "102",
+  "content": ""
+ },
+ {
+  "type": "alarm",
+  "code": "103",
+  "content": ""
+ },
+ {
+  "type": "alarm",
+  "code": "104",
+  "content": ""
+ },
+ {
+  "type": "alarm",
+  "code": "105",
+  "content": "Clamp error vacuum confirmation 1(X05) Please perform point inspection for the set value Sub-arm. abnormal Clamp error and wiring of vacuum generation unit and vacuum confirmation after point inspection for sucker and tubing. Clamp error vacuum confirmation 2(X13) Please perform point inspection for the set value abnormal Clamp error and wiring of vacuum generation unit and vacuum confirmation after point inspection for sucker and tubing. Clamp error vacuum confirmation 3(X64) Please perform point inspection for the set value abnormal Clamp error and wiring of vacuum generation unit and vacuum confirmation after point inspection for sucker and tubing. Clamp error vacuum confirmation 4(X65) Please perform point inspection for the set value abnormal Clamp error and wiring of vacuum generation unit and vacuum confirmation after point inspection for sucker and tubing. Clamp error Product confirmation 1(X04) Please perform point inspection for the signal and abnormal Clamp error wiring of product confirmation 1(X04). Clamp error Product confirmation 2(X66) Please perform point inspection for the signal and abnormal Clamp error wiring of product confirmation 2(X66)."
+ },
+ {
+  "type": "alarm",
+  "code": "106",
+  "content": "Clamp error Product confirmation 3(X67) Please perform point inspection for the signal and abnormal Clamp error wiring of product confirmation 3(X67)."
+ },
+ {
+  "type": "alarm",
+  "code": "107",
+  "content": "Clamp error Product confirmation 3(X67) Please perform point inspection for the signal and abnormal Clamp error wiring of product confirmation 4(X68)."
+ },
+ {
+  "type": "alarm",
+  "code": "108",
+  "content": "Clamp error Material inlet (X06) abnormal Please perform point inspection for the signal and Clamp error wiring of material inlet confirmation (X06)"
+ },
+ {
+  "type": "alarm",
+  "code": "109",
+  "content": "Clamp error runner (X12) abnormal Please perform point inspection for the signal and Clamp error wiring of runner confirmation (X12)"
+ },
+ {
+  "type": "alarm",
+  "code": "144",
+  "content": "Limit switch is During travel, posture action Please check whether the pressure input for posture abnormal limit (X09) OFF action cylinder is normal; check and confirm the"
+ },
+ {
+  "type": "alarm",
+  "code": "170",
+  "content": "status of electromagnetic valve, as well as the status and wiring of inductive switch (X09) Instruction program The corresponding detection Please check whether the detection command in abnormal has been triggered when the instruction program has error, or whether the electromagnetic valve does not electromagnetic valve control command is act abnormal Instruction program At in-mould posture limit Please check the instruction program@ abnormal mode, posture action cannot be Please make the arm in mould area ascent the"
+ },
+ {
+  "type": "alarm",
+  "code": "171",
+  "content": "instructed when the ascent limit appropriate position, and then instruct the posture of main arm in mould area is action OFF Instruction program At in-mould posture limit Please check the instruction program@ abnormal mode, posture action cannot be Please instruct the posture action when mould open"
+ },
+ {
+  "type": "alarm",
+  "code": "172",
+  "content": "instructed when the ascent limit is completed @ of Sub-arm in mould area is OFF Instruction program At the mode of horizontal Please check the instruction program@ abnormal standby locking limit mould @, Please instruct the posture action when mould open"
+ },
+ {
+  "type": "alarm",
+  "code": "173",
+  "content": "posture action cannot be is completed @ instructed when mould open completion signal is not ON @ Limit switch is Program limit of release side Perform point inspection for the safety door circuit abnormal area is OFF of injection molding machine and the signal"
+ },
+ {
+  "type": "alarm",
+  "code": "199",
+  "content": "Safe door of injection molding interlocking wiring between knockout machine~ machine (MD) is also OFF; injection molding machine. input of injection molding machine is abnormal"
+ },
+ {
+  "type": "axis_alarm",
+  "code": "01",
+  "content": "ROM/RAM error The electronic part of servo Please exchange the servo driver. driver is found to be abnormal"
+ },
+ {
+  "type": "axis_alarm",
+  "code": "08",
+  "content": "- Origin limit is not OFF when Please check the action status•wiring of origin limit origin search and connection•wiring of encoder• encoder cable. Please exchange the servo substrate or servo driver if there is no abnormal phenomenon."
+ },
+ {
+  "type": "axis_alarm",
+  "code": "09",
+  "content": "Origin limit is ON Origin limit is not OFF after Please check the action status•wiring of origin limit (beyond the origin) leaving the origin and connection•wiring of encoder• encoder cable. Please exchange the servo substrate or servo driver if there is no abnormal phenomenon."
+ },
+ {
+  "type": "axis_alarm",
+  "code": "10",
+  "content": "Origin limit is OFF at Origin limit is OFF when origin Please check the action status•wiring of origin limit the origin position movement is completed. and connection•wiring of encoder• encoder cable. Please exchange the servo substrate or servo driver if there is no abnormal phenomenon."
+ },
+ {
+  "type": "axis_alarm",
+  "code": "11",
+  "content": "Offside limit is ON Offside limit is ON Please check the action status•wiring of offside limit and the set value of position. Press [reset] key to eliminate the alarm, and free operation or home return can be used for avoidance."
+ },
+ {
+  "type": "axis_alarm",
+  "code": "32",
+  "content": "Absolute origin is not The origin of absolute encoder Please perform origin setting. set is not set."
+ },
+ {
+  "type": "axis_alarm",
+  "code": "33",
+  "content": "Communication of Axial CPU and acting CPU Please exchange the servo driver. servo driver is communication is found to be abnormal. abnormal."
+ },
+ {
+  "type": "axis_alarm",
+  "code": "47",
+  "content": "TS-NET command Receiving error is detected for Please inspect the communication wiring and receiving is abnormal. TS-NET communication connector."
+ },
+ {
+  "type": "axis_alarm",
+  "code": "49",
+  "content": "Driver alarm Alarm is found at driver side Please inspect the driver. ■Alarm"
+ },
+ {
+  "type": "inappropriate_home",
+  "code": "90",
+  "content": "When program limit of take-out side area is OFF, please perform home return operation after it is switched over to operation mode at [home return] position."
+ },
+ {
+  "type": "inappropriate_home",
+  "code": "91",
+  "content": "Main arm ascent limit (X03) is OFF Please perform home return operation after it is switched over to operation mode at [home return] position."
+ },
+ {
+  "type": "inappropriate_home",
+  "code": "92",
+  "content": "Sub-arm ascent limit (X11) is OFF. Please perform home return operation after it is switched over to operation mode at [home return] position."
+ },
+ {
+  "type": "inappropriate_home",
+  "code": "93",
+  "content": "Product confirmation (X04) is ON Please open the product after it is switched over to operation mode at [manual operation] position."
+ },
+ {
+  "type": "inappropriate_home",
+  "code": "94",
+  "content": "In-clamp product confirmation (X06) is ON. Please open the product after it is switched over to operation mode at [manual operation] position. Inappropriate home vacuum confirmation (X05) is ON"
+ },
+ {
+  "type": "inappropriate_home",
+  "code": "95",
+  "content": "Please open the product after it is switched over to operation mode at [manual operation] position. Inappropriate home vacuum confirmation (X05) is ON Please open the product after it is switched over to operation mode at [manual operation] position. When fixed and moving switching mode (FCKO) is available When fixed and moving switching mode (FCKO) is available"
+ },
+ {
+  "type": "inappropriate_home",
+  "code": "96",
+  "content": "Runnert confirmation (X12) is ON Please open the runner after it is switched over to operation mode at [manual operation] position."
+ },
+ {
+  "type": "inappropriate_home",
+  "code": "97",
+  "content": "Posture return limit (X08) is OFF Please perform home return operation after it is switched over to operation mode at [home return] position."
+ },
+ {
+  "type": "inappropriate_home",
+  "code": "98",
+  "content": "Please execute segment fetch and exchange by manual operation."
+ },
+ {
+  "type": "inappropriate_home",
+  "code": "99",
+  "content": "NT scissor pulling (Y13) is ON Please perform home return operation after it is switched over to operation mode at [home return] position."
+ },
+ {
+  "type": "inappropriate_home",
+  "code": "100",
+  "content": "Swinging return limit (X17) is OFF Please perform home return operation after it is switched over to operation mode at [home return] position."
+ },
+ {
+  "type": "inappropriate_home",
+  "code": "101",
+  "content": "Swinging action limit (X18) is OFF Please perform home return operation after it is switched over to operation mode at [home return] position."
+ },
+ {
+  "type": "inappropriate_home",
+  "code": "102",
+  "content": "Release side standby position is OFF When release side Please perform home return operation after it is switched over to operation standby mode mode at [home return] position."
+ },
+ {
+  "type": "inappropriate_home",
+  "code": "103",
+  "content": "Program limit of release side area is OFF (FCYT) is available When travel Please perform home return operation after it is switched over to operation standby mode mode at [home return] position."
+ },
+ {
+  "type": "inappropriate_home",
+  "code": "104",
+  "content": "Posture action limit (X09) is OFF Please perform home return operation after it is switched over to operation mode at [home return] position."
+ },
+ {
+  "type": "inappropriate_home",
+  "code": "105",
+  "content": "Posture action limit (X09) is OFF home return operation is not executed Convert when manual operation, and please execute posture action. (FCYT) is available When travel standby mode (FCYT) is available"
+ },
+ {
+  "type": "inappropriate_home",
+  "code": "106",
+  "content": "Posture action limit is OFF Please make arm return to safe area And then execute posture action."
+ },
+ {
+  "type": "inappropriate_home",
+  "code": "108",
+  "content": "vacuum confirmation 2 (X13) is ON Please open the product after it is switched over to operation mode at [manual operation] position."
+ },
+ {
+  "type": "inappropriate_home",
+  "code": "109",
+  "content": "Automatic operation cannot be performed. Please perform home return operation after it is switched over to operation mode at [home return] position. Inappropriate home Program limit of release side area OFF"
+ },
+ {
+  "type": "inappropriate_home",
+  "code": "110",
+  "content": "Please perform home return operation after it is switched over to operation mode at [home return] position. Inappropriate home Program limit of release side area OFF Make the robot travel to release side until program limit of release side area is ON via free operation."
+ },
+ {
+  "type": "inappropriate_home",
+  "code": "111",
+  "content": "Clamp confirmation is OFF Please confirm that the clamp is indeed installed after it is switched over to operation mode at [manual operation] position."
+ },
+ {
+  "type": "inappropriate_home",
+  "code": "189",
+  "content": "When horizontal standby locking limit mould mode is used, please set the horizontal status of traverse posture Inappropriate home runner confirmation (X12) is at confirmation status Please open the product after it is switched over to operation mode at [manual operation] position. Inappropriate home Product confirmation (X04) is at confirmation status"
+ },
+ {
+  "type": "inappropriate_home",
+  "code": "190",
+  "content": "Please open the product after it is switched over to operation mode at [manual operation] position. Inappropriate home Product confirmation (X04) is at confirmation status Please open the product after it is switched over to operation mode at [manual operation] position. Inappropriate home vacuum confirmation 1 (X05) is at confirmation status"
+ },
+ {
+  "type": "inappropriate_home",
+  "code": "191",
+  "content": "Please open the product after it is switched over to operation mode at [manual operation] position. Inappropriate home vacuum confirmation 1 (X05) is at confirmation status Please open the product after it is switched over to operation mode at [manual operation] position. Inappropriate home In-clamp confirmation (X06) is at confirmation status"
+ },
+ {
+  "type": "inappropriate_home",
+  "code": "192",
+  "content": "Please open the product after it is switched over to operation mode at [manual operation] position. Inappropriate home In-clamp confirmation (X06) is at confirmation status Please open the product after it is switched over to operation mode at [manual operation] position. Inappropriate home vacuum confirmation 2(X13) is at confirmation status"
+ },
+ {
+  "type": "inappropriate_home",
+  "code": "193",
+  "content": "Please open the product after it is switched over to operation mode at [manual operation] position. Inappropriate home vacuum confirmation 2(X13) is at confirmation status Please open the product after it is switched over to operation mode at [manual operation] position. Inappropriate home vacuum confirmation 3(X64) is at confirmation status"
+ },
+ {
+  "type": "inappropriate_home",
+  "code": "194",
+  "content": "Please open the product after it is switched over to operation mode at [manual operation] position. Inappropriate home vacuum confirmation 3(X64) is at confirmation status Please open the product after it is switched over to operation mode at [manual operation] position. Inappropriate home vacuum confirmation 4(X65) is at confirmation status"
+ },
+ {
+  "type": "inappropriate_home",
+  "code": "195",
+  "content": "Please open the product after it is switched over to operation mode at [manual operation] position. Inappropriate home vacuum confirmation 4(X65) is at confirmation status Please open the product after it is switched over to operation mode at [manual operation] position."
+ },
+ {
+  "type": "inappropriate_home",
+  "code": "196",
+  "content": "vacuum confirmation 2(X66) is at confirmation status Please open the product after it is switched over to operation mode at [manual operation] position. Inappropriate home vacuum confirmation 3(X67) is at confirmation status"
+ },
+ {
+  "type": "inappropriate_home",
+  "code": "197",
+  "content": "Please open the product after it is switched over to operation mode at [manual operation] position. Inappropriate home vacuum confirmation 3(X67) is at confirmation status Please open the product after it is switched over to operation mode at [manual operation] position. Inappropriate home vacuum confirmation 4(X68) is at confirmation status"
+ },
+ {
+  "type": "inappropriate_home",
+  "code": "198",
+  "content": "Please open the product after it is switched over to operation mode at [manual operation] position. Inappropriate home vacuum confirmation 4(X68) is at confirmation status Please open the product after it is switched over to operation mode at [manual operation] position."
+ },
+ {
+  "type": "operation_error",
+  "code": "01",
+  "content": "Descent action is not completed. When the action of descent completion is shown, please execute the descent operation."
+ },
+ {
+  "type": "operation_error",
+  "code": "02",
+  "content": "ascent action is not completed. When the action of ascent completion is shown, please execute the ascent operation."
+ },
+ {
+  "type": "operation_error",
+  "code": "03",
+  "content": "It does not move at take-out, lowering position. When the action of standby position completion is shown, please execute the retreat operation."
+ },
+ {
+  "type": "operation_error",
+  "code": "04",
+  "content": "It does not move at ascent position. When the action of ascent position completion is shown, please execute the retreat operation."
+ },
+ {
+  "type": "operation_error",
+  "code": "05",
+  "content": "Not the release and descent position. When the action of descent position completion (at release side) is shown, please execute the traverse operation of releaseside."
+ },
+ {
+  "type": "operation_error",
+  "code": "06",
+  "content": "Not the take-out, descent position When the action of take-out standby position is shown, please execute the travel operation at the take-out side."
+ },
+ {
+  "type": "operation_error",
+  "code": "07",
+  "content": "Not the take-out side or release side position Execute the travel operation at the release side or take-out side."
+ },
+ {
+  "type": "operation_error",
+  "code": "08",
+  "content": "Program limit of take-out side area and program limit of release side area OFF Execute the travel operation at the release side or take-out side."
+ },
+ {
+  "type": "operation_error",
+  "code": "09",
+  "content": "Signal for mould open end (MO/X33) OFF Please fully open the mold."
+ },
+ {
+  "type": "operation_error",
+  "code": "10",
+  "content": "Safety door (MD OFF) signal OFF Please close the safety door"
+ },
+ {
+  "type": "operation_error",
+  "code": "11",
+  "content": "Safety door open (MD OFF) Please close the safety door"
+ },
+ {
+  "type": "operation_error",
+  "code": "12",
+  "content": "release side safety door open (OD OFF) Please close the safety door at release side"
+ },
+ {
+  "type": "operation_error",
+  "code": "13",
+  "content": "Sub-arm ascent limit (X11) OFF Please execute ascent operation"
+ },
+ {
+  "type": "operation_error",
+  "code": "14",
+  "content": "Main arm ascent limit (X03) OFF Please execute the ascent operation"
+ },
+ {
+  "type": "operation_error",
+  "code": "15",
+  "content": "Posture return limit (X08) OFF Please execute posture return operation."
+ },
+ {
+  "type": "operation_error",
+  "code": "16",
+  "content": "Posture action limit (X09) OFF Please execute posture action operation. Scissors are available (FCCN) When mode is ON"
+ },
+ {
+  "type": "operation_error",
+  "code": "17",
+  "content": "When ascent operation of arm at take-out side, please start to execute clamp operation"
+ },
+ {
+  "type": "operation_error",
+  "code": "18",
+  "content": "Sub-arm take-out mode (FCS) is not used The operation of Sub-arm cannot be executed."
+ },
+ {
+  "type": "operation_error",
+  "code": "19",
+  "content": "In-clamp scissor mode (FCCN) is not used Clamp scissor operation cannot be executed."
+ },
+ {
+  "type": "operation_error",
+  "code": "20",
+  "content": "Posture action mode (FCSS) is not used Posture action operation cannot be executed."
+ },
+ {
+  "type": "operation_error",
+  "code": "21",
+  "content": "Main arm take-out mode (FCW) is not used The operation of main arm cannot be executed."
+ },
+ {
+  "type": "operation_error",
+  "code": "22",
+  "content": "Main arm take-out mode (FCW) is not ON and used for Sub-arm of the machine. It cannot be set."
+ },
+ {
+  "type": "operation_error",
+  "code": "23",
+  "content": "Sub-arm take-out mode (FCS) is not ON for Sub-arm of the machine. It cannot be set."
+ },
+ {
+  "type": "operation_error",
+  "code": "24",
+  "content": "After it is switched to operatioin mode at [home return] position, please perform home return operation."
+ },
+ {
+  "type": "operation_error",
+  "code": "25",
+  "content": "home return operation is not performed, manual operation Please avoid it by free operation."
+ },
+ {
+  "type": "operation_error",
+  "code": "26",
+  "content": "Program limit of release side area OFF Please execute traverse action."
+ },
+ {
+  "type": "operation_error",
+  "code": "27",
+  "content": "Swinging return limit (X17) OFF Please execute swinging return operation"
+ },
+ {
+  "type": "operation_error",
+  "code": "29",
+  "content": "Swinging action limit (X18) OFF Please execute swinging action operation"
+ },
+ {
+  "type": "operation_error",
+  "code": "30",
+  "content": "Swinging mode 1(FCR1) OFF Swinging operation cannot be executed."
+ },
+ {
+  "type": "operation_error",
+  "code": "31",
+  "content": "Swinging mode 2 (FCR2) OFF Swinging operation cannot be executed."
+ },
+ {
+  "type": "operation_error",
+  "code": "32",
+  "content": "Swinging mode 3 (FCR3) OFF Swinging operation cannot be executed."
+ },
+ {
+  "type": "operation_error",
+  "code": "33",
+  "content": "Swinging mode 1, 2 (FCR1, FCR2) OFF Swinging operation cannot be executed."
+ },
+ {
+  "type": "operation_error",
+  "code": "34",
+  "content": "Swinging mode 2, 3 (FCR2, FCR3) OFF Swinging operation cannot be executed."
+ },
+ {
+  "type": "operation_error",
+  "code": "35",
+  "content": "Swinging mode 1, 2, 3 (FCR1, FCR2, FCR3) OFF Swinging operation cannot be executed."
+ },
+ {
+  "type": "operation_error",
+  "code": "36",
+  "content": "In-Sub-arm mould open mode (FCSK) ON Travel operation cannot be executed."
+ },
+ {
+  "type": "operation_error",
+  "code": "37",
+  "content": "Slide and take-out free mode (FCCS) OFF Slide action operation cannot be executed."
+ },
+ {
+  "type": "operation_error",
+  "code": "38",
+  "content": "Slide action (Y17) ON Please execute slide return."
+ },
+ {
+  "type": "operation_error",
+  "code": "39",
+  "content": "Slide action (Y17) OFF Please execute slide return."
+ },
+ {
+  "type": "operation_error",
+  "code": "40",
+  "content": "NT scissor mode (FCNT) OFF NT scissor operation cannot be executed."
+ },
+ {
+  "type": "operation_error",
+  "code": "41",
+  "content": "NT scissor posture operation cannot be executed."
+ },
+ {
+  "type": "operation_error",
+  "code": "42",
+  "content": "Not at NT scissor position Execute travel operation at NT scissor position."
+ },
+ {
+  "type": "operation_error",
+  "code": "43",
+  "content": "Not move to NT scissor position Please perform a descent operation."
+ },
+ {
+  "type": "operation_error",
+  "code": "44",
+  "content": "Not move to NT scissor standby position Please execute retreat operation."
+ },
+ {
+  "type": "operation_error",
+  "code": "45",
+  "content": "Not move to NT scissor forward position Please execute forward operation."
+ },
+ {
+  "type": "operation_error",
+  "code": "46",
+  "content": "NT scissor pulling (Y13) OFF Please execute NT pulling action"
+ },
+ {
+  "type": "operation_error",
+  "code": "47",
+  "content": "NT scissor pulling (Y13) ON Please execute NT pulling return"
+ },
+ {
+  "type": "operation_error",
+  "code": "48",
+  "content": "Take-out side limit area (X19) OFF Please execute the travel operation at take-out side."
+ },
+ {
+  "type": "operation_error",
+  "code": "49",
+  "content": "Swinging return limit (X17) OFF Please execute swinging return operation when free interlocking operation"
+ },
+ {
+  "type": "operation_error",
+  "code": "50",
+  "content": "Swinging action limit (X18) OFF Please execute swinging action operation when free interlocking operation"
+ },
+ {
+  "type": "operation_error",
+  "code": "51",
+  "content": "Posture action limit (X09) OFF Please execute manual operation switch over, posture action operation"
+ },
+ {
+  "type": "operation_error",
+  "code": "52",
+  "content": "Posture action limit (X09) OFF Please execute manual operation switch over, posture action operation"
+ },
+ {
+  "type": "operation_error",
+  "code": "53",
+  "content": "Not posture action position When the action of posture action position movement completion is shown, please execute the forward operation."
+ },
+ {
+  "type": "operation_error",
+  "code": "54",
+  "content": "When the arm at take-out side is subject to decent operation, please start to execute the operation of clamp 2 open."
+ },
+ {
+  "type": "operation_error",
+  "code": "55",
+  "content": "Release side standby mode (FCYT) OFF Traverse standby operation cannot be executedwhen release side standy (FCYT) OFF Travel standby operation cannot be executed"
+ },
+ {
+  "type": "operation_error",
+  "code": "56",
+  "content": "When free operation is performed for take-outt machine and there is no interference with mould, please move the program limit ON position at release side area."
+ },
+ {
+  "type": "operation_error",
+  "code": "57",
+  "content": "Not the posture action position Execute the decent or ascent action when the screen for posture action position movement is displayed"
+ },
+ {
+  "type": "operation_error",
+  "code": "60",
+  "content": "NT cutting free mode (FCNF) is not used NT cutting operation cannot be performed"
+ },
+ {
+  "type": "operation_error",
+  "code": "61",
+  "content": "Not at the take-out side, NT cutting position Please perform the travel operation at take-out side or NT cutting position."
+ },
+ {
+  "type": "operation_error",
+  "code": "62",
+  "content": "ascent limit (X03,X11) OFF Please perform ascent operation by using free signal linkage operation."
+ },
+ {
+  "type": "operation_error",
+  "code": "63",
+  "content": "Posture return limit (X08) OFF Please perform posture return operation by free operation"
+ },
+ {
+  "type": "operation_error",
+  "code": "64",
+  "content": "Slide and take-out free mode (FCCS2) OFF Slide and take-out position operation cannot be executed."
+ },
+ {
+  "type": "operation_error",
+  "code": "65",
+  "content": "Not move to take-out and clamp position Execute forward operation when the action information of take-out and clamp position completion is displayed"
+ },
+ {
+  "type": "operation_error",
+  "code": "66",
+  "content": "Product 2-point release mode (FC2K) is not used Clamp 1 open, clamp 2 open operation cannot be performed"
+ },
+ {
+  "type": "operation_error",
+  "code": "67",
+  "content": "Slide and take-out action is not completed Please perform slide and take-out operation."
+ },
+ {
+  "type": "operation_error",
+  "code": "69",
+  "content": "Not manual mode Please start the operation at manual mode."
+ },
+ {
+  "type": "operation_error",
+  "code": "89",
+  "content": "Please switch over the selective switch beyond [automatic operation], and please press [reset] key."
+ },
+ {
+  "type": "operation_error",
+  "code": "116",
+  "content": "Packing counter cannot be cleared. When manual operation, packing counter can be cleared when take-out side or ascent limit (X03, X11) is ON When automatic operation, after take-out side or product is open, packing counter can be cleared when return."
+ },
+ {
+  "type": "operation_error",
+  "code": "117",
+  "content": "Not at release side position Please perform travel standby operation before the information of travel standby position movement completion is displayed."
+ },
+ {
+  "type": "operation_error",
+  "code": "119",
+  "content": "Mould open end (MO) signal is OFF Make the robot move to release side by free operation, and it shall not interfere with mold. After it is confirmed that there is no interference, press reset key and the signal of mould close permission will be output."
+ },
+ {
+  "type": "operation_error",
+  "code": "120",
+  "content": "Please firstly open the mould and then execute the operation."
+ },
+ {
+  "type": "operation_error",
+  "code": "121",
+  "content": "Please firstly confirm that the jig is vertical and then execute the operation."
+ },
+ {
+  "type": "operation_error",
+  "code": "122",
+  "content": "Please firstly confirm that the jig is horizontal and then execute the operation."
+ },
+ {
+  "type": "operation_error",
+  "code": "123",
+  "content": "Traverse to dangerous area The traverse posture is inconsistent with existing posture. Please execute posture status operation until it is consistent with traverse posture under the condition that there is no interference. Then execute the travel operation."
+ },
+ {
+  "type": "operation_error",
+  "code": "124",
+  "content": "Start of in-mould posture limit function Posture operation cannot be executed in mould, and please confirm the mode setting."
+ },
+ {
+  "type": "operation_error",
+  "code": "125",
+  "content": "release side safety OD signal is not ON Please confirm whether the release side safety signal is abnormal."
+ },
+ {
+  "type": "operation_error",
+  "code": "126",
+  "content": "ascent limit of Take-out side area is OFF Posture action operation cannot be executed."
+ },
+ {
+  "type": "operation_error",
+  "code": "127",
+  "content": "Arm is not at ascent limit Please firstly ascent to appropriate position manually, and then execute the operation."
+ },
+ {
+  "type": "operation_error",
+  "code": "128",
+  "content": "Horizontal standby [locking limit mould] mode is started Please firstly open the mould and then execute the operation."
+ },
+ {
+  "type": "operation_error",
+  "code": "129",
+  "content": "Please firstly open the mould and then execute the operation."
+ },
+ {
+  "type": "operation_error",
+  "code": "130",
+  "content": "Please firstly execute posture action and then execute the operation."
+ },
+ {
+  "type": "operation_error",
+  "code": "140",
+  "content": "Travel exceeds area setting Please execute traverse operation to return to safe area"
+ },
+ {
+  "type": "operation_error",
+  "code": "141",
+  "content": "Travel exceeds area setting upper limit Please execute traverse operation to return to safe area"
+ },
+ {
+  "type": "operation_error",
+  "code": "142",
+  "content": "The front and rear position of main arm exceeds area setting lower limit Please execute forward operation of main arm to return to safe area"
+ },
+ {
+  "type": "operation_error",
+  "code": "143",
+  "content": "The front and rear position of main arm exceeds area setting upper limit Please execute backward operation of main arm to return to safe area"
+ },
+ {
+  "type": "operation_error",
+  "code": "144",
+  "content": "The upper and lower position of main arm exceeds area setting lower limit Please execute decent operation of main arm to return to safe area"
+ },
+ {
+  "type": "operation_error",
+  "code": "145",
+  "content": "The upper and lower position of main arm exceeds area setting lower limit Please execute ascent operation of main arm to return to safe area"
+ },
+ {
+  "type": "operation_error",
+  "code": "146",
+  "content": "The front and rear position of Sub-arm exceeds area setting lower limit Please execute forward operation of Sub-arm to return to safe area"
+ },
+ {
+  "type": "operation_error",
+  "code": "147",
+  "content": "The front and rear position of Sub-arm exceeds area setting upper limit Please execute backward operation of Sub-arm to return to safe area"
+ },
+ {
+  "type": "operation_error",
+  "code": "148",
+  "content": "The upper and lower position of Sub-arm exceeds area setting lower limit Please execute decent operation of Sub-arm to return to safe area"
+ },
+ {
+  "type": "operation_error",
+  "code": "149",
+  "content": "The upper and lower position of Sub-arm exceeds area setting upper limit Please execute ascent operation of Sub-arm to return to safe area"
+ },
+ {
+  "type": "operation_error",
+  "code": "150",
+  "content": "Please enter into free operation screen or instruction screen to execute axis operation."
+ },
+ {
+  "type": "operation_error",
+  "code": "199",
+  "content": "Change the set value in the saved segment fetch and exchange file. Whether the data is saved?"
+ },
+ {
+  "type": "operation_error",
+  "code": "200",
+  "content": "Mould open completion (MO) OFF, stepping; return is not completed. Please confirm the input of injection molding machine."
+ },
+ {
+  "type": "operation_error",
+  "code": "201",
+  "content": "Injection molding machine safety door (MD) OFF, stepping; return is not completed. Please confirm the input of injection molding machine."
+ },
+ {
+  "type": "operation_error",
+  "code": "202",
+  "content": "release side decent safety (RD) OFF, stepping; return is not completed. Please confirm the external input."
+ },
+ {
+  "type": "operation_error",
+  "code": "203",
+  "content": "Starting automatic operation in [segment fetch and exchange] screen is not completed. [Segment fetch and exchange] screen disappears, so please do not execute automatic operation. Fan stop alarm The fan in servo driver stops. Please inspect the servo driver."
+ },
+ {
+  "type": "operation_error",
+  "code": "250",
+  "content": "The service life of knockout machine expires. Acceptance has been performed, and please get the password. Password is input via [password has been accepted]. Chapter B 38.Alarm information 38.1Alarm information function When power is input, the alarm contents expressed when manual operation and automatic operation is abnormal. The types of alarm information are as follows. Type Description System alarm It means that the control system is abnormal. Axis alarm It means that axis control and drive system is abnormal. Alarm There are the following errors: alarm for abnormal condition of limit switch, alarm for abnormal input of injection molding machine, alarm for period expiration, clamp error, product fall, product placement error. 38.2 Description on alarm information System alarm Alarm No./ name Name Contents Confirmation contents"
+ },
+ {
+  "type": "setting_error",
+  "code": "70",
+  "content": "Program limit of take-out side area OFF Please confirm the take-out standby position of traveling axis and take-out area."
+ },
+ {
+  "type": "setting_error",
+  "code": "71",
+  "content": "Program limit of release side area OFF Please confirm the point of traveling axis and the release side area"
+ },
+ {
+  "type": "setting_error",
+  "code": "72",
+  "content": "Program limit of release side area OFF Please confirm the decent position of release side of traveling axis and the release side area."
+ },
+ {
+  "type": "setting_error",
+  "code": "73",
+  "content": "Program limit of release side area OFF When fixed and The change between fixed and moving switching mode cannot be performed. moving switching When program limit of release side area is ON, please change the travel mode. mode (FCKO) is available"
+ },
+ {
+  "type": "setting_error",
+  "code": "74",
+  "content": "Program limit of release side area OFF Please confirm the NT scissor position of traveling axis and the release side area"
+ },
+ {
+  "type": "setting_error",
+  "code": "75",
+  "content": "Program limit of release side area OFF When travel Please confirm the travel standby position of traveling axis and the release side standby mode area (FCYT) is available"
+ },
+ {
+  "type": "setting_error",
+  "code": "76",
+  "content": "Not manual mode Please start to set at manual mode."
+ },
+ {
+  "type": "setting_error",
+  "code": "77",
+  "content": "ascent limit (X03, X11) OFF Please start the ascent and perform change."
+ },
+ {
+  "type": "setting_error",
+  "code": "78",
+  "content": "Product confirmation mode (FC4), in-clamp product confirmation mode (FC4T), vacuum confirmation mode (FCCV), vacuum 2 circuit mode (FCV2) cannot be changed to unused status completely. [Free interlocking mode] ** All interlocking are released!** ～ Please pay attention to operation execution.～ Downward: press [reset] key or button outside screen, and OFF is displayed; free operation may be performed."
+ },
+ {
+  "type": "setting_error",
+  "code": "80",
+  "content": "Please operate while [action possible] key is pressed."
+ },
+ {
+  "type": "setting_error",
+  "code": "81",
+  "content": "Take-out side limit (X19) OFF Please confirm the take-out standby position of traveling axis and take-out area."
+ },
+ {
+  "type": "setting_error",
+  "code": "82",
+  "content": "It is not installed for Sub-arm of the machine, so it cannot be executed. Free interlocking operation of Sub-arm."
+ },
+ {
+  "type": "setting_error",
+  "code": "83",
+  "content": "Take-out side area (X19) OFF Please confirm the posture action position of traveling axis and take-out area."
+ },
+ {
+  "type": "setting_error",
+  "code": "84",
+  "content": "Take-out side limit (X19) OFF Please confirm the posture action position of traveling axis and take-out limit."
+ },
+ {
+  "type": "setting_error",
+  "code": "85",
+  "content": "[Take-out posture setting permission] system mode is not set, and this mode setting cannot be executed. Please observe whether there is interference between jig and safety door when this mode is set."
+ },
+ {
+  "type": "setting_error",
+  "code": "87",
+  "content": "Take out from moving side Please change the set value."
+ },
+ {
+  "type": "setting_error",
+  "code": "88",
+  "content": "Take out from fixed side Please change the set value."
+ },
+ {
+  "type": "setting_error",
+  "code": "170",
+  "content": "When horizontal standby locking limit mould mode is used, please set the monitoring mode necessary for home return."
+ },
+ {
+  "type": "setting_error",
+  "code": "171",
+  "content": "When horizontal standby locking limit mould mode is used, please set the horizontal status of traverse posture Inappropriate home runner confirmation (X12) is at confirmation status"
+ },
+ {
+  "type": "system_alarm",
+  "code": "01",
+  "content": "SUM error MAIN CPU ROM data Please confirm whether there is any problem when calibration error MAIN system program is downloaded. Re-download MAIN system program. Please replace mainboard if it reoccurs. Please turn off the primary power supply."
+ },
+ {
+  "type": "system_alarm",
+  "code": "02",
+  "content": "External F-ROM1 MAIN CPU external Please confirm whether there is any problem when accessor error F-ROM1 accessor error external F-ROM1 data is downloaded Re-download external F-ROM1 data. Please PENDANT substrate if it reoccurs. Please turn off the primary power supply."
+ },
+ {
+  "type": "system_alarm",
+  "code": "03",
+  "content": "External F-ROM1 External F-ROM1 data Please confirm whether there is any problem when SUM error calibration error external F-ROM1 data is downloaded Re-download external F-ROM1 data. Please PENDANT substrate if it reoccurs. Please turn off the primary power supply."
+ },
+ {
+  "type": "system_alarm",
+  "code": "04",
+  "content": "External F-ROM2 MAIN CPU external Please turn off the primary power supply. access error F-ROM2 access error If it occurs again, please exchange PENDANT substrate."
+ },
+ {
+  "type": "system_alarm",
+  "code": "05",
+  "content": "External F-ROM2 External F-ROM2 data Initialize the initial set value of all segment fetch data calibration error calibration error and exchange data. Reset the segment fetch and exchange data. If it occurs again, please exchange PENDANT substrate."
+ },
+ {
+  "type": "system_alarm",
+  "code": "06",
+  "content": "Backup data is The backup data has abnormal Initialize all the set values. abnormal phenomenon. Reset the segment fetch and exchange data. Press [reset] key to return to initial screen. If it occurs again (except for backup clear), please exchange PENDANT substrate."
+ },
+ {
+  "type": "system_alarm",
+  "code": "07",
+  "content": "The model setting in Please confirm whether the model setting on interlocking substrate is setting screen of operating box system is consistent inconsistent with the internal with the model. setting of operating box. If the model in operating box is reset, please execute backup clear operation! Please turn off the primary power supply."
+ },
+ {
+  "type": "system_alarm",
+  "code": "08",
+  "content": "Ladder diagram Ladder diagram command Please confirm that there is any problem when command error check error, abnormal ladder diagram data is downloaded. command is executed Re-download the ladder diagram data. If it occurs again, please exchange CPU substrate. Please turn off the primary power supply."
+ },
+ {
+  "type": "system_alarm",
+  "code": "09",
+  "content": "SUM error PENDANT CPU ROM data Please confirm that there is any problem when check error PENDANT data is downloaded. Re-download the PENDANT data. If it occurs again, please exchange PENDANT substrate. Please turn off the primary power supply."
+ },
+ {
+  "type": "system_alarm",
+  "code": "10",
+  "content": "The voltage of backup The voltage of backup battery Please exchange the backup battery. battery is dropping. is dropping."
+ },
+ {
+  "type": "system_alarm",
+  "code": "11",
+  "content": "PENDANT Communication is abnormal Please perform point inspection for PENDANT communication is (between MAIN substrate~ wiring. abnormal PENDANT) If it occurs again, please exchange main substrate or PENDANT. Please turn off the primary power supply."
+ },
+ {
+  "type": "system_alarm",
+  "code": "21",
+  "content": "Communication is Communication is abnormal abnormal (between MAIN substrate~ PENDANT)"
+ },
+ {
+  "type": "system_alarm",
+  "code": "22",
+  "content": "Communication is Communication is abnormal Please inspect the communication wiring between abnormal (between MAIN substrate~ substrates. PPC substrate) If it occurs again, please exchange MAIN substrate or PPC substrate. Please turn off the primary power supply."
+ },
+ {
+  "type": "system_alarm",
+  "code": "31",
+  "content": "I/O substrate (ID0) Communication is abnormal Please confirm the ID setting of I/O substrate. communication is (between PPC substrate~I/O Please perform point inspection for communication abnormal substrate (ID0)) wiring between substrates. If it occurs again, please exchange PPC substrate or I/O substrate (ID0). Please turn off the primary power supply."
+ },
+ {
+  "type": "system_alarm",
+  "code": "32",
+  "content": "I/O substrate (ID1) Communication is abnormal Please confirm the ID setting of I/O substrate. communication is (between PPC substrate~I/O Please perform point inspection for communication abnormal substrate (ID1)) wiring between substrates. If it occurs again, please exchange PPC substrate or I/O substrate (ID1). Please turn off the primary power supply."
+ },
+ {
+  "type": "system_alarm",
+  "code": "33",
+  "content": "I/O substrate (ID2) Communication is abnormal Please confirm the ID setting of I/O substrate. communication is (between PPC substrate~I/O Please perform point inspection for communication abnormal substrate (ID2)) wiring between substrates. If it occurs again, please exchange PPC substrate or I/O substrate (ID2). Please turn off the primary power supply."
+ },
+ {
+  "type": "system_alarm",
+  "code": "34",
+  "content": "I/O substrate (ID3) Communication is abnormal Please confirm the ID setting of I/O substrate. communication is (between PPC substrate~I/O Please perform point inspection for communication abnormal substrate (ID3)) wiring between substrates. If it occurs again, please exchange PPC substrate or I/O substrate (ID3). Please turn off the primary power supply."
+ },
+ {
+  "type": "system_alarm",
+  "code": "35",
+  "content": "I/O substrate (ID4) Communication is abnormal Please confirm the ID setting of I/O substrate. communication is (between PPC substrate~I/O Please perform point inspection for communication abnormal substrate (ID4)) wiring between substrates. If it occurs again, please exchange PPC substrate or I/O substrate (ID4). Please turn off the primary power supply."
+ },
+ {
+  "type": "system_alarm",
+  "code": "36",
+  "content": "I/O substrate (ID5) Communication is abnormal Please confirm the ID setting of I/O substrate. communication is (between PPC substrate~I/O Please perform point inspection for communication abnormal substrate (ID5)) wiring between substrates. If it occurs again, please exchange PPC substrate or I/O substrate (ID5). Please turn off the primary power supply."
+ },
+ {
+  "type": "system_alarm",
+  "code": "37",
+  "content": "I/O substrate (ID6) Communication is abnormal Please confirm the ID setting of I/O substrate. communication is (between PPC substrate~I/O Please perform point inspection for communication abnormal substrate (ID6)) wiring between substrates. If it occurs again, please exchange PPC substrate or I/O substrate (ID6). Please turn off the primary power supply."
+ },
+ {
+  "type": "system_alarm",
+  "code": "38",
+  "content": "I/O substrate (ID7) Communication is abnormal Please confirm the ID setting of I/O substrate. communication is (between PPC substrate~I/O Please perform point inspection for communication abnormal substrate (ID7)) wiring between substrates. If it occurs again, please exchange PPC substrate or I/O substrate (ID7). Please turn off the primary power supply."
+ },
+ {
+  "type": "system_alarm",
+  "code": "40",
+  "content": "Voltage of driving Voltage of driving power is too Please confirm the voltage and wiring of main power is abnormal low power supply. Please confirm the voltage and wiring of switching power supply. If it occurs again, please exchange switching power supply or MAIN substrate. Please turn off the primary power supply."
+ },
+ {
+  "type": "system_alarm",
+  "code": "41",
+  "content": "Instantaneous stop of Instantaneous stop of main Please confirm the voltage and wiring of main main power supply power supply power supply. Please confirm the voltage and wiring of main power supply. If it occurs again, please exchange MAIN substrate. Please turn off the primary power supply."
+ },
+ {
+  "type": "system_alarm",
+  "code": "42",
+  "content": "Voltage of control Voltage of control power supply power supply is is too low abnormal"
+ },
+ {
+  "type": "system_alarm",
+  "code": "43",
+  "content": "High voltage of servo Voltage of servo power Please confirm the voltage and wiring of servo power supply is supply is too high power supply. abnormal Please confirm the connection and wiring of retrogradation resistance. If it occurs again, please exchange power substrate or I/O substrate (ID1). Please turn off the primary power supply."
+ },
+ {
+  "type": "system_alarm",
+  "code": "44",
+  "content": "Low voltage of servo Voltage of servo power Please confirm the voltage and wiring of main power supply is supply is too low power supply. abnormal Please confirm the voltage and wiring of servo power supply. If it occurs again, please exchange power substrate or I/O substrate (ID1). Please turn off the primary power supply."
+ },
+ {
+  "type": "system_alarm",
+  "code": "45",
+  "content": "Retrogradation Retrogradation load has Please confirm the voltage of main power supply, resistance is abnormal exceeded the specified value. voltage of servo power supply, connection and wiring of retrogradation resistance. Please prolong the acceleration and deceleration time."
+ },
+ {
+  "type": "system_alarm",
+  "code": "46",
+  "content": "Resolver backup is The voltage of backup power of Please confirm the voltage of backup power of abnormal resolver is abnormal. resolver. If it occurs again, please exchange power substrate or I/O substrate (ID1). Please turn off the primary power supply. Please confirm it when battery exists, exchange the battery. It also can act even if the power supply is turned off."
+ },
+ {
+  "type": "system_alarm",
+  "code": "47",
+  "content": "Retrogradation Retrogradation resistance is Please confirm the voltage of main power supply, resistance is abnormal overheating voltage of servo power supply, connection and (overheating) wiring of retrogradation resistance. Please prolong the acceleration and deceleration time. If it occurs again, please exchange power substrate or I/O substrate (ID1). Please turn off the primary power supply. ■List for axis alarm"
+ }
+]

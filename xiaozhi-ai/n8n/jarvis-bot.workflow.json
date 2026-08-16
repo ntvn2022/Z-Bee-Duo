@@ -1,0 +1,79 @@
+{
+  "name": "Jarvis - Bot lỗi máy (Leader/Branch)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "jarvis-bot",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-node",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        240,
+        300
+      ],
+      "webhookId": "jarvis-bot"
+    },
+    {
+      "parameters": {
+        "language": "javaScript",
+        "jsCode": "\n// === Jarvis \"leader -> branch\" robot-error bot ===\nconst REG_URL = \"https://raw.githubusercontent.com/ntvn2022/z-bee-duo/claude/esp32-s3-touch-screen-wwelt1/xiaozhi-ai/machines/registry.json\";\nconst body = ($input.first().json.body) || $input.first().json || {};\nconst text = (body.text || \"\").toString().trim();\nconst history = body.history || [];\nconst MODEL = body.model || \"gemini-2.5-flash\";\nconst GEMINI_KEY = body.gemini_key || $env.GEMINI_API_KEY || \"\";\n\nconst out = (o) => [{ json: o }];\nif (!text) return out({ reply: \"Bạn muốn hỏi lỗi/cảnh báo của máy nào, mã số mấy?\", need: \"text\" });\n\n// exit robot mode\nif (/(k[eế]t th[uú]c robot|tho[aá]t robot|d[uừ]ng robot)/i.test(text))\n  return out({ reply: \"Đã thoát chế độ tra cứu lỗi máy.\", mode: \"exit\" });\n\nconst norm = (s) => (s||\"\").toLowerCase().normalize(\"NFD\").replace(/[̀-ͯ]/g,\"\");\nconst t = norm(text);\n\n// 1) LEADER: fetch registry + pick machine by alias\nconst registry = await this.helpers.httpRequest({ url: REG_URL, json: true });\nlet machine = null;\nfor (const m of registry) if ((m.aliases||[]).some(a => t.includes(norm(a)))) { machine = m; break; }\nif (!machine) {\n  if (registry.length === 1) machine = registry[0];   // only one machine -> assume it\n  else return out({ reply: \"Bạn hỏi về máy nào? Hiện có: \" + registry.map(m=>m.name_vi).join(\", \") + \".\", need: \"machine\" });\n}\n\n// 2) extract code number\nconst cm = t.match(/(\\d{1,3})/);\nif (!cm) return out({ reply: `Bạn hỏi mã lỗi (error) hay cảnh báo (alarm) số mấy của ${machine.name_vi}?`, need: \"code\" });\nconst num = parseInt(cm[1], 10);\n\n// type hint from wording\nconst wantAlarm = /(alarm|canh bao)/.test(t);\nconst wantError = /(error|loi)/.test(t);\n\n// 3) BRANCH: fetch that machine's tables, find matches for the code\nconst rows = await this.helpers.httpRequest({ url: machine.tables_url, json: true });\nconst matches = rows.filter(r => parseInt(r.code,10) === num);\nif (!matches.length)\n  return out({ reply: `Không thấy mã ${num} cho ${machine.name_vi}. Bạn kiểm tra lại số giúp mình nhé.`, need: \"code\" });\n\nconst errT = machine.error_types||[], almT = machine.alarm_types||[];\nconst grp = (ty) => errT.includes(ty) ? \"error\" : (almT.includes(ty) ? \"alarm\" : \"other\");\nconst hasErr = matches.some(m=>grp(m.type)===\"error\");\nconst hasAlm = matches.some(m=>grp(m.type)===\"alarm\");\nlet selected = matches, askType = false;\nif (wantError && !wantAlarm) selected = matches.filter(m=>grp(m.type)===\"error\");\nelse if (wantAlarm && !wantError) selected = matches.filter(m=>grp(m.type)===\"alarm\");\nelse if (hasErr && hasAlm) askType = true;      // ambiguous: summarize both + ask\nif (!selected.length) selected = matches;\n\n// 4) build prompt + call Gemini to phrase the answer\nconst ctx = selected.map(m=>`[${m.type} ${m.code}] ${m.content}`).join(\"\\n\");\nlet sys = `Bạn là trợ lý kỹ thuật cho ${machine.name_vi}. Trả lời bằng ngôn ngữ của người hỏi (mặc định tiếng Việt), NGẮN GỌN, đúng thứ tự: 1) Mô tả lỗi 2) Nguyên nhân 3) Cách khắc phục. `;\nif (askType) sys += `Mã ${num} tồn tại ở CẢ cảnh báo (alarm) LẪN lỗi (error) — hãy tóm tắt cả hai loại rồi HỎI LẠI người dùng muốn loại nào. `;\nsys += `Cuối câu trả lời LUÔN kèm 1 câu nhắc: cần phân biệt \"cảnh báo (alarm)\" và \"lỗi (error)\" vì là hai khái niệm khác nhau. CHỈ dùng dữ liệu sau:\\n${ctx}`;\n\nlet reply = \"\";\nif (GEMINI_KEY) {\n  try {\n    const g = await this.helpers.httpRequest({\n      method: \"POST\",\n      url: `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${GEMINI_KEY}`,\n      body: { contents: [{ parts: [{ text: sys + `\\n\\nCâu hỏi: ${text}` }] }] },\n      json: true,\n    });\n    reply = g?.candidates?.[0]?.content?.parts?.[0]?.text || \"\";\n  } catch (e) { reply = \"\"; }\n}\nif (!reply) {\n  reply = selected.map(m=>`${m.type} ${m.code}: ${m.content}`).join(\"  |  \")\n    + \"  (Lưu ý: cảnh báo/alarm và lỗi/error là hai loại khác nhau.)\";\n}\nreturn out({ reply, machine: machine.id, code: num, types: selected.map(m=>m.type), askType });\n"
+      },
+      "id": "code-node",
+      "name": "Jarvis bot",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        520,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "id": "respond-node",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        800,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Jarvis bot",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Jarvis bot": {
+      "main": [
+        [
+          {
+            "node": "Respond",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "active": false
+}
