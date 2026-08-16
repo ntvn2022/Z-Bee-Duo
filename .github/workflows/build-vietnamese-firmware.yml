@@ -105,6 +105,19 @@ jobs:
           print("Patched status bar clock: weekday + dd/mm + HH:MM")
           PY
 
+      - name: Rename Wi-Fi config hotspot to "ruanqinghe"
+        run: |
+          python3 - <<'PY'
+          import pathlib
+          p = pathlib.Path("xz/main/boards/common/wifi_board.cc")
+          s = p.read_text()
+          anchor = 'config.ssid_prefix = "Xiaozhi";'
+          assert s.count(anchor) == 1
+          s = s.replace(anchor, 'config.ssid_prefix = "ruanqinghe";')
+          p.write_text(s)
+          print("Hotspot SSID prefix -> ruanqinghe")
+          PY
+
       - name: Build firmware (Vietnamese UI)
         shell: bash
         working-directory: xz
