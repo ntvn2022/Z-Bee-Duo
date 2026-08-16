@@ -109,6 +109,9 @@ prompt: |
 selected_module:
   LLM: GeminiLLM
   TTS: EdgeTTS
+  # nointent: tat function_call. Gemini khong ho tro schema function_call
+  # (loi "Unknown field for Schema: minimum") nen dung nointent de chat on dinh.
+  Intent: nointent
 
 LLM:
   GeminiLLM:
@@ -123,7 +126,6 @@ TTS:
     type: edge
     voice: vi-VN-HoaiMyNeural   # giong nu tieng Viet; nam: vi-VN-NamMinhNeural
     output_dir: tmp/
-    language: "Vietnamese"
 EOF
 
 # ---- Mo cong tuong lua (neu dung ufw) ----
