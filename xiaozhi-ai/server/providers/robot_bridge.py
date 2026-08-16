@@ -33,8 +33,11 @@ def _norm(s):
     return "".join(c for c in s if unicodedata.category(c) != "Mn")
 
 
-# Enter robot mode when a machine word appears; leave on an exit phrase.
-_ENTER = re.compile(r"\b(robot|tay may)\b")
+# Enter robot mode when a machine word or a machine symbol appears (T23, X03,
+# Y17, RY3, FCW...), or an explicit "ký hiệu/là gì". Leave on an exit phrase.
+_ENTER = re.compile(
+    r"\b(robot|tay may|ky hieu|fc[a-z0-9]{1,5}|ry\d{1,2}|[txy]\d{1,3})\b"
+)
 _EXIT = re.compile(r"(ket thuc robot|thoat robot|dung robot|ket thuc may)")
 
 

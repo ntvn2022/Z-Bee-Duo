@@ -1343,5 +1343,530 @@
   "type": "system_alarm",
   "code": "47",
   "content": "Retrogradation Retrogradation resistance is Please confirm the voltage of main power supply, resistance is abnormal overheating voltage of servo power supply, connection and (overheating) wiring of retrogradation resistance. Please prolong the acceleration and deceleration time. If it occurs again, please exchange power substrate or I/O substrate (ID1). Please turn off the primary power supply. ■List for axis alarm"
+ },
+ {
+  "type": "symbol",
+  "code": "FC2K",
+  "content": "Product 2 position Product can be packed in equal"
+ },
+ {
+  "type": "symbol",
+  "code": "FC4",
+  "content": "Product confirmation Product confirmation will be executed by limit"
+ },
+ {
+  "type": "symbol",
+  "code": "FC4T",
+  "content": "Confirmation of Product confirmation will be executed by product in the jig limit switch(X06) if this mode is on"
+ },
+ {
+  "type": "symbol",
+  "code": "FCCN",
+  "content": "Scissors in jig Takeout machine equipped with scissors"
+ },
+ {
+  "type": "symbol",
+  "code": "FCCS2",
+  "content": "Extract by free slide Product will be extracted through"
+ },
+ {
+  "type": "symbol",
+  "code": "FCCV",
+  "content": "Vacuum confirmation Vacuum confirmation is available if this mode"
+ },
+ {
+  "type": "symbol",
+  "code": "FCE",
+  "content": "Link with ejector Ejector controlled by takeout machine after you"
+ },
+ {
+  "type": "symbol",
+  "code": "FCK",
+  "content": "Extract product on Take-out machine will extract product from O fixed platen fixed platen if this mode is on"
+ },
+ {
+  "type": "symbol",
+  "code": "FCKO",
+  "content": "Generally ,product is extracted from moving platen. ※.This mode only can be turned on when the arm is in product releases scope"
+ },
+ {
+  "type": "symbol",
+  "code": "FCKT",
+  "content": "Stand by at a lower The arm will stand by at a lower position where"
+ },
+ {
+  "type": "symbol",
+  "code": "FCNF",
+  "content": "NT sprue scissors Takeout machine equipped with air"
+ },
+ {
+  "type": "symbol",
+  "code": "FCNG",
+  "content": "Discharge of Defective and qualified products will be put in"
+ },
+ {
+  "type": "symbol",
+  "code": "FCNT",
+  "content": ") is ON. Delay time between main arm of NT Setting available when NT free start. T15 NT crosswise action"
+ },
+ {
+  "type": "symbol",
+  "code": "FCPF",
+  "content": "Free packing Product can be packed in equal distance during standard packing ,Please turn on this mode if product is irregular and can not be"
+ },
+ {
+  "type": "symbol",
+  "code": "FCS",
+  "content": "Sub-arm extract Runner extracted by sub-arm after this mode is"
+ },
+ {
+  "type": "symbol",
+  "code": "FCSK",
+  "content": "Runner release in Set the mode into ON, and can take off"
+ },
+ {
+  "type": "symbol",
+  "code": "FCSS",
+  "content": "Wrist action at release Wrist will act then release the product when"
+ },
+ {
+  "type": "symbol",
+  "code": "FCSS2",
+  "content": "Wrist action during Wrist action and traversing will be executed at traverse the same time if this mode is on . Wrist action will start if timer T30 is up or"
+ },
+ {
+  "type": "symbol",
+  "code": "FCSSM",
+  "content": "M descending specific position when this mode is on. Specific position can be set in axis setting"
+ },
+ {
+  "type": "symbol",
+  "code": "FCTA",
+  "content": "Posture action on Wrist go forward and action to avoid the"
+ },
+ {
+  "type": "symbol",
+  "code": "FCTA2",
+  "content": "Wrist action 2 on Wrist go forward and action to avoid the"
+ },
+ {
+  "type": "symbol",
+  "code": "FCTB",
+  "content": "Release during return to Product will be released at release side then"
+ },
+ {
+  "type": "symbol",
+  "code": "FCTF",
+  "content": "Release during Runner and sprue will be released during going"
+ },
+ {
+  "type": "symbol",
+  "code": "FCV2",
+  "content": "Vacuum 2 Circuit Vacuum confirmation is available if this mode is on .Product will be sucked by sucker, and product confirmation will be executed by vacuum detector(X13)"
+ },
+ {
+  "type": "symbol",
+  "code": "FCW",
+  "content": "Main arm extract Product extracted by main arm after this mode is turned on . ※ Main arm works independently when Sub-arm extract function is OFF"
+ },
+ {
+  "type": "symbol",
+  "code": "FCYT",
+  "content": "Stand by outside Cycle start signal(RY3) is valid when release mold area scope limitation ON. Home position return and stand by position are same position"
+ },
+ {
+  "type": "symbol",
+  "code": "MA",
+  "content": "IMM signal: injection molding machine in automatic mode"
+ },
+ {
+  "type": "symbol",
+  "code": "MC",
+  "content": "IMM signal: mould close end (mold closed)"
+ },
+ {
+  "type": "symbol",
+  "code": "MD",
+  "content": "IMM signal: safety door of injection molding machine"
+ },
+ {
+  "type": "symbol",
+  "code": "ME",
+  "content": "IMM signal: ejector forward end"
+ },
+ {
+  "type": "symbol",
+  "code": "MN",
+  "content": "IMM signal: middle-mould / inferior signal"
+ },
+ {
+  "type": "symbol",
+  "code": "MO",
+  "content": "IMM signal: mould open end (mold opened)"
+ },
+ {
+  "type": "symbol",
+  "code": "OD",
+  "content": "safe linkage: release side safety"
+ },
+ {
+  "type": "symbol",
+  "code": "RD",
+  "content": "safe linkage: release side descent safety"
+ },
+ {
+  "type": "symbol",
+  "code": "RY-3",
+  "content": "Circulation start"
+ },
+ {
+  "type": "symbol",
+  "code": "RY-6",
+  "content": "belt signal"
+ },
+ {
+  "type": "symbol",
+  "code": "RY1",
+  "content": "relay output: enable mold open"
+ },
+ {
+  "type": "symbol",
+  "code": "RY2",
+  "content": "relay output: enable mold close"
+ },
+ {
+  "type": "symbol",
+  "code": "RY3",
+  "content": "relay output: cycle start signal"
+ },
+ {
+  "type": "symbol",
+  "code": "RY5",
+  "content": "relay output: robot alarm/error"
+ },
+ {
+  "type": "symbol",
+  "code": "RY6",
+  "content": "relay output: conveyor belt"
+ },
+ {
+  "type": "symbol",
+  "code": "RY7",
+  "content": "relay output: enable ejector"
+ },
+ {
+  "type": "symbol",
+  "code": "RY8",
+  "content": "relay output: spare"
+ },
+ {
+  "type": "symbol",
+  "code": "RY9",
+  "content": "relay output: spare"
+ },
+ {
+  "type": "symbol",
+  "code": "T1",
+  "content": "Descend of main arm Delay time between arm descent Setting available when main arm"
+ },
+ {
+  "type": "symbol",
+  "code": "T2",
+  "content": "Main arm forward Delay time between arm forwarding Setting available when main arm"
+ },
+ {
+  "type": "symbol",
+  "code": "T3",
+  "content": "Ejector forward Delay time between arm descending Setting available when ejector link"
+ },
+ {
+  "type": "symbol",
+  "code": "T4",
+  "content": "Clamp closing Delay time between clamping close Setting available when main arm"
+ },
+ {
+  "type": "symbol",
+  "code": "T5",
+  "content": "Main arm backward Delay time between arm backward Set when main arm taking out mode"
+ },
+ {
+  "type": "symbol",
+  "code": "T6",
+  "content": "Sub-arm clamp open Clamp open time when release runner Setting available when sub-arm"
+ },
+ {
+  "type": "symbol",
+  "code": "T7",
+  "content": "Wrist action Delay time between posture action start and posture action end"
+ },
+ {
+  "type": "symbol",
+  "code": "T8",
+  "content": "side Delay time between arm descending finished and clamp open in release"
+ },
+ {
+  "type": "symbol",
+  "code": "T9",
+  "content": "Clamp open Delay time between clamp open and arm ascending start"
+ },
+ {
+  "type": "symbol",
+  "code": "T10",
+  "content": "Scissors closing Delay time between scissors action Setting available when scissors in"
+ },
+ {
+  "type": "symbol",
+  "code": "T11",
+  "content": "Scissors open Delay time between scissors return Setting available when scissors in"
+ },
+ {
+  "type": "symbol",
+  "code": "T12",
+  "content": "traverse Any of Release during the traverse(FCTF),Release during"
+ },
+ {
+  "type": "symbol",
+  "code": "T13",
+  "content": "Sprue open Any of Release during the traverse(FCTF),Release during"
+ },
+ {
+  "type": "symbol",
+  "code": "T14",
+  "content": "NT cutter forward cutter stand by and crosswise action cutting (FCNT) is ON"
+ },
+ {
+  "type": "symbol",
+  "code": "T15",
+  "content": "NT crosswise action Delay time between NT crosswise Setting available when NT free"
+ },
+ {
+  "type": "symbol",
+  "code": "T16",
+  "content": "NT Cutting ON Delay time between NT cutting finish Setting available when NT free"
+ },
+ {
+  "type": "symbol",
+  "code": "T17",
+  "content": "NT cutting return finished and NT cutting return to cutting (FCNT) is ON"
+ },
+ {
+  "type": "symbol",
+  "code": "T18",
+  "content": "NT cutting OFF Delay time between NT cutting return Setting available when NT free"
+ },
+ {
+  "type": "symbol",
+  "code": "T19",
+  "content": "NT cutting descending descending finished and NT cutter cutting (FCNT) is ON"
+ },
+ {
+  "type": "symbol",
+  "code": "T20",
+  "content": "Jump over the ejector ※Clamp will close without any delay when crosswise limitation of ejector"
+ },
+ {
+  "type": "symbol",
+  "code": "T21",
+  "content": "Clamp failure ascending finished. ※The alarm occurs when the product"
+ },
+ {
+  "type": "symbol",
+  "code": "T22",
+  "content": "Product release ※The entire-stop alarm occurs when"
+ },
+ {
+  "type": "symbol",
+  "code": "T23",
+  "content": "Cycle overtime"
+ },
+ {
+  "type": "symbol",
+  "code": "T24",
+  "content": "Abnormal mould open the product confirmation is OFF when the setting time is up"
+ },
+ {
+  "type": "symbol",
+  "code": "T25",
+  "content": "RY-3 OFF ※Cycle start signal will be OFF if Mold open end (MO)signal is OFF,"
+ },
+ {
+  "type": "symbol",
+  "code": "T26",
+  "content": "TIMER If mold do not close within the setting time,then it will stop and give an"
+ },
+ {
+  "type": "symbol",
+  "code": "T27",
+  "content": "Convey belt Set the output last time of conveyor belt signal (RY-6)"
+ },
+ {
+  "type": "symbol",
+  "code": "T28",
+  "content": "TIMER If mold do not close within the setting time,then it will stop and give an"
+ },
+ {
+  "type": "symbol",
+  "code": "T29",
+  "content": "Descending delay end(MO/X33)ON and descending Delay time between mold open"
+ },
+ {
+  "type": "symbol",
+  "code": "T30",
+  "content": "Posture during the Delay time between product extract Setting available when posture"
+ },
+ {
+  "type": "symbol",
+  "code": "T31",
+  "content": "Slide action Delay time between clamping Setting available when free"
+ },
+ {
+  "type": "symbol",
+  "code": "T32",
+  "content": "Descending in release Delay time between arm descending Setting available When product"
+ },
+ {
+  "type": "symbol",
+  "code": "T33",
+  "content": "Clamp 2 open Delay time between clamp 2 open Setting available When product"
+ },
+ {
+  "type": "symbol",
+  "code": "T36",
+  "content": "Sprue clamp closing close and sprue clamp close . clamp and sprue clamp will act at"
+ },
+ {
+  "type": "symbol",
+  "code": "T37",
+  "content": "Sub-arm descending Delay time between Sub-arm Setting available when sub-arm"
+ },
+ {
+  "type": "symbol",
+  "code": "T38",
+  "content": "Sub-arm forwarding Delay time between sub-arm Setting available when sub-arm"
+ },
+ {
+  "type": "symbol",
+  "code": "T39",
+  "content": "Sub-arm clamp closing Delay time between sub-arm clamp"
+ },
+ {
+  "type": "symbol",
+  "code": "T40",
+  "content": "Sub-arm backward backward finish and sub-arm take-out mode (FCS) is ON"
+ },
+ {
+  "type": "symbol",
+  "code": "X03",
+  "content": "Main arm ascent limit"
+ },
+ {
+  "type": "symbol",
+  "code": "X04",
+  "content": "Product confirmation"
+ },
+ {
+  "type": "symbol",
+  "code": "X05",
+  "content": "vacuum confirmation"
+ },
+ {
+  "type": "symbol",
+  "code": "X06",
+  "content": "In-clamp product confirmation"
+ },
+ {
+  "type": "symbol",
+  "code": "X08",
+  "content": "Posture return limit"
+ },
+ {
+  "type": "symbol",
+  "code": "X09",
+  "content": "Posture action limit"
+ },
+ {
+  "type": "symbol",
+  "code": "X11",
+  "content": "Sub-arm ascent limit"
+ },
+ {
+  "type": "symbol",
+  "code": "X12",
+  "content": "Runnert confirmation"
+ },
+ {
+  "type": "symbol",
+  "code": "X13",
+  "content": "vacuum confirmation 2"
+ },
+ {
+  "type": "symbol",
+  "code": "X16",
+  "content": "abnormal"
+ },
+ {
+  "type": "symbol",
+  "code": "X17",
+  "content": "Swinging return limit"
+ },
+ {
+  "type": "symbol",
+  "code": "X18",
+  "content": "Swinging action limit"
+ },
+ {
+  "type": "symbol",
+  "code": "X19",
+  "content": "Take-out side limit area"
+ },
+ {
+  "type": "symbol",
+  "code": "X20",
+  "content": "Release scope signal"
+ },
+ {
+  "type": "symbol",
+  "code": "X33",
+  "content": "signal of mold open mid"
+ },
+ {
+  "type": "symbol",
+  "code": "X64",
+  "content": "vacuum confirmation 3"
+ },
+ {
+  "type": "symbol",
+  "code": "X65",
+  "content": "vacuum confirmation 4"
+ },
+ {
+  "type": "symbol",
+  "code": "X66",
+  "content": "vacuum confirmation 2"
+ },
+ {
+  "type": "symbol",
+  "code": "X67",
+  "content": "vacuum confirmation 3"
+ },
+ {
+  "type": "symbol",
+  "code": "X68",
+  "content": "vacuum confirmation 4"
+ },
+ {
+  "type": "symbol",
+  "code": "Y07",
+  "content": "return electromagnetic valve"
+ },
+ {
+  "type": "symbol",
+  "code": "Y13",
+  "content": "NT scissor pulling"
+ },
+ {
+  "type": "symbol",
+  "code": "Y17",
+  "content": "Slide action"
  }
 ]

@@ -1,0 +1,106 @@
+symbol,meaning
+FC2K,Product 2 position Product can be packed in equal
+FC4,Product confirmation Product confirmation will be executed by limit
+FC4T,Confirmation of Product confirmation will be executed by product in the jig limit switch(X06) if this mode is on
+FCCN,Scissors in jig Takeout machine equipped with scissors
+FCCS2,Extract by free slide Product will be extracted through
+FCCV,Vacuum confirmation Vacuum confirmation is available if this mode
+FCE,Link with ejector Ejector controlled by takeout machine after you
+FCK,Extract product on Take-out machine will extract product from O fixed platen fixed platen if this mode is on
+FCKO,"Generally ,product is extracted from moving platen. ※.This mode only can be turned on when the arm is in product releases scope"
+FCKT,Stand by at a lower The arm will stand by at a lower position where
+FCNF,NT sprue scissors Takeout machine equipped with air
+FCNG,Discharge of Defective and qualified products will be put in
+FCNT,) is ON. Delay time between main arm of NT Setting available when NT free start. T15 NT crosswise action
+FCPF,"Free packing Product can be packed in equal distance during standard packing ,Please turn on this mode if product is irregular and can not be"
+FCS,Sub-arm extract Runner extracted by sub-arm after this mode is
+FCSK,"Runner release in Set the mode into ON, and can take off"
+FCSS,Wrist action at release Wrist will act then release the product when
+FCSS2,Wrist action during Wrist action and traversing will be executed at traverse the same time if this mode is on . Wrist action will start if timer T30 is up or
+FCSSM,M descending specific position when this mode is on. Specific position can be set in axis setting
+FCTA,Posture action on Wrist go forward and action to avoid the
+FCTA2,Wrist action 2 on Wrist go forward and action to avoid the
+FCTB,Release during return to Product will be released at release side then
+FCTF,Release during Runner and sprue will be released during going
+FCV2,"Vacuum 2 Circuit Vacuum confirmation is available if this mode is on .Product will be sucked by sucker, and product confirmation will be executed by vacuum detector(X13)"
+FCW,Main arm extract Product extracted by main arm after this mode is turned on . ※ Main arm works independently when Sub-arm extract function is OFF
+FCYT,Stand by outside Cycle start signal(RY3) is valid when release mold area scope limitation ON. Home position return and stand by position are same position
+MA,IMM signal: injection molding machine in automatic mode
+MC,IMM signal: mould close end (mold closed)
+MD,IMM signal: safety door of injection molding machine
+ME,IMM signal: ejector forward end
+MN,IMM signal: middle-mould / inferior signal
+MO,IMM signal: mould open end (mold opened)
+OD,safe linkage: release side safety
+RD,safe linkage: release side descent safety
+RY-3,Circulation start
+RY-6,belt signal
+RY1,relay output: enable mold open
+RY2,relay output: enable mold close
+RY3,relay output: cycle start signal
+RY5,relay output: robot alarm/error
+RY6,relay output: conveyor belt
+RY7,relay output: enable ejector
+RY8,relay output: spare
+RY9,relay output: spare
+T1,Descend of main arm Delay time between arm descent Setting available when main arm
+T2,Main arm forward Delay time between arm forwarding Setting available when main arm
+T3,Ejector forward Delay time between arm descending Setting available when ejector link
+T4,Clamp closing Delay time between clamping close Setting available when main arm
+T5,Main arm backward Delay time between arm backward Set when main arm taking out mode
+T6,Sub-arm clamp open Clamp open time when release runner Setting available when sub-arm
+T7,Wrist action Delay time between posture action start and posture action end
+T8,side Delay time between arm descending finished and clamp open in release
+T9,Clamp open Delay time between clamp open and arm ascending start
+T10,Scissors closing Delay time between scissors action Setting available when scissors in
+T11,Scissors open Delay time between scissors return Setting available when scissors in
+T12,"traverse Any of Release during the traverse(FCTF),Release during"
+T13,"Sprue open Any of Release during the traverse(FCTF),Release during"
+T14,NT cutter forward cutter stand by and crosswise action cutting (FCNT) is ON
+T15,NT crosswise action Delay time between NT crosswise Setting available when NT free
+T16,NT Cutting ON Delay time between NT cutting finish Setting available when NT free
+T17,NT cutting return finished and NT cutting return to cutting (FCNT) is ON
+T18,NT cutting OFF Delay time between NT cutting return Setting available when NT free
+T19,NT cutting descending descending finished and NT cutter cutting (FCNT) is ON
+T20,Jump over the ejector ※Clamp will close without any delay when crosswise limitation of ejector
+T21,Clamp failure ascending finished. ※The alarm occurs when the product
+T22,Product release ※The entire-stop alarm occurs when
+T23,Cycle overtime
+T24,Abnormal mould open the product confirmation is OFF when the setting time is up
+T25,"RY-3 OFF ※Cycle start signal will be OFF if Mold open end (MO)signal is OFF,"
+T26,"TIMER If mold do not close within the setting time,then it will stop and give an"
+T27,Convey belt Set the output last time of conveyor belt signal (RY-6)
+T28,"TIMER If mold do not close within the setting time,then it will stop and give an"
+T29,Descending delay end(MO/X33)ON and descending Delay time between mold open
+T30,Posture during the Delay time between product extract Setting available when posture
+T31,Slide action Delay time between clamping Setting available when free
+T32,Descending in release Delay time between arm descending Setting available When product
+T33,Clamp 2 open Delay time between clamp 2 open Setting available When product
+T36,Sprue clamp closing close and sprue clamp close . clamp and sprue clamp will act at
+T37,Sub-arm descending Delay time between Sub-arm Setting available when sub-arm
+T38,Sub-arm forwarding Delay time between sub-arm Setting available when sub-arm
+T39,Sub-arm clamp closing Delay time between sub-arm clamp
+T40,Sub-arm backward backward finish and sub-arm take-out mode (FCS) is ON
+X03,Main arm ascent limit
+X04,Product confirmation
+X05,vacuum confirmation
+X06,In-clamp product confirmation
+X08,Posture return limit
+X09,Posture action limit
+X11,Sub-arm ascent limit
+X12,Runnert confirmation
+X13,vacuum confirmation 2
+X16,abnormal
+X17,Swinging return limit
+X18,Swinging action limit
+X19,Take-out side limit area
+X20,Release scope signal
+X33,signal of mold open mid
+X64,vacuum confirmation 3
+X65,vacuum confirmation 4
+X66,vacuum confirmation 2
+X67,vacuum confirmation 3
+X68,vacuum confirmation 4
+Y07,return electromagnetic valve
+Y13,NT scissor pulling
+Y17,Slide action

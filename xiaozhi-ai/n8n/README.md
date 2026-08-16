@@ -33,6 +33,9 @@ curl -s -X POST http://42.112.26.67:5678/webhook/jarvis-bot \
 Ví dụ khác:
 - `{"text":"cảnh báo robot 20"}`  → trả lời nhóm alarm
 - `{"text":"robot 10"}`           → nếu mã có ở cả 2 loại → tóm tắt + hỏi lại
+- `{"text":"robot T23 là gì"}`    → giải thích ký hiệu (timer/tín hiệu/chế độ)
+- `{"text":"robot X03 là gì"}`    → "Main arm ascent limit…"
+- `{"text":"robot FCW là gì"}`    → "Main arm extract…"
 - `{"text":"lỗi 10"}`             → hỏi lại "máy nào?" (nếu có nhiều máy)
 - `{"text":"kết thúc robot"}`      → thoát chế độ
 
