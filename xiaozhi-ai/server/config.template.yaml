@@ -30,7 +30,8 @@ ASR:
     type: openai
     api_key: __GROQ_KEY__
     base_url: https://api.groq.com/openai/v1/audio/transcriptions
-    model_name: whisper-large-v3-turbo
+    model_name: whisper-large-v3
+    language: vi          # ep nhan tieng Viet (can ban va openai.py provider)
 
 TTS:
   EdgeTTS:
