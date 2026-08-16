@@ -8,8 +8,17 @@
 #   Tuy chon: N8N_URL=... bash setup-robot-bridge.sh
 set -uo pipefail
 C="xiaozhi-esp32-server"
+N8N_C="n8n"
+NET="jarvisnet"
 RAW="https://raw.githubusercontent.com/ntvn2022/z-bee-duo/claude/esp32-s3-touch-screen-wwelt1/xiaozhi-ai/server/providers/robot_bridge.py"
-N8N_URL="${N8N_URL:-http://42.112.26.67:5678/webhook/jarvis-bot}"
+# Reach n8n by container name over a shared Docker network (works from inside
+# the container, unlike the host public IP which fails via NAT hairpin).
+N8N_URL="${N8N_URL:-http://n8n:5678/webhook/jarvis-bot}"
+
+echo "==> Noi 2 container qua mang Docker chung ($NET) ..."
+docker network create "$NET" >/dev/null 2>&1 || true
+docker network connect "$NET" "$C" 2>/dev/null || true
+docker network connect "$NET" "$N8N_C" 2>/dev/null || true
 
 echo "==> Tai provider robot_bridge.py ..."
 curl -fsSL "$RAW" -o /tmp/robot_bridge.py
@@ -40,6 +49,22 @@ PY
 
 echo "==> Restart ..."
 docker restart "$C" >/dev/null
+
+echo "==> Test ket noi tu trong container xiaozhi toi n8n ..."
+sleep 6
+docker exec "$C" python3 - <<'PY' || echo "  !!! Container CHUA goi duoc n8n. Kiem tra workflow n8n da Active chua."
+import json, urllib.request
+req=urllib.request.Request("http://n8n:5678/webhook/jarvis-bot",
+    data=json.dumps({"text":"robot T23 la gi"}).encode(),
+    headers={"Content-Type":"application/json"})
+try:
+    r=urllib.request.urlopen(req, timeout=15)
+    d=json.loads(r.read().decode())
+    print("  OK n8n tra loi:", (d.get("reply","") or "")[:80])
+except Exception as e:
+    print("  LOI:", e); raise SystemExit(1)
+PY
+
 echo "==> XONG."
 echo "    - Chat thuong: van tra loi nhu cu (qua Gemini)."
 echo "    - Noi 'lỗi robot 10' -> Jarvis doc cau tra loi tu bot n8n."

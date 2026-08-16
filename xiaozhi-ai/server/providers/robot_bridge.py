@@ -50,9 +50,12 @@ def _clean(text):
 class LLMProvider(GeminiLLM):
     def __init__(self, config):
         super().__init__(config)
+        # Reach n8n by container name over a shared Docker network (reliable from
+        # inside the container; the public IP often fails via NAT hairpin).
         self.n8n_url = config.get(
-            "n8n_url", "http://42.112.26.67:5678/webhook/jarvis-bot"
+            "n8n_url", "http://n8n:5678/webhook/jarvis-bot"
         )
+        self._timeout = int(config.get("n8n_timeout", 15))
         self._gemini_key = config.get("api_key", "")
         # session_id -> list of user utterances since entering robot mode
         self._ctx = {}
@@ -68,7 +71,7 @@ class LLMProvider(GeminiLLM):
             r = requests.post(
                 self.n8n_url,
                 json={"text": query, "gemini_key": self._gemini_key},
-                timeout=30,
+                timeout=self._timeout,
             )
             return _clean((r.json() or {}).get("reply", ""))
         except Exception as e:
