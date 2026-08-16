@@ -146,7 +146,13 @@ jobs:
               s = s.replace("#include <esp_timer.h>",
                             '#include <esp_timer.h>\n#include "application.h"', 1)
 
-          # members + methods, inserted right before the constructor
+          # 1) call it at the end of the constructor (do this FIRST, while
+          #    SetBrightness(100) still appears exactly once).
+          anchor = "GetBacklight()->SetBrightness(100);"
+          assert s.count(anchor) == 1
+          s = s.replace(anchor, anchor + "\n        InitializeBacklightTimeout();")
+
+          # 2) members + methods, inserted right before the constructor
           methods = (
               "    // [custom] Turn the screen (backlight) off after 5s idle, on when active.\n"
               "    esp_timer_handle_t bl_timer_ = nullptr;\n"
@@ -172,11 +178,6 @@ jobs:
           )
           assert s.count("FreenoveESP32S3Display()") >= 1
           s = s.replace("FreenoveESP32S3Display()", methods + "    FreenoveESP32S3Display()", 1)
-
-          # call it at the end of the constructor
-          anchor = "GetBacklight()->SetBrightness(100);"
-          assert s.count(anchor) == 1
-          s = s.replace(anchor, anchor + "\n        InitializeBacklightTimeout();")
 
           p.write_text(s)
           print("Patched: backlight auto-off after 5s idle")
