@@ -37,6 +37,28 @@ jobs:
           print(p.read_text())
           PY
 
+      - name: Move emoji icon to bottom (answer text shows above the icon)
+        run: |
+          python3 - <<'PY'
+          import re, pathlib
+          p = pathlib.Path("xz/main/display/lcd_display.cc")
+          s = p.read_text()
+          # emoji image: align to bottom instead of top
+          s2 = re.sub(
+              r"lv_obj_align\(emoji_image_,\s*LV_ALIGN_TOP_MID,[^;]*\);",
+              "lv_obj_align(emoji_image_, LV_ALIGN_BOTTOM_MID, 0, -lvgl_theme->spacing(8));",
+              s,
+          )
+          # emoji label (robot face): align to bottom instead of center
+          s2 = s2.replace(
+              "lv_obj_center(emoji_label_);",
+              "lv_obj_align(emoji_label_, LV_ALIGN_BOTTOM_MID, 0, -lvgl_theme->spacing(8));",
+          )
+          assert s2 != s, "emoji layout patch did not match anything"
+          p.write_text(s2)
+          print("Patched emoji alignment to bottom.")
+          PY
+
       - name: Build firmware (Vietnamese UI)
         shell: bash
         working-directory: xz
