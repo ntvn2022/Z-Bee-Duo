@@ -1,0 +1,98 @@
+code,content
+01,"Descent action is not completed. When the action of descent completion is shown, please execute the descent operation."
+02,"ascent action is not completed. When the action of ascent completion is shown, please execute the ascent operation."
+03,"It does not move at take-out, lowering position. When the action of standby position completion is shown, please execute the retreat operation."
+04,"It does not move at ascent position. When the action of ascent position completion is shown, please execute the retreat operation."
+05,"Not the release and descent position. When the action of descent position completion (at release side) is shown, please execute the traverse operation of releaseside."
+06,"Not the take-out, descent position When the action of take-out standby position is shown, please execute the travel operation at the take-out side."
+07,Not the take-out side or release side position Execute the travel operation at the release side or take-out side.
+08,Program limit of take-out side area and program limit of release side area OFF Execute the travel operation at the release side or take-out side.
+09,Signal for mould open end (MO/X33) OFF Please fully open the mold.
+10,Safety door (MD OFF) signal OFF Please close the safety door
+11,Safety door open (MD OFF) Please close the safety door
+12,release side safety door open (OD OFF) Please close the safety door at release side
+13,Sub-arm ascent limit (X11) OFF Please execute ascent operation
+14,Main arm ascent limit (X03) OFF Please execute the ascent operation
+15,Posture return limit (X08) OFF Please execute posture return operation.
+16,Posture action limit (X09) OFF Please execute posture action operation. Scissors are available (FCCN) When mode is ON
+17,"When ascent operation of arm at take-out side, please start to execute clamp operation"
+18,Sub-arm take-out mode (FCS) is not used The operation of Sub-arm cannot be executed.
+19,In-clamp scissor mode (FCCN) is not used Clamp scissor operation cannot be executed.
+20,Posture action mode (FCSS) is not used Posture action operation cannot be executed.
+21,Main arm take-out mode (FCW) is not used The operation of main arm cannot be executed.
+22,Main arm take-out mode (FCW) is not ON and used for Sub-arm of the machine. It cannot be set.
+23,Sub-arm take-out mode (FCS) is not ON for Sub-arm of the machine. It cannot be set.
+24,"After it is switched to operatioin mode at [home return] position, please perform home return operation."
+25,"home return operation is not performed, manual operation Please avoid it by free operation."
+26,Program limit of release side area OFF Please execute traverse action.
+27,Swinging return limit (X17) OFF Please execute swinging return operation
+29,Swinging action limit (X18) OFF Please execute swinging action operation
+30,Swinging mode 1(FCR1) OFF Swinging operation cannot be executed.
+31,Swinging mode 2 (FCR2) OFF Swinging operation cannot be executed.
+32,Swinging mode 3 (FCR3) OFF Swinging operation cannot be executed.
+33,"Swinging mode 1, 2 (FCR1, FCR2) OFF Swinging operation cannot be executed."
+34,"Swinging mode 2, 3 (FCR2, FCR3) OFF Swinging operation cannot be executed."
+35,"Swinging mode 1, 2, 3 (FCR1, FCR2, FCR3) OFF Swinging operation cannot be executed."
+36,In-Sub-arm mould open mode (FCSK) ON Travel operation cannot be executed.
+37,Slide and take-out free mode (FCCS) OFF Slide action operation cannot be executed.
+38,Slide action (Y17) ON Please execute slide return.
+39,Slide action (Y17) OFF Please execute slide return.
+40,NT scissor mode (FCNT) OFF NT scissor operation cannot be executed.
+41,NT scissor posture operation cannot be executed.
+42,Not at NT scissor position Execute travel operation at NT scissor position.
+43,Not move to NT scissor position Please perform a descent operation.
+44,Not move to NT scissor standby position Please execute retreat operation.
+45,Not move to NT scissor forward position Please execute forward operation.
+46,NT scissor pulling (Y13) OFF Please execute NT pulling action
+47,NT scissor pulling (Y13) ON Please execute NT pulling return
+48,Take-out side limit area (X19) OFF Please execute the travel operation at take-out side.
+49,Swinging return limit (X17) OFF Please execute swinging return operation when free interlocking operation
+50,Swinging action limit (X18) OFF Please execute swinging action operation when free interlocking operation
+51,"Posture action limit (X09) OFF Please execute manual operation switch over, posture action operation"
+52,"Posture action limit (X09) OFF Please execute manual operation switch over, posture action operation"
+53,"Not posture action position When the action of posture action position movement completion is shown, please execute the forward operation."
+54,"When the arm at take-out side is subject to decent operation, please start to execute the operation of clamp 2 open."
+55,Release side standby mode (FCYT) OFF Traverse standby operation cannot be executedwhen release side standy (FCYT) OFF Travel standby operation cannot be executed
+56,"When free operation is performed for take-outt machine and there is no interference with mould, please move the program limit ON position at release side area."
+57,Not the posture action position Execute the decent or ascent action when the screen for posture action position movement is displayed
+60,NT cutting free mode (FCNF) is not used NT cutting operation cannot be performed
+61,"Not at the take-out side, NT cutting position Please perform the travel operation at take-out side or NT cutting position."
+62,"ascent limit (X03,X11) OFF Please perform ascent operation by using free signal linkage operation."
+63,Posture return limit (X08) OFF Please perform posture return operation by free operation
+64,Slide and take-out free mode (FCCS2) OFF Slide and take-out position operation cannot be executed.
+65,Not move to take-out and clamp position Execute forward operation when the action information of take-out and clamp position completion is displayed
+66,"Product 2-point release mode (FC2K) is not used Clamp 1 open, clamp 2 open operation cannot be performed"
+67,Slide and take-out action is not completed Please perform slide and take-out operation.
+69,Not manual mode Please start the operation at manual mode.
+89,"Please switch over the selective switch beyond [automatic operation], and please press [reset] key."
+116,"Packing counter cannot be cleared. When manual operation, packing counter can be cleared when take-out side or ascent limit (X03, X11) is ON When automatic operation, after take-out side or product is open, packing counter can be cleared when return."
+117,Not at release side position Please perform travel standby operation before the information of travel standby position movement completion is displayed.
+119,"Mould open end (MO) signal is OFF Make the robot move to release side by free operation, and it shall not interfere with mold. After it is confirmed that there is no interference, press reset key and the signal of mould close permission will be output."
+120,Please firstly open the mould and then execute the operation.
+121,Please firstly confirm that the jig is vertical and then execute the operation.
+122,Please firstly confirm that the jig is horizontal and then execute the operation.
+123,Traverse to dangerous area The traverse posture is inconsistent with existing posture. Please execute posture status operation until it is consistent with traverse posture under the condition that there is no interference. Then execute the travel operation.
+124,"Start of in-mould posture limit function Posture operation cannot be executed in mould, and please confirm the mode setting."
+125,release side safety OD signal is not ON Please confirm whether the release side safety signal is abnormal.
+126,ascent limit of Take-out side area is OFF Posture action operation cannot be executed.
+127,"Arm is not at ascent limit Please firstly ascent to appropriate position manually, and then execute the operation."
+128,Horizontal standby [locking limit mould] mode is started Please firstly open the mould and then execute the operation.
+129,Please firstly open the mould and then execute the operation.
+130,Please firstly execute posture action and then execute the operation.
+140,Travel exceeds area setting Please execute traverse operation to return to safe area
+141,Travel exceeds area setting upper limit Please execute traverse operation to return to safe area
+142,The front and rear position of main arm exceeds area setting lower limit Please execute forward operation of main arm to return to safe area
+143,The front and rear position of main arm exceeds area setting upper limit Please execute backward operation of main arm to return to safe area
+144,The upper and lower position of main arm exceeds area setting lower limit Please execute decent operation of main arm to return to safe area
+145,The upper and lower position of main arm exceeds area setting lower limit Please execute ascent operation of main arm to return to safe area
+146,The front and rear position of Sub-arm exceeds area setting lower limit Please execute forward operation of Sub-arm to return to safe area
+147,The front and rear position of Sub-arm exceeds area setting upper limit Please execute backward operation of Sub-arm to return to safe area
+148,The upper and lower position of Sub-arm exceeds area setting lower limit Please execute decent operation of Sub-arm to return to safe area
+149,The upper and lower position of Sub-arm exceeds area setting upper limit Please execute ascent operation of Sub-arm to return to safe area
+150,Please enter into free operation screen or instruction screen to execute axis operation.
+199,Change the set value in the saved segment fetch and exchange file. Whether the data is saved?
+200,"Mould open completion (MO) OFF, stepping; return is not completed. Please confirm the input of injection molding machine."
+201,"Injection molding machine safety door (MD) OFF, stepping; return is not completed. Please confirm the input of injection molding machine."
+202,"release side decent safety (RD) OFF, stepping; return is not completed. Please confirm the external input."
+203,"Starting automatic operation in [segment fetch and exchange] screen is not completed. [Segment fetch and exchange] screen disappears, so please do not execute automatic operation. Fan stop alarm The fan in servo driver stops. Please inspect the servo driver."
+250,"The service life of knockout machine expires. Acceptance has been performed, and please get the password. Password is input via [password has been accepted]. Chapter B 38.Alarm information 38.1Alarm information function When power is input, the alarm contents expressed when manual operation and automatic operation is abnormal. The types of alarm information are as follows. Type Description System alarm It means that the control system is abnormal. Axis alarm It means that axis control and drive system is abnormal. Alarm There are the following errors: alarm for abnormal condition of limit switch, alarm for abnormal input of injection molding machine, alarm for period expiration, clamp error, product fall, product placement error. 38.2 Description on alarm information System alarm Alarm No./ name Name Contents Confirmation contents"

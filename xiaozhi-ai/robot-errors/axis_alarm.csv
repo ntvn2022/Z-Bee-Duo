@@ -1,0 +1,10 @@
+code,content
+01,ROM/RAM error The electronic part of servo Please exchange the servo driver. driver is found to be abnormal
+08,- Origin limit is not OFF when Please check the action status•wiring of origin limit origin search and connection•wiring of encoder• encoder cable. Please exchange the servo substrate or servo driver if there is no abnormal phenomenon.
+09,Origin limit is ON Origin limit is not OFF after Please check the action status•wiring of origin limit (beyond the origin) leaving the origin and connection•wiring of encoder• encoder cable. Please exchange the servo substrate or servo driver if there is no abnormal phenomenon.
+10,Origin limit is OFF at Origin limit is OFF when origin Please check the action status•wiring of origin limit the origin position movement is completed. and connection•wiring of encoder• encoder cable. Please exchange the servo substrate or servo driver if there is no abnormal phenomenon.
+11,"Offside limit is ON Offside limit is ON Please check the action status•wiring of offside limit and the set value of position. Press [reset] key to eliminate the alarm, and free operation or home return can be used for avoidance."
+32,Absolute origin is not The origin of absolute encoder Please perform origin setting. set is not set.
+33,Communication of Axial CPU and acting CPU Please exchange the servo driver. servo driver is communication is found to be abnormal. abnormal.
+47,TS-NET command Receiving error is detected for Please inspect the communication wiring and receiving is abnormal. TS-NET communication connector.
+49,Driver alarm Alarm is found at driver side Please inspect the driver. ■Alarm

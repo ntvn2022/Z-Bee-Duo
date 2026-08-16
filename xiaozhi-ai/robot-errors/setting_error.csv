@@ -1,0 +1,20 @@
+code,content
+70,Program limit of take-out side area OFF Please confirm the take-out standby position of traveling axis and take-out area.
+71,Program limit of release side area OFF Please confirm the point of traveling axis and the release side area
+72,Program limit of release side area OFF Please confirm the decent position of release side of traveling axis and the release side area.
+73,"Program limit of release side area OFF When fixed and The change between fixed and moving switching mode cannot be performed. moving switching When program limit of release side area is ON, please change the travel mode. mode (FCKO) is available"
+74,Program limit of release side area OFF Please confirm the NT scissor position of traveling axis and the release side area
+75,Program limit of release side area OFF When travel Please confirm the travel standby position of traveling axis and the release side standby mode area (FCYT) is available
+76,Not manual mode Please start to set at manual mode.
+77,"ascent limit (X03, X11) OFF Please start the ascent and perform change."
+78,"Product confirmation mode (FC4), in-clamp product confirmation mode (FC4T), vacuum confirmation mode (FCCV), vacuum 2 circuit mode (FCV2) cannot be changed to unused status completely. [Free interlocking mode] ** All interlocking are released!** ～ Please pay attention to operation execution.～ Downward: press [reset] key or button outside screen, and OFF is displayed; free operation may be performed."
+80,Please operate while [action possible] key is pressed.
+81,Take-out side limit (X19) OFF Please confirm the take-out standby position of traveling axis and take-out area.
+82,"It is not installed for Sub-arm of the machine, so it cannot be executed. Free interlocking operation of Sub-arm."
+83,Take-out side area (X19) OFF Please confirm the posture action position of traveling axis and take-out area.
+84,Take-out side limit (X19) OFF Please confirm the posture action position of traveling axis and take-out limit.
+85,"[Take-out posture setting permission] system mode is not set, and this mode setting cannot be executed. Please observe whether there is interference between jig and safety door when this mode is set."
+87,Take out from moving side Please change the set value.
+88,Take out from fixed side Please change the set value.
+170,"When horizontal standby locking limit mould mode is used, please set the monitoring mode necessary for home return."
+171,"When horizontal standby locking limit mould mode is used, please set the horizontal status of traverse posture Inappropriate home runner confirmation (X12) is at confirmation status"
