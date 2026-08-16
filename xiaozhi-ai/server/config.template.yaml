@@ -21,7 +21,9 @@ LLM:
   GeminiLLM:
     type: gemini
     api_key: __GEMINI_KEY__
-    model_name: "gemini-2.0-flash"
+    # Model tot + nhanh cho tro ly giong noi. Lua chon:
+    #   gemini-3.7-flash (moi nhat), gemini-3.5-flash (khuyen nghi), gemini-2.5-flash
+    model_name: "gemini-3.5-flash"
     http_proxy: ""
     https_proxy: ""
 
