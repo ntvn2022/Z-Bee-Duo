@@ -1,0 +1,34 @@
+# Danh bạ máy cho BOT TRƯỞNG NHÓM (leader) định tuyến tới đúng BOT NHÁNH.
+# Thêm 1 máy mới = thêm 1 mục ở đây + 1 thư mục machines/<id>/tables/*.csv.
+# Leader chỉ đọc file nhỏ này để chọn nhánh; sau đó nhánh mới nạp bảng của nó.
+
+machines:
+  - id: takeout_robot
+    name_vi: "Robot gắp sản phẩm (cho máy ép nhựa)"
+    # Từ khoá để leader nhận ra người dùng đang hỏi về máy này (không dấu cũng nên có):
+    aliases:
+      - "robot"
+      - "robot gắp"
+      - "robot gap"
+      - "gắp sản phẩm"
+      - "take-out"
+      - "takeout"
+      - "tay máy"
+    tables_dir: "machines/takeout-robot/tables"
+    # 3 loại LỖI (error) và 3 loại CẢNH BÁO (alarm) của máy này:
+    error_types:
+      - operation_error       # Lỗi thao tác
+      - setting_error         # Lỗi cài đặt
+      - inappropriate_home    # Lỗi vị trí home
+    alarm_types:
+      - system_alarm          # Cảnh báo hệ thống
+      - axis_alarm            # Cảnh báo trục/servo
+      - alarm                 # Cảnh báo chung
+
+  # --- Ví dụ thêm máy mới (bỏ ghi chú và điền khi có dữ liệu) ---
+  # - id: injection_machine_x
+  #   name_vi: "Máy ép nhựa X"
+  #   aliases: ["máy ép", "ép nhựa", "máy X"]
+  #   tables_dir: "machines/injection-machine-x/tables"
+  #   error_types: [operation_error, setting_error]
+  #   alarm_types: [system_alarm, alarm]
