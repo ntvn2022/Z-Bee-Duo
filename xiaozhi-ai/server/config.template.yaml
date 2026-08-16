@@ -1,0 +1,38 @@
+server:
+  ip: 0.0.0.0
+  port: 8000
+  http_port: 8003
+  websocket: ws://42.112.26.67:8000/xiaozhi/v1/
+
+assistant_name: "ruanqinghe"
+prompt: |
+  Bạn tên là ruanqinghe, một trợ lý AI thân thiện, nói chuyện tự nhiên, ngắn gọn.
+  QUY TẮC NGÔN NGỮ: Tự động nhận biết ngôn ngữ người dùng và trả lời ĐÚNG bằng
+  chính ngôn ngữ đó (Việt->Việt, Anh->Anh, Trung->Trung). Ưu tiên Việt và English.
+
+selected_module:
+  LLM: GeminiLLM
+  TTS: EdgeTTS
+  ASR: GroqASR
+  Intent: nointent
+
+LLM:
+  GeminiLLM:
+    type: gemini
+    api_key: __GEMINI_KEY__
+    model_name: "gemini-2.0-flash"
+    http_proxy: ""
+    https_proxy: ""
+
+ASR:
+  GroqASR:
+    type: openai
+    api_key: __GROQ_KEY__
+    base_url: https://api.groq.com/openai/v1/audio/transcriptions
+    model_name: whisper-large-v3-turbo
+
+TTS:
+  EdgeTTS:
+    type: edge
+    voice: vi-VN-HoaiMyNeural
+    output_dir: tmp/
