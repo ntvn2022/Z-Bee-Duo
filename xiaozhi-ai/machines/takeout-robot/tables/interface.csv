@@ -1,0 +1,50 @@
+kind,code,meaning
+cable,1,enable mould open
+cable,2,enable mould open
+cable,3,enable mould close
+cable,4,enable mould close
+cable,5,recycle
+cable,6,recycle
+cable,7,enable ejector
+cable,8,enable ejector
+cable,9,spare
+cable,10,spare
+cable,11,safety door
+cable,12,mould open end
+cable,13,mould close end
+cable,14,ejector forward end
+cable,15,spare
+cable,16,common port
+cable,17,spare
+cable,18,spare
+cable,19,common port
+cable,20,robot automation
+cable,21,GND (ground)
+signal,EJ1,RY7 Enable eject (connector RUN)
+signal,EJ2,RY7 Enable eject (connector RUN)
+signal,ES1,Robot emergency stop output (RUN)
+signal,ES2,Robot emergency stop output (RUN)
+signal,ES3,Emergency stop (TB3)
+signal,ES4,Emergency stop (TB3)
+signal,ME,Ejector forward end
+signal,MO,Mold open end
+signal,MD,Safety door
+signal,MN,Default
+signal,MC,Mold close end
+signal,SP1,RY8 spare output (TB3)
+signal,SP2,RY8 spare output (TB3)
+signal,SP3,RY9 spare output (TB3)
+signal,SP4,RY9 spare output (TB3)
+signal,SP7,Spare input (TB3)
+signal,SP10,Spare input (TB3)
+signal,SG1,RY6 conveyor (TB3)
+signal,SG2,RY6 conveyor (TB3)
+signal,AL1,RY5 robot alarm (TB3)
+signal,AL2,RY5 robot alarm (TB3)
+signal,RD,Release side descent safety (TB3)
+signal,OD,Release side safety (TB3)
+signal,MA,IMM automation (TB3)
+signal,X33,Mid mold confirmation (TB4)
+signal,24G2,24G2 power/common (TB4)
+signal,24G3,24G3 power/common
+signal,24V2,24V2 power (TB4)

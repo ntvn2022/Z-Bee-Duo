@@ -1868,5 +1868,250 @@
   "type": "symbol",
   "code": "Y17",
   "content": "Slide action"
+ },
+ {
+  "type": "cable",
+  "code": "1",
+  "content": "enable mould open"
+ },
+ {
+  "type": "cable",
+  "code": "2",
+  "content": "enable mould open"
+ },
+ {
+  "type": "cable",
+  "code": "3",
+  "content": "enable mould close"
+ },
+ {
+  "type": "cable",
+  "code": "4",
+  "content": "enable mould close"
+ },
+ {
+  "type": "cable",
+  "code": "5",
+  "content": "recycle"
+ },
+ {
+  "type": "cable",
+  "code": "6",
+  "content": "recycle"
+ },
+ {
+  "type": "cable",
+  "code": "7",
+  "content": "enable ejector"
+ },
+ {
+  "type": "cable",
+  "code": "8",
+  "content": "enable ejector"
+ },
+ {
+  "type": "cable",
+  "code": "9",
+  "content": "spare"
+ },
+ {
+  "type": "cable",
+  "code": "10",
+  "content": "spare"
+ },
+ {
+  "type": "cable",
+  "code": "11",
+  "content": "safety door"
+ },
+ {
+  "type": "cable",
+  "code": "12",
+  "content": "mould open end"
+ },
+ {
+  "type": "cable",
+  "code": "13",
+  "content": "mould close end"
+ },
+ {
+  "type": "cable",
+  "code": "14",
+  "content": "ejector forward end"
+ },
+ {
+  "type": "cable",
+  "code": "15",
+  "content": "spare"
+ },
+ {
+  "type": "cable",
+  "code": "16",
+  "content": "common port"
+ },
+ {
+  "type": "cable",
+  "code": "17",
+  "content": "spare"
+ },
+ {
+  "type": "cable",
+  "code": "18",
+  "content": "spare"
+ },
+ {
+  "type": "cable",
+  "code": "19",
+  "content": "common port"
+ },
+ {
+  "type": "cable",
+  "code": "20",
+  "content": "robot automation"
+ },
+ {
+  "type": "cable",
+  "code": "21",
+  "content": "GND (ground)"
+ },
+ {
+  "type": "signal",
+  "code": "EJ1",
+  "content": "RY7 Enable eject (connector RUN)"
+ },
+ {
+  "type": "signal",
+  "code": "EJ2",
+  "content": "RY7 Enable eject (connector RUN)"
+ },
+ {
+  "type": "signal",
+  "code": "ES1",
+  "content": "Robot emergency stop output (RUN)"
+ },
+ {
+  "type": "signal",
+  "code": "ES2",
+  "content": "Robot emergency stop output (RUN)"
+ },
+ {
+  "type": "signal",
+  "code": "ES3",
+  "content": "Emergency stop (TB3)"
+ },
+ {
+  "type": "signal",
+  "code": "ES4",
+  "content": "Emergency stop (TB3)"
+ },
+ {
+  "type": "signal",
+  "code": "ME",
+  "content": "Ejector forward end"
+ },
+ {
+  "type": "signal",
+  "code": "MO",
+  "content": "Mold open end"
+ },
+ {
+  "type": "signal",
+  "code": "MD",
+  "content": "Safety door"
+ },
+ {
+  "type": "signal",
+  "code": "MN",
+  "content": "Default"
+ },
+ {
+  "type": "signal",
+  "code": "MC",
+  "content": "Mold close end"
+ },
+ {
+  "type": "signal",
+  "code": "SP1",
+  "content": "RY8 spare output (TB3)"
+ },
+ {
+  "type": "signal",
+  "code": "SP2",
+  "content": "RY8 spare output (TB3)"
+ },
+ {
+  "type": "signal",
+  "code": "SP3",
+  "content": "RY9 spare output (TB3)"
+ },
+ {
+  "type": "signal",
+  "code": "SP4",
+  "content": "RY9 spare output (TB3)"
+ },
+ {
+  "type": "signal",
+  "code": "SP7",
+  "content": "Spare input (TB3)"
+ },
+ {
+  "type": "signal",
+  "code": "SP10",
+  "content": "Spare input (TB3)"
+ },
+ {
+  "type": "signal",
+  "code": "SG1",
+  "content": "RY6 conveyor (TB3)"
+ },
+ {
+  "type": "signal",
+  "code": "SG2",
+  "content": "RY6 conveyor (TB3)"
+ },
+ {
+  "type": "signal",
+  "code": "AL1",
+  "content": "RY5 robot alarm (TB3)"
+ },
+ {
+  "type": "signal",
+  "code": "AL2",
+  "content": "RY5 robot alarm (TB3)"
+ },
+ {
+  "type": "signal",
+  "code": "RD",
+  "content": "Release side descent safety (TB3)"
+ },
+ {
+  "type": "signal",
+  "code": "OD",
+  "content": "Release side safety (TB3)"
+ },
+ {
+  "type": "signal",
+  "code": "MA",
+  "content": "IMM automation (TB3)"
+ },
+ {
+  "type": "signal",
+  "code": "X33",
+  "content": "Mid mold confirmation (TB4)"
+ },
+ {
+  "type": "signal",
+  "code": "24G2",
+  "content": "24G2 power/common (TB4)"
+ },
+ {
+  "type": "signal",
+  "code": "24G3",
+  "content": "24G3 power/common"
+ },
+ {
+  "type": "signal",
+  "code": "24V2",
+  "content": "24V2 power (TB4)"
  }
 ]
