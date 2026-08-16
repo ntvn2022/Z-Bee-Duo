@@ -62,12 +62,14 @@ jobs:
                           "    lv_obj_add_flag(emoji_image_, LV_OBJ_FLAG_HIDDEN);\n")
           assert c.count(setup_anchor) == 1
           c = c.replace(setup_anchor, setup_anchor +
-              "\n    // [custom] AI answer label, above the centered icon\n"
+              "\n    // [custom] AI answer label above the icon: single line, slow horizontal\n"
+              "    // marquee that loops forever (keeps cycling while waiting for next question).\n"
               "    answer_label_ = lv_label_create(screen);\n"
-              "    lv_obj_set_width(answer_label_, LV_HOR_RES * 9 / 10);\n"
-              "    lv_label_set_long_mode(answer_label_, LV_LABEL_LONG_WRAP);\n"
+              "    lv_obj_set_width(answer_label_, LV_HOR_RES);\n"
+              "    lv_label_set_long_mode(answer_label_, LV_LABEL_LONG_MODE_SCROLL_CIRCULAR);\n"
               "    lv_obj_set_style_text_align(answer_label_, LV_TEXT_ALIGN_CENTER, 0);\n"
               "    lv_obj_set_style_text_color(answer_label_, lvgl_theme->text_color(), 0);\n"
+              "    lv_obj_set_style_anim_duration(answer_label_, lv_anim_speed_clamped(20, 500, 10000), 0);\n"
               "    lv_obj_align(answer_label_, LV_ALIGN_TOP_MID, 0, text_font->line_height * 2);\n"
               "    lv_label_set_text(answer_label_, \"\");\n")
 
