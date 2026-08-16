@@ -24,14 +24,22 @@ jobs:
           git config --global --add safe.directory '*'
           git clone --depth 1 --branch v2.4.2 https://github.com/78/xiaozhi-esp32.git xz
 
-      - name: Point default OTA server to the VPS
+      - name: Point default OTA server to the VPS + set wake word to "Jarvis"
         run: |
           python3 - <<'PY'
           import json, pathlib
           p = pathlib.Path("xz/main/boards/freenove-esp32s3-display-2.8-lcd/config.json")
           cfg = json.loads(p.read_text())
           cfg["builds"][0]["sdkconfig_append"] = [
-              'CONFIG_OTA_URL="http://42.112.26.67:8003/ruanqinghe/ota/"'
+              'CONFIG_OTA_URL="http://42.112.26.67:8003/ruanqinghe/ota/"',
+              # Wake word = "Jarvis" (offline WakeNet). AFE path on S3+PSRAM.
+              'CONFIG_USE_AFE_WAKE_WORD=y',
+              'CONFIG_SR_WN_WN9_JARVIS_TTS=y',
+              # Turn OFF the Chinese defaults so only "Jarvis" is packed (no ambiguity).
+              'CONFIG_SR_WN_WN9_NIHAOXIAOZHI=n',
+              'CONFIG_SR_WN_WN9S_NIHAOXIAOZHI=n',
+              'CONFIG_SR_WN_WN9_HILEXIN=n',
+              'CONFIG_SR_WN_WN9S_HILEXIN=n',
           ]
           p.write_text(json.dumps(cfg, indent=4))
           print(p.read_text())
@@ -124,6 +132,20 @@ jobs:
         run: |
           source "$IDF_PATH/export.sh"
           python scripts/build.py freenove-esp32s3-display-2.8-lcd --language vi-VN
+
+      - name: Verify wake word = Jarvis only
+        shell: bash
+        working-directory: xz
+        run: |
+          echo "== Active SR_WN wake-word models in sdkconfig =="
+          grep -E '^CONFIG_SR_WN_.*=y' sdkconfig || echo "(none matched)"
+          if grep -qE '^CONFIG_SR_WN_.*(NIHAOXIAOZHI|HILEXIN).*=y' sdkconfig; then
+            echo "ERROR: a Chinese wake word is still enabled" >&2
+            exit 1
+          fi
+          grep -qE '^CONFIG_SR_WN_WN9_JARVIS_TTS=y' sdkconfig \
+            && echo "OK: Jarvis wake word packed" \
+            || { echo "ERROR: Jarvis wake word NOT packed" >&2; exit 1; }
 
       - name: Upload firmware artifact
         uses: actions/upload-artifact@v4
