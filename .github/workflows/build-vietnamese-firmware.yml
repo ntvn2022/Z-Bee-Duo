@@ -131,6 +131,57 @@ jobs:
           print("Hotspot SSID prefix -> ruanqinghe")
           PY
 
+      - name: Auto turn screen off after 5s idle (backlight timeout)
+        run: |
+          python3 - <<'PY'
+          import pathlib
+          p = pathlib.Path("xz/main/boards/freenove-esp32s3-display-2.8-lcd/freenove-esp32s3-display-2.8-lcd.cc")
+          s = p.read_text()
+
+          # includes
+          if "#include <esp_timer.h>" not in s:
+              s = s.replace("#include <driver/i2c_master.h>",
+                            "#include <driver/i2c_master.h>\n#include <esp_timer.h>", 1)
+          if '#include "application.h"' not in s:
+              s = s.replace("#include <esp_timer.h>",
+                            '#include <esp_timer.h>\n#include "application.h"', 1)
+
+          # members + methods, inserted right before the constructor
+          methods = (
+              "    // [custom] Turn the screen (backlight) off after 5s idle, on when active.\n"
+              "    esp_timer_handle_t bl_timer_ = nullptr;\n"
+              "    int bl_idle_ = 0;\n"
+              "    bool bl_on_ = true;\n"
+              "    void BacklightTick() {\n"
+              "        bool idle = (Application::GetInstance().GetDeviceState() == kDeviceStateIdle);\n"
+              "        if (idle) {\n"
+              "            if (bl_on_ && ++bl_idle_ >= 5) { GetBacklight()->SetBrightness(0); bl_on_ = false; }\n"
+              "        } else {\n"
+              "            bl_idle_ = 0;\n"
+              "            if (!bl_on_) { GetBacklight()->SetBrightness(100); bl_on_ = true; }\n"
+              "        }\n"
+              "    }\n"
+              "    void InitializeBacklightTimeout() {\n"
+              "        esp_timer_create_args_t args = {};\n"
+              "        args.callback = [](void* arg){ static_cast<FreenoveESP32S3Display*>(arg)->BacklightTick(); };\n"
+              "        args.arg = this;\n"
+              "        args.name = \"bl_timeout\";\n"
+              "        esp_timer_create(&args, &bl_timer_);\n"
+              "        esp_timer_start_periodic(bl_timer_, 1000000);\n"
+              "    }\n\n"
+          )
+          assert s.count("FreenoveESP32S3Display()") >= 1
+          s = s.replace("FreenoveESP32S3Display()", methods + "    FreenoveESP32S3Display()", 1)
+
+          # call it at the end of the constructor
+          anchor = "GetBacklight()->SetBrightness(100);"
+          assert s.count(anchor) == 1
+          s = s.replace(anchor, anchor + "\n        InitializeBacklightTimeout();")
+
+          p.write_text(s)
+          print("Patched: backlight auto-off after 5s idle")
+          PY
+
       - name: Build once to fetch the font component
         shell: bash
         working-directory: xz
