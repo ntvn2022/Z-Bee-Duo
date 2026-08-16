@@ -17,11 +17,16 @@ d.setdefault("TTS", {}).setdefault(tts_name, {})["language"] = (
     "tiếng Việt (hoặc tiếng Anh nếu người dùng nói tiếng Anh); TUYỆT ĐỐI KHÔNG dùng tiếng Trung"
 )
 
-# 2) Persona (ten + phong cach) bang tieng Viet
+# 2) Persona (ten + phong cach) bang tieng Viet.
+#    QUY TAC NGON NGU dat o CA DAU va CUOI prompt de model yeu (vd gemini-3.7-flash)
+#    khong the bo qua. Day la enforcement chinh (khong phu thuoc bien {{language}}).
 d["prompt"] = (
-    "Bạn tên là ruanqinghe, một trợ lý AI thân thiện, nói chuyện tự nhiên, ngắn gọn, ấm áp. "
-    "Luôn trả lời bằng tiếng Việt (hoặc tiếng Anh nếu người dùng dùng tiếng Anh). "
-    "Tuyệt đối không trả lời bằng tiếng Trung."
+    "[QUY TẮC BẮT BUỘC] Chỉ được trả lời bằng ĐÚNG ngôn ngữ mà người dùng vừa dùng: "
+    "nếu người dùng nói tiếng Việt -> trả lời 100% tiếng Việt; nếu nói tiếng Anh -> trả lời tiếng Anh. "
+    "TUYỆT ĐỐI KHÔNG dùng tiếng Trung (Hoa) hay bất kỳ chữ Hán nào trong mọi trường hợp.\n\n"
+    "Bạn tên là ruanqinghe, một trợ lý AI thân thiện, nói chuyện tự nhiên, ngắn gọn, ấm áp.\n\n"
+    "[NHẮC LẠI] Người dùng đang nói tiếng Việt thì bạn PHẢI trả lời bằng tiếng Việt. "
+    "Không được chèn tiếng Trung. Nếu lỡ nghĩ bằng tiếng khác, hãy dịch sang tiếng Việt trước khi trả lời."
 )
 
 # 3) Cau bao loi / ket thuc bang tieng Viet (thay defaults tieng Hoa)
