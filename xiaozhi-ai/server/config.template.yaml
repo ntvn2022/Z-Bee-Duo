@@ -40,4 +40,7 @@ TTS:
   EdgeTTS:
     type: edge
     voice: vi-VN-HoaiMyNeural
+    volume: 0        # khop tham so mac dinh cua CLI (dang chay OK); +50% hay loi "No audio"
+    rate: 0
+    pitch: 0
     output_dir: tmp/
