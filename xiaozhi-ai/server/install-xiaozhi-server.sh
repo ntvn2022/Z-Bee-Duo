@@ -28,6 +28,16 @@ if [ -z "${GEMINI_API_KEY:-}" ]; then
     echo "!! Chua co GEMINI_API_KEY. Dung lai."; exit 1
 fi
 
+# ---- ASR: neu co GROQ_API_KEY thi dung GroqASR (nghe tieng Viet), khong thi FunASR ----
+GROQ_API_KEY="${GROQ_API_KEY:-}"
+if [ -n "$GROQ_API_KEY" ]; then
+    ASR_SELECTED="GroqASR"
+    echo "==> ASR: GroqASR (Whisper, ho tro tieng Viet)"
+else
+    ASR_SELECTED="FunASR"
+    echo "==> ASR: FunASR (local; KHONG nghe duoc tieng Viet). Dat GROQ_API_KEY de nghe tieng Viet."
+fi
+
 # ---- Tu dong lay IP cong khai ----
 PUBLIC_IP="${PUBLIC_IP:-$(curl -fsS https://api.ipify.org 2>/dev/null || true)}"
 if [ -z "$PUBLIC_IP" ]; then
@@ -109,6 +119,7 @@ prompt: |
 selected_module:
   LLM: GeminiLLM
   TTS: EdgeTTS
+  ASR: ${ASR_SELECTED}
   # nointent: tat function_call. Gemini khong ho tro schema function_call
   # (loi "Unknown field for Schema: minimum") nen dung nointent de chat on dinh.
   Intent: nointent
@@ -120,6 +131,15 @@ LLM:
     model_name: "${GEMINI_MODEL}"
     http_proxy: ""
     https_proxy: ""
+
+ASR:
+  # GroqASR: Whisper large-v3 tren Groq (mien phi, ho tro TIENG VIET, khong ton RAM).
+  # Lay key mien phi tai: https://console.groq.com/keys
+  GroqASR:
+    type: openai
+    api_key: ${GROQ_API_KEY}
+    base_url: https://api.groq.com/openai/v1/audio/transcriptions
+    model_name: whisper-large-v3-turbo
 
 TTS:
   EdgeTTS:
