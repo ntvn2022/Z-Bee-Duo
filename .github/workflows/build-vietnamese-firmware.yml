@@ -36,6 +36,8 @@ jobs:
               'CONFIG_USE_AFE_WAKE_WORD=y',
               'CONFIG_SR_WN_WN9_JARVIS_TTS=y',
               # Turn OFF the Chinese defaults so only "Jarvis" is packed (no ambiguity).
+              # NOTE: the actual default is the _TTS variant.
+              'CONFIG_SR_WN_WN9_NIHAOXIAOZHI_TTS=n',
               'CONFIG_SR_WN_WN9_NIHAOXIAOZHI=n',
               'CONFIG_SR_WN_WN9S_NIHAOXIAOZHI=n',
               'CONFIG_SR_WN_WN9_HILEXIN=n',
@@ -135,6 +137,20 @@ jobs:
           source "$IDF_PATH/export.sh"
           python scripts/build.py freenove-esp32s3-display-2.8-lcd --language vi-VN
 
+      - name: Verify wake word = Jarvis only (fail fast before font rebuild)
+        shell: bash
+        working-directory: xz
+        run: |
+          echo "== Active SR_WN wake-word models in sdkconfig =="
+          grep -E '^CONFIG_SR_WN_.*=y' sdkconfig || echo "(none matched)"
+          if grep -qE '^CONFIG_SR_WN_.*(NIHAOXIAOZHI|HILEXIN).*=y' sdkconfig; then
+            echo "ERROR: a Chinese wake word is still enabled" >&2
+            exit 1
+          fi
+          grep -qE '^CONFIG_SR_WN_WN9_JARVIS_TTS=y' sdkconfig \
+            && echo "OK: Jarvis wake word packed" \
+            || { echo "ERROR: Jarvis wake word NOT packed" >&2; exit 1; }
+
       - name: Regenerate basic fonts with FULL Vietnamese coverage
         shell: bash
         working-directory: xz
@@ -181,20 +197,6 @@ jobs:
         run: |
           source "$IDF_PATH/export.sh"
           python scripts/build.py freenove-esp32s3-display-2.8-lcd --language vi-VN
-
-      - name: Verify wake word = Jarvis only
-        shell: bash
-        working-directory: xz
-        run: |
-          echo "== Active SR_WN wake-word models in sdkconfig =="
-          grep -E '^CONFIG_SR_WN_.*=y' sdkconfig || echo "(none matched)"
-          if grep -qE '^CONFIG_SR_WN_.*(NIHAOXIAOZHI|HILEXIN).*=y' sdkconfig; then
-            echo "ERROR: a Chinese wake word is still enabled" >&2
-            exit 1
-          fi
-          grep -qE '^CONFIG_SR_WN_WN9_JARVIS_TTS=y' sdkconfig \
-            && echo "OK: Jarvis wake word packed" \
-            || { echo "ERROR: Jarvis wake word NOT packed" >&2; exit 1; }
 
       - name: Upload firmware artifact
         uses: actions/upload-artifact@v4
