@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 # Doi TTS sang gTTS (Google Translate TTS): free, on dinh, khong quota, khong key.
 # Dung khi EdgeTTS loi 'No audio' va Gemini TTS het quota.
-# Chay tren VPS: bash use-gtts.sh    (tuy chon: LANG=vi bash use-gtts.sh)
+# Chay tren VPS: bash use-gtts.sh    (tuy chon: GTTS_LANG=vi bash use-gtts.sh)
 set -uo pipefail
 C="xiaozhi-esp32-server"
 RAW="https://raw.githubusercontent.com/ntvn2022/z-bee-duo/claude/esp32-s3-touch-screen-wwelt1/xiaozhi-ai/server/providers/gtts_tts.py"
-LANG_CODE="${LANG:-vi}"
+# LUU Y: dung GTTS_LANG (khong dung $LANG vi trung bien he thong = en_US.UTF-8)
+LANG_CODE="${GTTS_LANG:-vi}"
 
 echo "==> Cai gTTS trong container ..."
 docker exec "$C" pip install -q -U gTTS >/dev/null 2>&1 || \
