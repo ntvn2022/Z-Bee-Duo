@@ -2,6 +2,7 @@ server:
   ip: 0.0.0.0
   port: 8000
   http_port: 8003
+  timezone_offset: +7          # gio Viet Nam (UTC+7)
   websocket: ws://42.112.26.67:8000/xiaozhi/v1/
 
 assistant_name: "ruanqinghe"
