@@ -56,6 +56,33 @@ for m in reg:
         print(f"  (thieu file local cho {mid}: {rel})")
 PY
 
+echo "==> Doi model sang gemini-2.5-flash-lite (nhanh hon, khong 'thinking') ..."
+docker exec -i "$C" python3 - <<'PY'
+import yaml
+p = "/opt/xiaozhi-esp32-server/data/.config.yaml"
+d = yaml.safe_load(open(p)) or {}
+llm = d.setdefault("LLM", {}).setdefault("RobotBridge", {})
+llm["model_name"] = "gemini-2.5-flash-lite"
+yaml.safe_dump(d, open(p, "w"), allow_unicode=True, sort_keys=False)
+print("  LLM.RobotBridge.model_name = gemini-2.5-flash-lite")
+PY
+
+echo "==> Tat plugin thoi tiet (khong co API key -> chi spam loi) ..."
+docker exec -i "$C" python3 - <<'PY'
+p = "/opt/xiaozhi-esp32-server/plugins_func/functions/get_weather.py"
+try:
+    s = open(p).read()
+    a = "async def fetch_city_info(location, api_key, api_host):\n"
+    if "WEATHER_DISABLED" not in s and a in s:
+        s = s.replace(a, a + "    return None  # WEATHER_DISABLED: tat tra cuu thoi tiet\n", 1)
+        open(p, "w").write(s)
+        print("  get_weather: da tat")
+    else:
+        print("  get_weather: bo qua (da tat hoac khong thay)")
+except Exception as e:
+    print("  get_weather: loi", e)
+PY
+
 echo "==> Bo tra cuu IP cham (whois.pconline) ..."
 docker exec -i "$C" python3 - <<'PY'
 p = "/opt/xiaozhi-esp32-server/core/utils/util.py"
