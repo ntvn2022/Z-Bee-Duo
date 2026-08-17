@@ -179,7 +179,7 @@ jobs:
           methods = (
               "    // [custom] Turn the screen (backlight) off after 5s idle, on when active.\n"
               "    esp_timer_handle_t bl_timer_ = nullptr;\n"
-              "    volatile int bl_idle_ = 0;\n"
+              "    int bl_idle_ = 0;\n"
               "    volatile bool bl_on_ = true;\n"
               "    // Called from the touch task: ANY tap lights the screen instantly.\n"
               "    // Touch itself is never disabled when the screen is off.\n"
@@ -205,7 +205,7 @@ jobs:
               "            if (!bl_on_) { GetBacklight()->SetBrightness(100); bl_on_ = true; }\n"
               "            return;\n"
               "        }\n"
-              "        if (bl_on_ && (bl_idle_ = bl_idle_ + 1) >= off) { GetBacklight()->SetBrightness(0); bl_on_ = false; }\n"
+              "        if (bl_on_ && ++bl_idle_ >= off) { GetBacklight()->SetBrightness(0); bl_on_ = false; }\n"
               "    }\n"
               "    void InitializeBacklightTimeout() {\n"
               "        esp_timer_create_args_t args = {};\n"
