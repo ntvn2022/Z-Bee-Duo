@@ -20,6 +20,7 @@ Config (data/.config.yaml):
       model_name: "gemini-2.5-flash"
       registry_url: "<optional override>"
 """
+import datetime as _dt
 import json
 import os
 import re
@@ -50,6 +51,15 @@ _ENTER = re.compile(
 )
 _EXIT = re.compile(r"(ket thuc robot|thoat robot|dung robot|ket thuc may)")
 _WAKE = re.compile(r"^(alexa|hi|hey|hello|ok|chao|xin chao|a ?lo)[ !,.?]*$")
+# Time / date questions are answered instantly and locally (normal Gemini chat
+# takes ~100s here), always in Vietnam time (UTC+7), no dependency on anything.
+_TIME_Q = re.compile(r"(may gio|gio roi|gio hien tai|thoi gian bay gio|bay gio.*gio)")
+_DATE_Q = re.compile(r"(hom nay.*(ngay|thu|bao nhieu)|ngay may|ngay bao nhieu|thu may|hom nay la ngay)")
+_VN_TZ = _dt.timezone(_dt.timedelta(hours=7))
+_BUOI = (
+    (4, "đêm"), (11, "sáng"), (13, "trưa"), (18, "chiều"), (23, "tối"), (24, "đêm"),
+)
+_WEEKDAY_VI = ["thứ Hai", "thứ Ba", "thứ Tư", "thứ Năm", "thứ Sáu", "thứ Bảy", "Chủ nhật"]
 
 
 def _norm(s):
@@ -280,6 +290,20 @@ class LLMProvider(GeminiLLM):
             return "Dạ, bạn cần gì ạ?"
         return None
 
+    def _time_reply(self, text):
+        n = _norm(text)
+        now = _dt.datetime.now(_VN_TZ)
+        if _DATE_Q.search(n):
+            wd = _WEEKDAY_VI[now.weekday()]
+            return f"Hôm nay là {wd}, ngày {now.day} tháng {now.month} năm {now.year}."
+        if _TIME_Q.search(n):
+            h, m = now.hour, now.minute
+            buoi = next(b for lim, b in _BUOI if h < lim)
+            h12 = h % 12 or 12
+            phut = f" {m} phút" if m else ""
+            return f"Bây giờ là {h12} giờ{phut} {buoi}."
+        return None
+
     def _maybe_enter(self, session_id, text):
         n = _norm(text)
         if _EXIT.search(n):
@@ -298,7 +322,7 @@ class LLMProvider(GeminiLLM):
         if state == "in":
             yield from self._robot_answer(session_id, text)
             return
-        w = self._wake_reply(text)
+        w = self._wake_reply(text) or self._time_reply(text)
         if w is not None:
             yield w
             return
@@ -314,7 +338,7 @@ class LLMProvider(GeminiLLM):
             for chunk in self._robot_answer(session_id, text):
                 yield chunk, None
             return
-        w = self._wake_reply(text)
+        w = self._wake_reply(text) or self._time_reply(text)
         if w is not None:
             yield w, None
             return
