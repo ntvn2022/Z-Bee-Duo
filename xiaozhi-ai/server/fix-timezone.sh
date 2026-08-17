@@ -8,10 +8,22 @@
 # dong import luc khoi dong) dat TZ=ICT-7 (dang POSIX cua UTC+7, KHONG can
 # tzdata). Nho vay MOI datetime.now() deu ra gio VN.
 #
-# Chay tren VPS:  bash fix-timezone.sh
+# Chay TU BAN CLONE (tranh loi 429 cua GitHub raw):
+#   git clone --depth 1 -b claude/esp32-s3-touch-screen-wwelt1 \
+#     https://github.com/ntvn2022/z-bee-duo /tmp/zbd && \
+#   bash /tmp/zbd/xiaozhi-ai/server/fix-timezone.sh
 set -uo pipefail
 C="xiaozhi-esp32-server"
 RAW="https://raw.githubusercontent.com/ntvn2022/z-bee-duo/claude/esp32-s3-touch-screen-wwelt1/xiaozhi-ai/server"
+HERE="$(cd "$(dirname "$0")" 2>/dev/null && pwd)"
+# Lay file: uu tien ban clone (local), neu khong co thi tai qua curl.
+get() {  # get <ten_file> <dich_tmp>
+  if [ -n "$HERE" ] && [ -f "$HERE/$1" ]; then
+    cp "$HERE/$1" "$2"
+  else
+    curl -fsSL "$RAW/$1" -o "$2"
+  fi
+}
 
 echo "==> Gio hien tai trong container TRUOC khi sua:"
 docker exec "$C" python3 -c "from datetime import datetime; print('   now() =', datetime.now().strftime('%Y-%m-%d %H:%M'))" 2>/dev/null || true
@@ -22,7 +34,7 @@ SP="$(docker exec "$C" python3 -c 'import site; print(site.getsitepackages()[0])
 echo "   site-packages = ${SP:-<khong tim thay>}"
 
 echo "==> Nap sitecustomize.py (ep TZ=ICT-7 cho toan tien trinh) ..."
-curl -fsSL "$RAW/sitecustomize.py" -o /tmp/sitecustomize.py
+get sitecustomize.py /tmp/sitecustomize.py
 if [ -n "$SP" ]; then
   docker cp /tmp/sitecustomize.py "$C":"$SP/sitecustomize.py"
 fi
@@ -30,7 +42,7 @@ fi
 docker cp /tmp/sitecustomize.py "$C":/opt/xiaozhi-esp32-server/sitecustomize.py 2>/dev/null || true
 
 echo "==> Nap current_time.py (UTC+7 tuong minh, du phong) ..."
-curl -fsSL "$RAW/current_time.py" -o /tmp/current_time.py
+get current_time.py /tmp/current_time.py
 docker cp /tmp/current_time.py "$C":/opt/xiaozhi-esp32-server/core/utils/current_time.py 2>/dev/null || true
 
 echo "==> Dat /etc/localtime = Asia/Ho_Chi_Minh (neu co tzdata) ..."
