@@ -20,6 +20,8 @@ Config (data/.config.yaml):
       model_name: "gemini-2.5-flash"
       registry_url: "<optional override>"
 """
+import json
+import os
 import re
 import unicodedata
 
@@ -35,6 +37,10 @@ _REGISTRY_URL = (
     "https://raw.githubusercontent.com/ntvn2022/z-bee-duo/"
     "claude/esp32-s3-touch-screen-wwelt1/xiaozhi-ai/machines/registry.json"
 )
+# Local data dir (bundled by speedup-robot.sh) is tried FIRST, so the runtime
+# never depends on GitHub (which rate-limits this VPS with HTTP 429). URLs are
+# only a fallback if the local files are missing.
+_ROBOT_DIR = "/opt/xiaozhi-esp32-server/data/robot"
 
 # Enter robot mode on a machine word or a machine symbol/code; leave on an exit
 # phrase. Wake word alone gets a short Vietnamese prompt.
@@ -66,30 +72,48 @@ class LLMProvider(GeminiLLM):
     def __init__(self, config):
         super().__init__(config)
         self._registry_url = config.get("registry_url", _REGISTRY_URL)
+        self._robot_dir = config.get("robot_dir", _ROBOT_DIR)
         self._registry = None          # cached registry.json
         self._tables = {}              # machine id -> cached rows
         self._mode = set()             # session_ids currently in robot mode
 
-    # ---- data (fetched once, then cached in memory) ----
+    # ---- data: local file first (bundled), URL only as fallback ----
+    def _load_local(self, rel):
+        p = os.path.join(self._robot_dir, rel)
+        try:
+            if os.path.exists(p):
+                with open(p, encoding="utf-8") as f:
+                    return json.load(f)
+        except Exception as e:
+            logger.bind(tag=TAG).error(f"local {rel} read failed: {e}")
+        return None
+
+    def _fetch_json(self, url):
+        if not url:
+            return None
+        try:
+            return requests.get(url, timeout=8).json()
+        except Exception as e:
+            logger.bind(tag=TAG).error(f"fetch {url} failed: {e}")
+            return None
+
     def _get_registry(self):
         if self._registry is None:
-            try:
-                self._registry = requests.get(self._registry_url, timeout=8).json()
-            except Exception as e:
-                logger.bind(tag=TAG).error(f"registry fetch failed: {e}")
-                self._registry = []
+            self._registry = (
+                self._load_local("registry.json")
+                or self._fetch_json(self._registry_url)
+                or []
+            )
         return self._registry
 
     def _get_tables(self, machine):
         mid = machine.get("id")
         if mid not in self._tables:
-            try:
-                self._tables[mid] = requests.get(
-                    machine["tables_url"], timeout=10
-                ).json()
-            except Exception as e:
-                logger.bind(tag=TAG).error(f"tables fetch failed: {e}")
-                self._tables[mid] = []
+            self._tables[mid] = (
+                self._load_local(f"tables/{mid}.json")
+                or self._fetch_json(machine.get("tables_url"))
+                or []
+            )
         return self._tables[mid]
 
     def _last_user(self, dialogue):
