@@ -349,8 +349,14 @@ class LLMProvider(GeminiLLM):
                 params={
                     "latitude": r0["latitude"],
                     "longitude": r0["longitude"],
-                    "current": "temperature_2m,relative_humidity_2m,weather_code",
-                    "daily": "temperature_2m_max,temperature_2m_min",
+                    "current": (
+                        "temperature_2m,apparent_temperature,relative_humidity_2m,"
+                        "weather_code,cloud_cover,wind_speed_10m,precipitation,is_day"
+                    ),
+                    "daily": (
+                        "temperature_2m_max,temperature_2m_min,"
+                        "precipitation_probability_max"
+                    ),
                     "timezone": "Asia/Ho_Chi_Minh",
                     "forecast_days": 1,
                 },
@@ -358,16 +364,60 @@ class LLMProvider(GeminiLLM):
             ).json()
             cur = w.get("current", {})
             daily = w.get("daily", {})
+            code = int(cur.get("weather_code", 0))
             temp = round(cur.get("temperature_2m", 0))
+            feels = cur.get("apparent_temperature")
             hum = cur.get("relative_humidity_2m")
-            desc = _WMO.get(int(cur.get("weather_code", 0)), "")
+            cloud = cur.get("cloud_cover")
+            wind = cur.get("wind_speed_10m")
+            precip = cur.get("precipitation") or 0
+            is_day = cur.get("is_day", 1)
             tmin = round((daily.get("temperature_2m_min") or [temp])[0])
             tmax = round((daily.get("temperature_2m_max") or [temp])[0])
-            s = f"Thời tiết ở {city}: {desc}, nhiệt độ {temp} độ C"
+            pprob = (daily.get("precipitation_probability_max") or [None])[0]
+
+            # Sky description: rain/fog from the WMO code, otherwise cloud cover.
+            if code in _WMO and (code >= 45):
+                sky = _WMO[code]
+            elif cloud is None:
+                sky = _WMO.get(code, "trời quang")
+            elif cloud < 20:
+                sky = "trời nắng đẹp, quang mây" if is_day else "trời quang, ít mây"
+            elif cloud < 60:
+                sky = "trời có nắng, ít mây" if is_day else "trời ít mây"
+            elif cloud < 85:
+                sky = "trời nhiều mây"
+            else:
+                sky = "trời âm u, nhiều mây"
+
+            parts = [f"Thời tiết ở {city}: {sky}."]
+            t2 = f"Nhiệt độ {temp} độ C"
+            if feels is not None and round(feels) != temp:
+                t2 += f", cảm giác như {round(feels)} độ"
+            parts.append(t2 + ".")
             if hum is not None:
-                s += f", độ ẩm {hum} phần trăm"
-            s += f". Hôm nay từ {tmin} đến {tmax} độ C."
-            return s
+                parts.append(f"Độ ẩm {hum} phần trăm.")
+            if wind is not None:
+                if wind < 12:
+                    wd = "gió nhẹ"
+                elif wind < 30:
+                    wd = "gió vừa"
+                elif wind < 50:
+                    wd = "gió khá mạnh"
+                else:
+                    wd = "gió mạnh"
+                parts.append(f"{wd[0].upper()}{wd[1:]}, khoảng {round(wind)} km một giờ.")
+            if precip > 0:
+                parts.append(f"Hiện đang có mưa, lượng mưa {precip} mi li mét.")
+            elif pprob is not None:
+                if pprob >= 60:
+                    parts.append(f"Khả năng mưa cao, khoảng {pprob} phần trăm.")
+                elif pprob >= 30:
+                    parts.append(f"Có thể có mưa, khoảng {pprob} phần trăm.")
+                else:
+                    parts.append("Ít khả năng mưa.")
+            parts.append(f"Hôm nay dao động từ {tmin} đến {tmax} độ C.")
+            return " ".join(parts)
         except Exception as e:
             logger.bind(tag=TAG).error(f"weather error: {e}")
             return "Xin lỗi, hiện chưa lấy được thời tiết. Bạn thử lại sau nhé."
