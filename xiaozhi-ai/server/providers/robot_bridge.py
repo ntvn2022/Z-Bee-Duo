@@ -102,6 +102,7 @@ class LLMProvider(GeminiLLM):
         super().__init__(config)
         self._registry_url = config.get("registry_url", _REGISTRY_URL)
         self._robot_dir = config.get("robot_dir", _ROBOT_DIR)
+        self._owm_key = config.get("owm_key", "")  # OpenWeatherMap (accurate)
         self._registry = None          # cached registry.json
         self._tables = {}              # machine id -> cached rows
         self._mode = set()             # session_ids currently in robot mode
@@ -323,6 +324,72 @@ class LLMProvider(GeminiLLM):
             return f"Bây giờ là {h12} giờ{phut} {buoi}."
         return None
 
+    def _weather_owm(self, loc):
+        """OpenWeatherMap current + short forecast. Returns None on failure so the
+        caller can fall back to open-meteo."""
+        try:
+            base = "https://api.openweathermap.org/data/2.5"
+            common = {"appid": self._owm_key, "units": "metric", "lang": "vi"}
+            cur = requests.get(
+                f"{base}/weather", params={**common, "q": f"{loc},VN"}, timeout=6
+            ).json()
+            if str(cur.get("cod")) != "200":
+                # try without the country hint
+                cur = requests.get(
+                    f"{base}/weather", params={**common, "q": loc}, timeout=6
+                ).json()
+            if str(cur.get("cod")) != "200":
+                return None
+            name = cur.get("name", loc)
+            desc = (cur.get("weather") or [{}])[0].get("description", "")
+            main = cur.get("main", {})
+            temp = round(main.get("temp", 0))
+            feels = round(main.get("feels_like", temp))
+            hum = main.get("humidity")
+            wind_kmh = round((cur.get("wind", {}).get("speed", 0)) * 3.6)
+            rain1h = (cur.get("rain") or {}).get("1h")
+            tmin = tmax = temp
+            pprob = None
+            try:
+                fc = requests.get(
+                    f"{base}/forecast", params={**common, "q": name, "cnt": 8}, timeout=6
+                ).json()
+                lst = fc.get("list") or []
+                temps = [e["main"]["temp"] for e in lst if "main" in e]
+                pops = [e.get("pop", 0) for e in lst]
+                if temps:
+                    tmin, tmax = round(min(temps)), round(max(temps))
+                if pops:
+                    pprob = round(max(pops) * 100)
+            except Exception:
+                pass
+
+            parts = [f"Thời tiết ở {name}: {desc}."]
+            t2 = f"Nhiệt độ {temp} độ C"
+            if feels != temp:
+                t2 += f", cảm giác như {feels} độ"
+            parts.append(t2 + ".")
+            if hum is not None:
+                parts.append(f"Độ ẩm {hum} phần trăm.")
+            if wind_kmh:
+                wd = ("gió nhẹ" if wind_kmh < 12 else "gió vừa" if wind_kmh < 30
+                      else "gió khá mạnh" if wind_kmh < 50 else "gió mạnh")
+                parts.append(f"{wd[0].upper()}{wd[1:]}, khoảng {wind_kmh} km một giờ.")
+            if rain1h:
+                parts.append(f"Đang có mưa, lượng mưa {rain1h} mi li mét trong một giờ.")
+            elif pprob is not None:
+                if pprob >= 60:
+                    parts.append(f"Khả năng mưa cao, khoảng {pprob} phần trăm.")
+                elif pprob >= 30:
+                    parts.append(f"Có thể có mưa, khoảng {pprob} phần trăm.")
+                else:
+                    parts.append("Ít khả năng mưa.")
+            parts.append(f"Hôm nay dao động từ {tmin} đến {tmax} độ C.")
+            return " ".join(parts)
+        except Exception as e:
+            logger.bind(tag=TAG).error(f"owm weather error: {e}")
+            return None
+
     def _weather_reply(self, text):
         n = _norm(text)
         if not _WEATHER_Q.search(n):
@@ -333,6 +400,12 @@ class LLMProvider(GeminiLLM):
         loc = re.sub(r"\s+", " ", loc).strip()
         if not loc:
             return "Bạn muốn xem thời tiết ở đâu ạ?"
+        # Prefer OpenWeatherMap (more accurate, Vietnamese descriptions) if a key
+        # is configured; otherwise fall back to the free open-meteo model.
+        if self._owm_key:
+            r = self._weather_owm(loc)
+            if r is not None:
+                return r
         try:
             g = requests.get(
                 "https://geocoding-api.open-meteo.com/v1/search",
