@@ -3,6 +3,10 @@
 // Value stored in NVS namespace "ruanqinghe" key "scr_off_s" (read by the board
 // backlight timer). Uses only lv_obj + lv_label so it always compiles.
 {
+    // Defined in the board .cc. While the overlay is open the raw TouchTask must
+    // not toggle listen/talk (taps go to these LVGL widgets instead).
+    extern volatile bool g_settings_open;
+
     struct SUI {
         lv_obj_t* win;
         lv_obj_t* pass;
@@ -187,6 +191,7 @@
             nvs_close(h);
         }
         lv_obj_add_flag(u->win, LV_OBJ_FLAG_HIDDEN);
+        g_settings_open = false;
     }, LV_EVENT_CLICKED, g);
 
     lv_obj_t* close = lv_obj_create(g->cfg);
@@ -197,6 +202,7 @@
     lv_obj_add_event_cb(close, [](lv_event_t* e) {
         SUI* u = (SUI*)lv_event_get_user_data(e);
         lv_obj_add_flag(u->win, LV_OBJ_FLAG_HIDDEN);
+        g_settings_open = false;
     }, LV_EVENT_CLICKED, g);
 
     // ---------- 3-tap bottom-right corner to open ----------
@@ -220,6 +226,7 @@
             lv_obj_remove_flag(u->pass, LV_OBJ_FLAG_HIDDEN);
             lv_obj_add_flag(u->cfg, LV_OBJ_FLAG_HIDDEN);
             lv_obj_remove_flag(u->win, LV_OBJ_FLAG_HIDDEN);
+            g_settings_open = true;
         }
     }, LV_EVENT_CLICKED, g);
 }

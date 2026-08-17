@@ -216,6 +216,153 @@ jobs:
           print("Patched: backlight auto-off after 5s idle")
           PY
 
+      - name: Touch -> top area toggles talk, bottom reserved for menu + LVGL touch
+        run: |
+          python3 - <<'PY'
+          import pathlib
+          p = pathlib.Path("xz/main/boards/freenove-esp32s3-display-2.8-lcd/freenove-esp32s3-display-2.8-lcd.cc")
+          s = p.read_text()
+
+          # ---- 1) includes: pull in esp_lvgl_port (for lvgl_port_lock + lvgl) ----
+          if "#include <esp_lvgl_port.h>" not in s:
+              s = s.replace('#include "esp_lcd_ili9341.h"',
+                            '#include "esp_lcd_ili9341.h"\n#include <esp_lvgl_port.h>', 1)
+
+          # ---- 2) file-scope: coord-mapping flags + shared "menu open" flag ----
+          # Touch controller reports raw (rx, ry). Panel uses DISPLAY_SWAP_XY=true,
+          # so display_x runs along raw Y (0..319) and display_y along raw X (0..239).
+          # If taps land mirrored/rotated on the real device, flip ONE of these to 1
+          # and rebuild:  TP_SWAP (axes rotated 90), TP_FLIP_X, TP_FLIP_Y.
+          flags = (
+              "// [custom] raw-touch -> display coordinate mapping (flip if mirrored)\n"
+              "#ifndef TP_SWAP\n#define TP_SWAP 0\n#endif\n"
+              "#ifndef TP_FLIP_X\n#define TP_FLIP_X 0\n#endif\n"
+              "#ifndef TP_FLIP_Y\n#define TP_FLIP_Y 0\n#endif\n"
+              "// Only the top portion of the screen toggles listen/talk; the bottom\n"
+              "// is reserved for on-screen menus.\n"
+              "#define TP_TALK_MAX (DISPLAY_HEIGHT * 60 / 100)\n"
+              "// Set true by the settings overlay so raw taps don't toggle talk while open.\n"
+              "volatile bool g_settings_open = false;\n\n"
+          )
+          assert s.count("class TouchDriver {") == 1
+          s = s.replace("class TouchDriver {", flags + "class TouchDriver {", 1)
+
+          # ---- 3) class members + helpers, inserted right before the constructor ----
+          members = (
+              "    // [custom] latest touch point in DISPLAY coords, published by TouchTask\n"
+              "    // and consumed by the LVGL pointer indev (single hardware reader).\n"
+              "    volatile int32_t tp_x_ = 0;\n"
+              "    volatile int32_t tp_y_ = 0;\n"
+              "    volatile bool tp_pressed_ = false;\n"
+              "    lv_indev_t* touch_indev_ = nullptr;\n"
+              "    static void MapTouch(uint16_t rx, uint16_t ry, int32_t &dx, int32_t &dy) {\n"
+              "    #if TP_SWAP\n        dx = rx; dy = ry;\n"
+              "    #else\n        dx = ry; dy = rx;\n    #endif\n"
+              "    #if TP_FLIP_X\n        dx = (DISPLAY_WIDTH - 1) - dx;\n    #endif\n"
+              "    #if TP_FLIP_Y\n        dy = (DISPLAY_HEIGHT - 1) - dy;\n    #endif\n"
+              "        if (dx < 0) dx = 0;\n"
+              "        if (dx > DISPLAY_WIDTH - 1) dx = DISPLAY_WIDTH - 1;\n"
+              "        if (dy < 0) dy = 0;\n"
+              "        if (dy > DISPLAY_HEIGHT - 1) dy = DISPLAY_HEIGHT - 1;\n"
+              "    }\n"
+              "    static void LvglTouchRead(lv_indev_t* indev, lv_indev_data_t* data) {\n"
+              "        auto* self = static_cast<FreenoveESP32S3Display*>(lv_indev_get_user_data(indev));\n"
+              "        if (self == nullptr) { data->state = LV_INDEV_STATE_RELEASED; return; }\n"
+              "        data->point.x = self->tp_x_;\n"
+              "        data->point.y = self->tp_y_;\n"
+              "        data->state = self->tp_pressed_ ? LV_INDEV_STATE_PRESSED : LV_INDEV_STATE_RELEASED;\n"
+              "    }\n"
+              "    void InitializeLvglTouch() {\n"
+              "        if (!lvgl_port_lock(0)) return;\n"
+              "        touch_indev_ = lv_indev_create();\n"
+              "        lv_indev_set_type(touch_indev_, LV_INDEV_TYPE_POINTER);\n"
+              "        lv_indev_set_read_cb(touch_indev_, LvglTouchRead);\n"
+              "        lv_indev_set_user_data(touch_indev_, this);\n"
+              "        lv_indev_set_display(touch_indev_, lv_display_get_default());\n"
+              "        lvgl_port_unlock();\n"
+              "    }\n\n"
+          )
+          assert s.count("FreenoveESP32S3Display()") >= 1
+          s = s.replace("FreenoveESP32S3Display()", members + "    FreenoveESP32S3Display()", 1)
+
+          # ---- 4) constructor: register the LVGL indev after touch hw is up ----
+          call_anchor = "        InitializeTouch();\n"
+          assert s.count(call_anchor) == 1
+          s = s.replace(call_anchor, call_anchor + "        InitializeLvglTouch();\n")
+
+          # ---- 5) TouchTask: publish coords + gate talk-toggle to the top area ----
+          loc_anchor = ("    uint32_t last_tap = 0;\n"
+                        "    uint32_t down_start = 0;\n"
+                        "    bool down = false;\n")
+          assert s.count(loc_anchor) == 1
+          s = s.replace(loc_anchor, loc_anchor + "    bool down_top = false;\n")
+
+          # 5a) publish the point (display coords) for the LVGL indev
+          read_anchor = "        self->touch_.Read(t, x, y);\n"
+          assert s.count(read_anchor) == 1
+          s = s.replace(read_anchor, read_anchor +
+              "\n"
+              "        // Publish the point (in display coords) for the LVGL indev.\n"
+              "        int32_t dx, dy;\n"
+              "        FreenoveESP32S3Display::MapTouch(x, y, dx, dy);\n"
+              "        self->tp_x_ = dx;\n"
+              "        self->tp_y_ = dy;\n"
+              "        self->tp_pressed_ = t;\n")
+
+          # 5b) remember whether the press STARTED in the top (talk) area
+          down_anchor = ("            if (!down) {\n"
+                         "                down = true;\n"
+                         "                down_start = now;\n"
+                         "            }\n")
+          assert s.count(down_anchor) == 1
+          s = s.replace(down_anchor,
+              "            if (!down) {\n"
+              "                down = true;\n"
+              "                down_start = now;\n"
+              "                down_top = (dy < TP_TALK_MAX);  // where the press began\n"
+              "            }\n")
+
+          # 5c) gate the gesture handling: top area only, and never while settings open
+          gate_old = ("            uint32_t press = now - down_start;\n"
+                      "\n"
+                      "            if (press > 3000) {\n"
+                      "                self->EnterWifiConfigMode();\n"
+                      "            } else {\n"
+                      "                if (now - last_tap < 250) {\n"
+                      "                    app.StartListening();\n"
+                      "                    last_tap = 0;\n"
+                      "                } else {\n"
+                      "                    app.ToggleChatState();\n"
+                      "                    last_tap = now;\n"
+                      "                }\n"
+                      "            }\n")
+          gate_new = ("            uint32_t press = now - down_start;\n"
+                      "\n"
+                      "            // Only a tap that STARTED in the top area toggles talk;\n"
+                      "            // bottom taps are left for the LVGL menu. Ignore taps while\n"
+                      "            // the settings overlay is open.\n"
+                      "            if (down_top && !g_settings_open) {\n"
+                      "                if (press > 3000) {\n"
+                      "                    self->EnterWifiConfigMode();\n"
+                      "                } else if (now - last_tap < 250) {\n"
+                      "                    app.StartListening();\n"
+                      "                    last_tap = 0;\n"
+                      "                } else {\n"
+                      "                    app.ToggleChatState();\n"
+                      "                    last_tap = now;\n"
+                      "                }\n"
+                      "            }\n")
+          assert s.count(gate_old) == 1
+          s = s.replace(gate_old, gate_new)
+
+          # 5d) faster poll so the indev feeds LVGL smoothly (slider drag)
+          assert s.count("vTaskDelay(pdMS_TO_TICKS(50));") == 1
+          s = s.replace("vTaskDelay(pdMS_TO_TICKS(50));", "vTaskDelay(pdMS_TO_TICKS(20));")
+
+          p.write_text(s)
+          print("Patched: LVGL touch indev + top-only talk gating")
+          PY
+
       - name: Build once to fetch the font component
         shell: bash
         working-directory: xz
