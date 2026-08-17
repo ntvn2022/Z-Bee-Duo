@@ -56,6 +56,25 @@ _WAKE = re.compile(r"^(alexa|hi|hey|hello|ok|chao|xin chao|a ?lo)[ !,.?]*$")
 _TIME_Q = re.compile(r"(may gio|gio roi|gio hien tai|thoi gian bay gio|bay gio.*gio)")
 _DATE_Q = re.compile(r"(hom nay.*(ngay|thu|bao nhieu)|ngay may|ngay bao nhieu|thu may|hom nay la ngay)")
 _VN_TZ = _dt.timezone(_dt.timedelta(hours=7))
+# Weather via open-meteo (free, no API key). Answered directly in the bridge.
+_WEATHER_Q = re.compile(r"thoi tiet")
+_WMO = {
+    0: "trời quang", 1: "trời quang", 2: "có mây", 3: "nhiều mây",
+    45: "sương mù", 48: "sương mù",
+    51: "mưa phùn nhẹ", 53: "mưa phùn", 55: "mưa phùn nặng",
+    56: "mưa phùn đông đá", 57: "mưa phùn đông đá",
+    61: "mưa nhẹ", 63: "mưa", 65: "mưa to",
+    66: "mưa đông đá", 67: "mưa đông đá",
+    71: "tuyết nhẹ", 73: "tuyết", 75: "tuyết dày", 77: "hạt tuyết",
+    80: "mưa rào nhẹ", 81: "mưa rào", 82: "mưa rào lớn",
+    85: "mưa tuyết", 86: "mưa tuyết",
+    95: "dông", 96: "dông kèm mưa đá", 99: "dông kèm mưa đá",
+}
+_WEATHER_FILLER = (
+    "thoi tiet", "bay gio", "the nao", "nhu the nao", "hom nay", "ngay mai",
+    "ra sao", "hien tai", "khu vuc", "tinh", "thanh pho", "o", "tai", "cho hoi",
+    "cho minh hoi", "?", ".", ",",
+)
 _BUOI = (
     (4, "đêm"), (11, "sáng"), (13, "trưa"), (18, "chiều"), (23, "tối"), (24, "đêm"),
 )
@@ -304,6 +323,55 @@ class LLMProvider(GeminiLLM):
             return f"Bây giờ là {h12} giờ{phut} {buoi}."
         return None
 
+    def _weather_reply(self, text):
+        n = _norm(text)
+        if not _WEATHER_Q.search(n):
+            return None
+        loc = n
+        for w in _WEATHER_FILLER:
+            loc = loc.replace(w, " ")
+        loc = re.sub(r"\s+", " ", loc).strip()
+        if not loc:
+            return "Bạn muốn xem thời tiết ở đâu ạ?"
+        try:
+            g = requests.get(
+                "https://geocoding-api.open-meteo.com/v1/search",
+                params={"name": loc, "count": 1, "language": "vi", "format": "json"},
+                timeout=6,
+            ).json()
+            res = g.get("results") or []
+            if not res:
+                return f"Xin lỗi, mình không tìm thấy địa điểm {loc}."
+            r0 = res[0]
+            city = r0.get("name", loc)
+            w = requests.get(
+                "https://api.open-meteo.com/v1/forecast",
+                params={
+                    "latitude": r0["latitude"],
+                    "longitude": r0["longitude"],
+                    "current": "temperature_2m,relative_humidity_2m,weather_code",
+                    "daily": "temperature_2m_max,temperature_2m_min",
+                    "timezone": "Asia/Ho_Chi_Minh",
+                    "forecast_days": 1,
+                },
+                timeout=6,
+            ).json()
+            cur = w.get("current", {})
+            daily = w.get("daily", {})
+            temp = round(cur.get("temperature_2m", 0))
+            hum = cur.get("relative_humidity_2m")
+            desc = _WMO.get(int(cur.get("weather_code", 0)), "")
+            tmin = round((daily.get("temperature_2m_min") or [temp])[0])
+            tmax = round((daily.get("temperature_2m_max") or [temp])[0])
+            s = f"Thời tiết ở {city}: {desc}, nhiệt độ {temp} độ C"
+            if hum is not None:
+                s += f", độ ẩm {hum} phần trăm"
+            s += f". Hôm nay từ {tmin} đến {tmax} độ C."
+            return s
+        except Exception as e:
+            logger.bind(tag=TAG).error(f"weather error: {e}")
+            return "Xin lỗi, hiện chưa lấy được thời tiết. Bạn thử lại sau nhé."
+
     def _maybe_enter(self, session_id, text):
         n = _norm(text)
         if _EXIT.search(n):
@@ -322,7 +390,7 @@ class LLMProvider(GeminiLLM):
         if state == "in":
             yield from self._robot_answer(session_id, text)
             return
-        w = self._wake_reply(text) or self._time_reply(text)
+        w = self._wake_reply(text) or self._time_reply(text) or self._weather_reply(text)
         if w is not None:
             yield w
             return
@@ -338,7 +406,7 @@ class LLMProvider(GeminiLLM):
             for chunk in self._robot_answer(session_id, text):
                 yield chunk, None
             return
-        w = self._wake_reply(text) or self._time_reply(text)
+        w = self._wake_reply(text) or self._time_reply(text) or self._weather_reply(text)
         if w is not None:
             yield w, None
             return
