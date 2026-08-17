@@ -205,7 +205,7 @@ jobs:
               "            if (!bl_on_) { GetBacklight()->SetBrightness(100); bl_on_ = true; }\n"
               "            return;\n"
               "        }\n"
-              "        if (bl_on_ && ++bl_idle_ >= off) { GetBacklight()->SetBrightness(0); bl_on_ = false; }\n"
+              "        if (bl_on_ && (bl_idle_ = bl_idle_ + 1) >= off) { GetBacklight()->SetBrightness(0); bl_on_ = false; }\n"
               "    }\n"
               "    void InitializeBacklightTimeout() {\n"
               "        esp_timer_create_args_t args = {};\n"
