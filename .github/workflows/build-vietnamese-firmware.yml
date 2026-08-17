@@ -179,8 +179,14 @@ jobs:
           methods = (
               "    // [custom] Turn the screen (backlight) off after 5s idle, on when active.\n"
               "    esp_timer_handle_t bl_timer_ = nullptr;\n"
-              "    int bl_idle_ = 0;\n"
-              "    bool bl_on_ = true;\n"
+              "    volatile int bl_idle_ = 0;\n"
+              "    volatile bool bl_on_ = true;\n"
+              "    // Called from the touch task: ANY tap lights the screen instantly.\n"
+              "    // Touch itself is never disabled when the screen is off.\n"
+              "    void WakeScreen() {\n"
+              "        bl_idle_ = 0;\n"
+              "        if (!bl_on_) { GetBacklight()->SetBrightness(100); bl_on_ = true; }\n"
+              "    }\n"
               "    int ReadScreenOffSec() {\n"
               "        int v = 5;\n"
               "        nvs_handle_t h;\n"
@@ -310,7 +316,8 @@ jobs:
           # (down_start is assigned exactly once, at press-begin.)
           assert s.count("down_start = now;") == 1
           s = s.replace("down_start = now;",
-                        "down_start = now; self->press_top_ = (dy < TP_TALK_MAX);")
+                        "down_start = now; self->press_top_ = (dy < TP_TALK_MAX);"
+                        " self->WakeScreen();")
 
           # 5c) gate the talk actions: only when the press began in the top area
           # and the settings overlay is closed. EnterWifiConfigMode / StartListening
