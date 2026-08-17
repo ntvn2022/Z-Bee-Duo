@@ -128,14 +128,19 @@ jobs:
                     '                SetStatus(time_str);\n')
           assert s.count(anchor) == 1
           s = s.replace(anchor,
+              '                // [custom] force Vietnam time (UTC+7): the device clock is\n'
+              '                // UTC, so add 7h to the epoch and format via gmtime_r.\n'
+              '                time_t vn_t = time(NULL) + 7 * 3600;\n'
+              '                struct tm vn_tm;\n'
+              '                gmtime_r(&vn_t, &vn_tm);\n'
               '                char time_str[48];\n'
               '                static const char* const vi_wd[] = {"CN","T2","T3","T4","T5","T6","T7"};\n'
               '                snprintf(time_str, sizeof(time_str), "%s %02d/%02d %02d:%02d",\n'
-              '                         vi_wd[tm->tm_wday % 7], tm->tm_mday, tm->tm_mon + 1,\n'
-              '                         tm->tm_hour, tm->tm_min);\n'
+              '                         vi_wd[vn_tm.tm_wday % 7], vn_tm.tm_mday, vn_tm.tm_mon + 1,\n'
+              '                         vn_tm.tm_hour, vn_tm.tm_min);\n'
               '                SetStatus(time_str);\n')
           p.write_text(s)
-          print("Patched status bar clock: weekday + dd/mm + HH:MM")
+          print("Patched status bar clock: Vietnam time (UTC+7), weekday + dd/mm + HH:MM")
           PY
 
       - name: Rename Wi-Fi config hotspot to "ruanqinghe"
