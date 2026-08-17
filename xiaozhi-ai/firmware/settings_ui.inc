@@ -46,6 +46,18 @@
     lv_obj_remove_flag(g->win, LV_OBJ_FLAG_SCROLLABLE);
     lv_obj_add_flag(g->win, LV_OBJ_FLAG_HIDDEN);
 
+    // Give a button a clear pressed-state color so a tap is visibly registered.
+    auto style_btn = [](lv_obj_t* b) {
+        lv_obj_set_style_bg_opa(b, LV_OPA_COVER, 0);
+        lv_obj_set_style_bg_color(b, lv_color_hex(0xF0F0F0), 0);
+        lv_obj_set_style_border_color(b, lv_color_hex(0xBBBBBB), 0);
+        lv_obj_set_style_border_width(b, 1, 0);
+        lv_obj_set_style_radius(b, 4, 0);
+        // pressed: bright blue fill + white text
+        lv_obj_set_style_bg_color(b, lv_color_hex(0x1976D2), LV_STATE_PRESSED);
+        lv_obj_set_style_bg_opa(b, LV_OPA_COVER, LV_STATE_PRESSED);
+    };
+
     // ---------- password panel ----------
     g->pass = lv_obj_create(g->win);
     lv_obj_set_size(g->pass, lv_pct(100), lv_pct(100));
@@ -53,9 +65,23 @@
     lv_obj_set_style_border_width(g->pass, 0, 0);
     lv_obj_remove_flag(g->pass, LV_OBJ_FLAG_SCROLLABLE);
 
+    // Exit button so you are never trapped on the password screen.
+    lv_obj_t* pexit = lv_obj_create(g->pass);
+    lv_obj_set_size(pexit, 34, 26);
+    lv_obj_align(pexit, LV_ALIGN_TOP_LEFT, 2, 2);
+    lv_obj_set_style_pad_all(pexit, 0, 0);
+    style_btn(pexit);
+    lv_obj_add_flag(pexit, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_t* pxl = lv_label_create(pexit); lv_label_set_text(pxl, "X"); lv_obj_center(pxl);
+    lv_obj_add_event_cb(pexit, [](lv_event_t* e) {
+        SUI* u = (SUI*)lv_event_get_user_data(e);
+        lv_obj_add_flag(u->win, LV_OBJ_FLAG_HIDDEN);
+        g_settings_open = false;
+    }, LV_EVENT_CLICKED, g);
+
     lv_obj_t* pt = lv_label_create(g->pass);
     lv_label_set_text(pt, "Password:");
-    lv_obj_align(pt, LV_ALIGN_TOP_LEFT, 6, 4);
+    lv_obj_align(pt, LV_ALIGN_TOP_LEFT, 44, 6);
     g->pdisp = lv_label_create(g->pass);
     lv_label_set_text(g->pdisp, "");
     lv_obj_align(g->pdisp, LV_ALIGN_TOP_RIGHT, -8, 4);
@@ -67,6 +93,7 @@
         int col = i % 3, row = i / 3;
         lv_obj_align(b, LV_ALIGN_TOP_LEFT, 10 + col * 74, 34 + row * 46);
         lv_obj_set_style_pad_all(b, 0, 0);
+        style_btn(b);
         lv_obj_add_flag(b, LV_OBJ_FLAG_CLICKABLE);
         lv_obj_set_user_data(b, (void*)keys[i]);
         lv_obj_t* bl = lv_label_create(b);
@@ -153,6 +180,7 @@
     lv_obj_t* minus = lv_obj_create(g->cfg);
     lv_obj_set_size(minus, 48, 38);
     lv_obj_align(minus, LV_ALIGN_CENTER, -140, 0);
+    style_btn(minus);
     lv_obj_add_flag(minus, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_t* ml = lv_label_create(minus); lv_label_set_text(ml, "-"); lv_obj_center(ml);
     lv_obj_add_event_cb(minus, [](lv_event_t* e) {
@@ -166,6 +194,7 @@
     lv_obj_t* plus = lv_obj_create(g->cfg);
     lv_obj_set_size(plus, 48, 38);
     lv_obj_align(plus, LV_ALIGN_CENTER, 140, 0);
+    style_btn(plus);
     lv_obj_add_flag(plus, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_t* pl = lv_label_create(plus); lv_label_set_text(pl, "+"); lv_obj_center(pl);
     lv_obj_add_event_cb(plus, [](lv_event_t* e) {
@@ -180,6 +209,7 @@
     lv_obj_t* save = lv_obj_create(g->cfg);
     lv_obj_set_size(save, 90, 38);
     lv_obj_align(save, LV_ALIGN_BOTTOM_LEFT, 12, -6);
+    style_btn(save);
     lv_obj_add_flag(save, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_t* svl = lv_label_create(save); lv_label_set_text(svl, "Save"); lv_obj_center(svl);
     lv_obj_add_event_cb(save, [](lv_event_t* e) {
@@ -197,6 +227,7 @@
     lv_obj_t* close = lv_obj_create(g->cfg);
     lv_obj_set_size(close, 90, 38);
     lv_obj_align(close, LV_ALIGN_BOTTOM_RIGHT, -12, -6);
+    style_btn(close);
     lv_obj_add_flag(close, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_t* cll = lv_label_create(close); lv_label_set_text(cll, "Close"); lv_obj_center(cll);
     lv_obj_add_event_cb(close, [](lv_event_t* e) {
