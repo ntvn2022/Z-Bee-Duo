@@ -254,6 +254,7 @@ jobs:
               "    volatile int32_t tp_x_ = 0;\n"
               "    volatile int32_t tp_y_ = 0;\n"
               "    volatile bool tp_pressed_ = false;\n"
+              "    bool press_top_ = false;  // did the current press start in the talk area?\n"
               "    lv_indev_t* touch_indev_ = nullptr;\n"
               "    static void MapTouch(uint16_t rx, uint16_t ry, int32_t &dx, int32_t &dy) {\n"
               "    #if TP_SWAP\n        dx = rx; dy = ry;\n"
@@ -291,73 +292,37 @@ jobs:
           s = s.replace(call_anchor, call_anchor + "        InitializeLvglTouch();\n")
 
           # ---- 5) TouchTask: publish coords + gate talk-toggle to the top area ----
-          loc_anchor = ("    uint32_t last_tap = 0;\n"
-                        "    uint32_t down_start = 0;\n"
-                        "    bool down = false;\n")
-          assert s.count(loc_anchor) == 1
-          s = s.replace(loc_anchor, loc_anchor + "    bool down_top = false;\n")
+          # Use single-line, indentation-agnostic anchors (robust to formatting).
 
           # 5a) publish the point (display coords) for the LVGL indev
-          read_anchor = "        self->touch_.Read(t, x, y);\n"
+          read_anchor = "self->touch_.Read(t, x, y);"
           assert s.count(read_anchor) == 1
           s = s.replace(read_anchor, read_anchor +
               "\n"
-              "        // Publish the point (in display coords) for the LVGL indev.\n"
-              "        int32_t dx, dy;\n"
+              "        int32_t dx, dy;  // [custom] publish point for the LVGL indev\n"
               "        FreenoveESP32S3Display::MapTouch(x, y, dx, dy);\n"
               "        self->tp_x_ = dx;\n"
               "        self->tp_y_ = dy;\n"
-              "        self->tp_pressed_ = t;\n")
+              "        self->tp_pressed_ = t;")
 
-          # 5b) remember whether the press STARTED in the top (talk) area
-          down_anchor = ("            if (!down) {\n"
-                         "                down = true;\n"
-                         "                down_start = now;\n"
-                         "            }\n")
-          assert s.count(down_anchor) == 1
-          s = s.replace(down_anchor,
-              "            if (!down) {\n"
-              "                down = true;\n"
-              "                down_start = now;\n"
-              "                down_top = (dy < TP_TALK_MAX);  // where the press began\n"
-              "            }\n")
+          # 5b) remember whether the press STARTED in the top (talk) area.
+          # (down_start is assigned exactly once, at press-begin.)
+          assert s.count("down_start = now;") == 1
+          s = s.replace("down_start = now;",
+                        "down_start = now; self->press_top_ = (dy < TP_TALK_MAX);")
 
-          # 5c) gate the gesture handling: top area only, and never while settings open
-          gate_old = ("            uint32_t press = now - down_start;\n"
-                      "\n"
-                      "            if (press > 3000) {\n"
-                      "                self->EnterWifiConfigMode();\n"
-                      "            } else {\n"
-                      "                if (now - last_tap < 250) {\n"
-                      "                    app.StartListening();\n"
-                      "                    last_tap = 0;\n"
-                      "                } else {\n"
-                      "                    app.ToggleChatState();\n"
-                      "                    last_tap = now;\n"
-                      "                }\n"
-                      "            }\n")
-          gate_new = ("            uint32_t press = now - down_start;\n"
-                      "\n"
-                      "            // Only a tap that STARTED in the top area toggles talk;\n"
-                      "            // bottom taps are left for the LVGL menu. Ignore taps while\n"
-                      "            // the settings overlay is open.\n"
-                      "            if (down_top && !g_settings_open) {\n"
-                      "                if (press > 3000) {\n"
-                      "                    self->EnterWifiConfigMode();\n"
-                      "                } else if (now - last_tap < 250) {\n"
-                      "                    app.StartListening();\n"
-                      "                    last_tap = 0;\n"
-                      "                } else {\n"
-                      "                    app.ToggleChatState();\n"
-                      "                    last_tap = now;\n"
-                      "                }\n"
-                      "            }\n")
-          assert s.count(gate_old) == 1
-          s = s.replace(gate_old, gate_new)
+          # 5c) gate each action: only when the press began in the top area and the
+          # settings overlay is closed. Statement anchors ignore indentation.
+          for stmt in ("self->EnterWifiConfigMode();",
+                       "app.StartListening();",
+                       "app.ToggleChatState();"):
+              assert s.count(stmt) == 1, stmt
+              s = s.replace(stmt, "if (self->press_top_ && !g_settings_open) " + stmt)
 
-          # 5d) faster poll so the indev feeds LVGL smoothly (slider drag)
-          assert s.count("vTaskDelay(pdMS_TO_TICKS(50));") == 1
-          s = s.replace("vTaskDelay(pdMS_TO_TICKS(50));", "vTaskDelay(pdMS_TO_TICKS(20));")
+          # 5d) faster poll so the indev feeds LVGL smoothly (slider drag) - optional
+          if s.count("vTaskDelay(pdMS_TO_TICKS(50));") == 1:
+              s = s.replace("vTaskDelay(pdMS_TO_TICKS(50));",
+                            "vTaskDelay(pdMS_TO_TICKS(20));")
 
           p.write_text(s)
           print("Patched: LVGL touch indev + top-only talk gating")
