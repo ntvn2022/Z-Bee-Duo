@@ -246,7 +246,7 @@ jobs:
               "#ifndef TP_FLIP_X\n#define TP_FLIP_X 0\n#endif\n"
               "#ifndef TP_FLIP_Y\n#define TP_FLIP_Y 1\n#endif\n"
               "// Calibration overlay: red dot at the touched point + raw/mapped readout.\n"
-              "#ifndef TP_DEBUG\n#define TP_DEBUG 1\n#endif\n"
+              "#ifndef TP_DEBUG\n#define TP_DEBUG 0\n#endif\n"
               "// Only the top portion of the screen toggles listen/talk; the bottom\n"
               "// is reserved for on-screen menus.\n"
               "#define TP_TALK_MAX (DISPLAY_HEIGHT * 60 / 100)\n"
