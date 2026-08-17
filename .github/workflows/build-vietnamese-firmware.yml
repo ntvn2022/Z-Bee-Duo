@@ -219,7 +219,7 @@ jobs:
       - name: Touch -> top area toggles talk, bottom reserved for menu + LVGL touch
         run: |
           python3 - <<'PY'
-          import pathlib
+          import pathlib, re
           p = pathlib.Path("xz/main/boards/freenove-esp32s3-display-2.8-lcd/freenove-esp32s3-display-2.8-lcd.cc")
           s = p.read_text()
 
@@ -311,13 +311,20 @@ jobs:
           s = s.replace("down_start = now;",
                         "down_start = now; self->press_top_ = (dy < TP_TALK_MAX);")
 
-          # 5c) gate each action: only when the press began in the top area and the
-          # settings overlay is closed. Statement anchors ignore indentation.
+          # 5c) gate the talk actions: only when the press began in the top area
+          # and the settings overlay is closed. EnterWifiConfigMode / StartListening
+          # appear once (only in TouchTask). ToggleChatState also appears in the
+          # boot-button handler, so target only the TouchTask one (it is the toggle
+          # immediately followed by "last_tap = now;") and leave the button alone.
           for stmt in ("self->EnterWifiConfigMode();",
-                       "app.StartListening();",
-                       "app.ToggleChatState();"):
+                       "app.StartListening();"):
               assert s.count(stmt) == 1, stmt
               s = s.replace(stmt, "if (self->press_top_ && !g_settings_open) " + stmt)
+          toggle_pat = re.compile(r"app\.ToggleChatState\(\);(\s*)last_tap = now;")
+          assert len(toggle_pat.findall(s)) == 1
+          s = toggle_pat.sub(
+              r"if (self->press_top_ && !g_settings_open) app.ToggleChatState();\1last_tap = now;",
+              s)
 
           # 5d) faster poll so the indev feeds LVGL smoothly (slider drag) - optional
           if s.count("vTaskDelay(pdMS_TO_TICKS(50));") == 1:
