@@ -56,15 +56,15 @@ for m in reg:
         print(f"  (thieu file local cho {mid}: {rel})")
 PY
 
-echo "==> Doi model sang gemini-2.5-flash-lite (nhanh hon, khong 'thinking') ..."
+echo "==> Doi model sang gemini-3.7-flash (Flash moi nhat: nhanh, re, thong minh) ..."
 docker exec -i "$C" python3 - <<'PY'
 import yaml
 p = "/opt/xiaozhi-esp32-server/data/.config.yaml"
 d = yaml.safe_load(open(p)) or {}
 llm = d.setdefault("LLM", {}).setdefault("RobotBridge", {})
-llm["model_name"] = "gemini-2.5-flash-lite"
+llm["model_name"] = "gemini-3.7-flash"
 yaml.safe_dump(d, open(p, "w"), allow_unicode=True, sort_keys=False)
-print("  LLM.RobotBridge.model_name = gemini-2.5-flash-lite")
+print("  LLM.RobotBridge.model_name = gemini-3.7-flash")
 PY
 
 echo "==> Tat plugin thoi tiet (khong co API key -> chi spam loi) ..."
