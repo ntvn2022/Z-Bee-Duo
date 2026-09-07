@@ -104,6 +104,11 @@ jobs:
           if '#include "nvs.h"' not in s:
               s = s.replace('#include "lcd_display.h"',
                             '#include "lcd_display.h"\n#include "nvs.h"', 1)
+          # Volume page needs the full AudioCodec definition (board.h only
+          # forward-declares it) to call SetOutputVolume.
+          if '#include "audio/audio_codec.h"' not in s:
+              s = s.replace('#include "nvs.h"',
+                            '#include "nvs.h"\n#include "audio/audio_codec.h"', 1)
           # Unique anchor: the answer_label align line exists only in SetupUI
           # (the plain set_text appears twice, so we can't anchor on that).
           anchor = "lv_obj_align(answer_label_, LV_ALIGN_TOP_MID, 0, text_font->line_height * 2);"
