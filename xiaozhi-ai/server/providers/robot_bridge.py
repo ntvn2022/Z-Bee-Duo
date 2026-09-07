@@ -72,9 +72,43 @@ _WMO = {
 }
 _WEATHER_FILLER = (
     "thoi tiet", "bay gio", "the nao", "nhu the nao", "hom nay", "ngay mai",
-    "ra sao", "hien tai", "khu vuc", "tinh", "thanh pho", "o", "tai", "cho hoi",
+    "ra sao", "hien tai", "khu vuc", "tinh", "thanh pho", "cho hoi",
     "cho minh hoi", "?", ".", ",",
 )
+# Map Vietnamese place names (accent-stripped) to a name the geocoder resolves.
+# Provinces are mapped to their main city so weather still works.
+_VN_PLACE = {
+    "sai gon": "Ho Chi Minh City", "tphcm": "Ho Chi Minh City",
+    "tp hcm": "Ho Chi Minh City", "hcm": "Ho Chi Minh City",
+    "ho chi minh": "Ho Chi Minh City", "sg": "Ho Chi Minh City",
+    "ha noi": "Hanoi", "hn": "Hanoi",
+    "da nang": "Da Nang",
+    "da lat": "Da Lat", "dalat": "Da Lat",
+    "ban me thuot": "Buon Ma Thuot", "buon ma thuot": "Buon Ma Thuot",
+    "bmt": "Buon Ma Thuot", "dak lak": "Buon Ma Thuot", "daklak": "Buon Ma Thuot",
+    "binh duong": "Thu Dau Mot", "thu dau mot": "Thu Dau Mot",
+    "dong nai": "Bien Hoa", "bien hoa": "Bien Hoa",
+    "tay ninh": "Tay Ninh",
+    "binh phuoc": "Dong Xoai", "dong xoai": "Dong Xoai",
+    "ba ria vung tau": "Vung Tau", "vung tau": "Vung Tau", "ba ria": "Ba Ria",
+    "can tho": "Can Tho", "hai phong": "Hai Phong", "hue": "Hue",
+    "nha trang": "Nha Trang", "khanh hoa": "Nha Trang",
+    "bac ninh": "Bac Ninh", "quy nhon": "Quy Nhon", "binh dinh": "Quy Nhon",
+    "vinh": "Vinh", "nghe an": "Vinh", "thanh hoa": "Thanh Hoa",
+    "long an": "Tan An", "tien giang": "My Tho", "my tho": "My Tho",
+    "lam dong": "Da Lat", "gia lai": "Pleiku", "pleiku": "Pleiku",
+    "quang ninh": "Ha Long", "ha long": "Ha Long",
+}
+
+
+def _resolve_place(loc):
+    """Map a stripped Vietnamese place phrase to a geocoder-friendly name."""
+    if loc in _VN_PLACE:
+        return _VN_PLACE[loc]
+    for k, v in _VN_PLACE.items():
+        if k in loc:
+            return v
+    return loc
 _BUOI = (
     (4, "đêm"), (11, "sáng"), (13, "trưa"), (18, "chiều"), (23, "tối"), (24, "đêm"),
 )
@@ -400,6 +434,7 @@ class LLMProvider(GeminiLLM):
         loc = re.sub(r"\s+", " ", loc).strip()
         if not loc:
             return "Bạn muốn xem thời tiết ở đâu ạ?"
+        loc = _resolve_place(loc)  # provinces / aliases -> geocoder-friendly name
         # Prefer OpenWeatherMap (more accurate, Vietnamese descriptions) if a key
         # is configured; otherwise fall back to the free open-meteo model.
         if self._owm_key:
