@@ -109,6 +109,23 @@ def _resolve_place(loc):
         if k in loc:
             return v
     return loc
+
+
+# Traffic / travel time: "tu <A> den <B> ..." via Google Directions.
+_TRAFFIC_RE = re.compile(r"\btu\b\s+(.+?)\s+\bden\b\s+(.+)")
+_DEST_TAIL = re.compile(
+    r"\b(di mat bao lau|di bao lau|mat bao lau|bao lau|bao xa|bao nhieu[a-z ]*"
+    r"|may tieng|co ket xe khong|co ket khong|ket xe khong|ket xe|ket khong"
+    r"|di duong nao|nhu the nao|the nao|di the nao)\b.*$"
+)
+
+
+def _dur_vi(sec):
+    m = int(round(sec / 60.0))
+    if m < 60:
+        return f"{m} phút"
+    h, mm = divmod(m, 60)
+    return f"{h} giờ {mm} phút" if mm else f"{h} giờ"
 _BUOI = (
     (4, "đêm"), (11, "sáng"), (13, "trưa"), (18, "chiều"), (23, "tối"), (24, "đêm"),
 )
@@ -137,6 +154,7 @@ class LLMProvider(GeminiLLM):
         self._registry_url = config.get("registry_url", _REGISTRY_URL)
         self._robot_dir = config.get("robot_dir", _ROBOT_DIR)
         self._owm_key = config.get("owm_key", "")  # OpenWeatherMap (accurate)
+        self._gmaps_key = config.get("gmaps_key", "")  # Google Directions (traffic)
         self._registry = None          # cached registry.json
         self._tables = {}              # machine id -> cached rows
         self._mode = set()             # session_ids currently in robot mode
@@ -530,6 +548,62 @@ class LLMProvider(GeminiLLM):
             logger.bind(tag=TAG).error(f"weather error: {e}")
             return "Xin lỗi, hiện chưa lấy được thời tiết. Bạn thử lại sau nhé."
 
+    def _traffic_reply(self, text):
+        n = _norm(text)
+        m = _TRAFFIC_RE.search(n)
+        if not m:
+            return None
+        if not self._gmaps_key:
+            return "Tính năng chỉ đường chưa được bật. Cần thêm Google Maps API key."
+        origin = re.sub(r"^\s*di\s+", "", m.group(1)).strip()
+        dest = _DEST_TAIL.sub("", m.group(2)).strip(" ?.")
+        if not origin or not dest:
+            return "Bạn muốn đi từ đâu đến đâu ạ?"
+        o = _resolve_place(origin)
+        d = _resolve_place(dest)
+        try:
+            r = requests.get(
+                "https://maps.googleapis.com/maps/api/directions/json",
+                params={
+                    "origin": o + ", Vietnam",
+                    "destination": d + ", Vietnam",
+                    "departure_time": "now",
+                    "traffic_model": "best_guess",
+                    "language": "vi",
+                    "region": "vn",
+                    "key": self._gmaps_key,
+                },
+                timeout=8,
+            ).json()
+            st = r.get("status")
+            if st != "OK" or not r.get("routes"):
+                if st == "REQUEST_DENIED":
+                    logger.bind(tag=TAG).error(
+                        f"gmaps denied: {r.get('error_message')}"
+                    )
+                    return "Chưa dùng được chỉ đường (API key/Directions API chưa bật)."
+                return f"Xin lỗi, mình không tìm được đường từ {origin} đến {dest}."
+            leg = r["routes"][0]["legs"][0]
+            dist = leg["distance"]["text"]
+            dur = leg["duration"]["value"]
+            durt = leg.get("duration_in_traffic", {}).get("value", dur)
+            start = (leg.get("start_address", "") or origin).split(",")[0]
+            end = (leg.get("end_address", "") or dest).split(",")[0]
+            ratio = (durt / dur) if dur else 1.0
+            if ratio >= 1.5:
+                cond = "Đang kẹt xe khá nặng."
+            elif ratio >= 1.2:
+                cond = "Đường hơi đông xe."
+            else:
+                cond = "Đường khá thông thoáng."
+            return (
+                f"Từ {start} đến {end} khoảng {dist}, đi hết chừng "
+                f"{_dur_vi(durt)} theo tình hình giao thông hiện tại. {cond}"
+            )
+        except Exception as e:
+            logger.bind(tag=TAG).error(f"gmaps error: {e}")
+            return "Xin lỗi, hiện chưa lấy được thông tin giao thông."
+
     def _maybe_enter(self, session_id, text):
         n = _norm(text)
         if _EXIT.search(n):
@@ -548,7 +622,7 @@ class LLMProvider(GeminiLLM):
         if state == "in":
             yield from self._robot_answer(session_id, text)
             return
-        w = self._wake_reply(text) or self._time_reply(text) or self._weather_reply(text)
+        w = self._wake_reply(text) or self._traffic_reply(text) or self._time_reply(text) or self._weather_reply(text)
         if w is not None:
             yield w
             return
@@ -564,7 +638,7 @@ class LLMProvider(GeminiLLM):
             for chunk in self._robot_answer(session_id, text):
                 yield chunk, None
             return
-        w = self._wake_reply(text) or self._time_reply(text) or self._weather_reply(text)
+        w = self._wake_reply(text) or self._traffic_reply(text) or self._time_reply(text) or self._weather_reply(text)
         if w is not None:
             yield w, None
             return
