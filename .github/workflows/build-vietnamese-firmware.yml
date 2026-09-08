@@ -421,6 +421,14 @@ jobs:
           npm install -g "lv_font_conv@^1.5.3"
           curl -fsSL -o /tmp/NotoSans-Regular.ttf \
             https://raw.githubusercontent.com/googlefonts/noto-fonts/main/hinted/ttf/NotoSans/NotoSans-Regular.ttf
+          # Simplified-Chinese font (for the on-screen Chinese language mode) and
+          # the list of ~3500 common Hanzi to embed (only these, to stay small).
+          curl -fsSL -o /tmp/NotoSansSC.otf \
+            https://raw.githubusercontent.com/notofonts/noto-cjk/main/Sans/OTF/SimplifiedChinese/NotoSansCJKsc-Regular.otf
+          curl -fsSL -o /tmp/zh_common.txt \
+            https://raw.githubusercontent.com/ntvn2022/z-bee-duo/claude/esp32-s3-touch-screen-wwelt1/xiaozhi-ai/firmware/zh_common.txt
+          ZH_SYMBOLS="$(cat /tmp/zh_common.txt)"
+          echo "Loaded $(printf %s "$ZH_SYMBOLS" | wc -m) Chinese symbols; SC font $(wc -c < /tmp/NotoSansSC.otf) bytes"
 
           # Locate the font component's src dir that ships the basic fonts.
           SRC="$(dirname "$(find managed_components -name 'font_noto_sans_basic_16_4.c' | head -1)")"
@@ -441,15 +449,27 @@ jobs:
           for spec in 14:1 16:4 20:4 30:4; do
             size="${spec%:*}"; bpp="${spec#*:}"
             name="font_noto_sans_basic_${size}_${bpp}"
-            lv_font_conv --no-compress --no-prefilter --force-fast-kern-format \
-              --font /tmp/NotoSans-Regular.ttf --format lvgl --bpp "$bpp" --size "$size" \
-              -r "$VN" --lv-font-name "$name" -o "$SRC/${name}.c"
+            # This board's on-screen text font is font_noto_sans_basic_20_4 (see
+            # main/CMakeLists.txt), so merge the Chinese glyphs into ONLY that size
+            # (keeps the extra flash to ~0.6 MB). Other sizes stay Vietnamese-only.
+            if [ "$size" = "20" ]; then
+              lv_font_conv --no-compress --no-prefilter --force-fast-kern-format \
+                --font /tmp/NotoSans-Regular.ttf -r "$VN" \
+                --font /tmp/NotoSansSC.otf --symbols "$ZH_SYMBOLS" \
+                --format lvgl --bpp "$bpp" --size "$size" \
+                --lv-font-name "$name" -o "$SRC/${name}.c"
+            else
+              lv_font_conv --no-compress --no-prefilter --force-fast-kern-format \
+                --font /tmp/NotoSans-Regular.ttf --format lvgl --bpp "$bpp" --size "$size" \
+                -r "$VN" --lv-font-name "$name" -o "$SRC/${name}.c"
+            fi
             # A Vietnamese-complete size-16 font is well over 100 KB; basic-only
-            # was ~tens of KB. Guard against an empty/failed generation.
+            # was ~tens of KB. Guard against an empty/failed generation. Size 20
+            # now also carries ~3500 Hanzi, so it is multi-MB of source.
             bytes="$(wc -c < "$SRC/${name}.c")"
             echo "Regenerated $name (${bytes} bytes)"
             if [ "$size" = "20" ] && [ "$bytes" -lt 80000 ]; then
-              echo "ERROR: $name too small ($bytes) - Vietnamese range likely missing" >&2
+              echo "ERROR: $name too small ($bytes) - Vietnamese/Chinese range likely missing" >&2
               exit 1
             fi
           done
