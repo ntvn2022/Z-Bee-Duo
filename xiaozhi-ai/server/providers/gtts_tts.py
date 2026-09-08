@@ -21,6 +21,22 @@ from core.providers.tts.base import TTSProviderBase
 TAG = __name__
 logger = setup_logging()
 
+# Shared with the LLM bridge: the language chosen on the settings screen is
+# written here (vi / en / zh). We read it each call so speech follows the UI.
+_LANG_FILE = "/opt/xiaozhi-esp32-server/data/robot/lang.txt"
+_GTTS_LANG = {"vi": "vi", "en": "en", "zh": "zh-CN"}
+
+
+def _selected_lang(default="vi"):
+    try:
+        with open(_LANG_FILE, encoding="utf-8") as f:
+            c = f.read().strip().lower()
+            if c in _GTTS_LANG:
+                return _GTTS_LANG[c]
+    except Exception:
+        pass
+    return _GTTS_LANG.get(default, "vi")
+
 
 class TTSProvider(TTSProviderBase):
     def __init__(self, config, delete_audio_file):
@@ -41,8 +57,9 @@ class TTSProvider(TTSProviderBase):
 
         mp3 = self.generate_filename(".mp3")
         wav = mp3[:-4] + ".wav"
+        lang = _selected_lang(self.lang)  # follow the language chosen in settings
         try:
-            gTTS(text=text, lang=self.lang, tld=self.tld).save(mp3)
+            gTTS(text=text, lang=lang, tld=self.tld).save(mp3)
             seg = AudioSegment.from_file(mp3, format="mp3")
             # Make speech noticeably louder for small speakers: compress the
             # dynamic range (lift quiet parts) then peak-normalize to full scale.

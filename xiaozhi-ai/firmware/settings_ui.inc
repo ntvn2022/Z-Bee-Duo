@@ -2,7 +2,9 @@
 // 3-tap bottom-right corner -> password 12345 -> multi-page settings.
 //   Page 0: Screen off timer 0..600s (0 = never). NVS "ruanqinghe"/"scr_off_s".
 //   Page 1: Volume 0..100%. Applied to the ES8311 codec + Settings "audio".
-// Navigate with Back / Next. Uses only lv_obj + lv_label so it always compiles.
+//   Page 2: Language (English / Tieng Viet / Tieng Trung). Sends "setlang xx"
+//           to the server (WakeWordInvoke) so it listens/replies in that language.
+// Navigate with Back / Next (wraps 0->1->2). Uses only lv_obj + lv_label.
 {
     // Defined in the board .cc. While the overlay is open the raw TouchTask must
     // not toggle listen/talk (taps go to these LVGL widgets instead).
@@ -15,11 +17,16 @@
         lv_obj_t* pdisp;
         char buf[8];
         int blen;
-        int page;          // 0 = screen-off, 1 = volume
+        int page;          // 0 = screen-off, 1 = volume, 2 = language
         lv_obj_t* title;
         lv_obj_t* track;
         lv_obj_t* fill;
         lv_obj_t* val;
+        lv_obj_t* minus;
+        lv_obj_t* plus;
+        lv_obj_t* lang_panel;
+        lv_obj_t* lang_btn[3];
+        int lang_sel;      // 0 = en, 1 = vi, 2 = zh
         int scr_value;     // screen-off seconds (0..600)
         int vol_value;     // volume percent (0..100)
         int track_w;
@@ -30,14 +37,16 @@
     g->page = 0;
     g->scr_value = 5;
     g->vol_value = 70;
+    g->lang_sel = 1;       // default Vietnamese
     g->track_w = 200;
 
-    // read current screen-off value from NVS
+    // read current screen-off value + language from NVS
     {
         nvs_handle_t h;
         if (nvs_open("ruanqinghe", NVS_READONLY, &h) == ESP_OK) {
             int32_t x;
             if (nvs_get_i32(h, "scr_off_s", &x) == ESP_OK) g->scr_value = (int)x;
+            if (nvs_get_i32(h, "lang_sel", &x) == ESP_OK) g->lang_sel = (int)x;
             nvs_close(h);
         }
     }
@@ -163,22 +172,89 @@
     lv_obj_align(g->fill, LV_ALIGN_LEFT_MID, 0, 0);
     lv_obj_remove_flag(g->fill, LV_OBJ_FLAG_CLICKABLE);
 
-    // Refresh the bar + label from the current page's value.  (Repeated inline in
-    // handlers because LVGL event callbacks cannot capture.)
-    auto refresh = [](SUI* u) {
-        int mx = u->page ? 100 : 600;
-        int v = u->page ? u->vol_value : u->scr_value;
-        lv_obj_set_size(u->fill, u->track_w * v / mx, 26);
-        if (u->page) lv_label_set_text_fmt(u->val, "%d %%", v);
-        else if (v == 0) lv_label_set_text(u->val, "Never off");
-        else lv_label_set_text_fmt(u->val, "%d sec", v);
-        lv_label_set_text(u->title, u->page ? "Volume" : "Screen off (sec)");
-    };
-    refresh(g);
+    // ---------- language panel (page 2) ----------
+    g->lang_panel = lv_obj_create(g->cfg);
+    lv_obj_set_size(g->lang_panel, lv_pct(100), 150);
+    lv_obj_align(g->lang_panel, LV_ALIGN_TOP_MID, 0, 28);
+    lv_obj_set_style_pad_all(g->lang_panel, 0, 0);
+    lv_obj_set_style_border_width(g->lang_panel, 0, 0);
+    lv_obj_set_style_bg_opa(g->lang_panel, LV_OPA_TRANSP, 0);
+    lv_obj_remove_flag(g->lang_panel, LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_add_flag(g->lang_panel, LV_OBJ_FLAG_HIDDEN);
+    {
+        static const char* lang_lbl[3] = {"English", "Tieng Viet", "Tieng Trung"};
+        for (int i = 0; i < 3; i++) {
+            lv_obj_t* lb = lv_obj_create(g->lang_panel);
+            lv_obj_set_size(lb, 180, 40);
+            lv_obj_align(lb, LV_ALIGN_TOP_MID, 0, i * 48);
+            lv_obj_set_style_pad_all(lb, 0, 0);
+            style_btn(lb);
+            lv_obj_add_flag(lb, LV_OBJ_FLAG_CLICKABLE);
+            lv_obj_set_user_data(lb, (void*)(intptr_t)i);
+            lv_obj_t* ll = lv_label_create(lb);
+            lv_label_set_text(ll, lang_lbl[i]);
+            lv_obj_center(ll);
+            g->lang_btn[i] = lb;
+            lv_obj_add_event_cb(lb, [](lv_event_t* e) {
+                SUI* u = (SUI*)lv_event_get_user_data(e);
+                lv_obj_t* t = (lv_obj_t*)lv_event_get_target(e);
+                int idx = (int)(intptr_t)lv_obj_get_user_data(t);
+                u->lang_sel = idx;
+                // persist selection so the highlight survives a reboot
+                nvs_handle_t h;
+                if (nvs_open("ruanqinghe", NVS_READWRITE, &h) == ESP_OK) {
+                    nvs_set_i32(h, "lang_sel", idx);
+                    nvs_commit(h);
+                    nvs_close(h);
+                }
+                // tell the server which language to listen/reply in
+                const char* code[3] = {"en", "vi", "zh"};
+                Application::GetInstance().WakeWordInvoke(
+                    std::string("setlang ") + code[idx]);
+                // refresh highlight
+                for (int k = 0; k < 3; k++) {
+                    lv_obj_set_style_bg_color(u->lang_btn[k],
+                        lv_color_hex(k == u->lang_sel ? 0x1976D2 : 0xF0F0F0), 0);
+                }
+            }, LV_EVENT_CLICKED, g);
+        }
+    }
 
-    // tap / drag on the track to set the value
+    // Centralized page render. A captureless lambda assigned to a static pointer
+    // can be called from the event callbacks below (which cannot capture).
+    static void (*apply)(SUI*) = [](SUI* u) {
+        bool lang = (u->page == 2);
+        if (lang) {
+            lv_obj_add_flag(u->track, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_add_flag(u->minus, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_add_flag(u->plus, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_add_flag(u->val, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_remove_flag(u->lang_panel, LV_OBJ_FLAG_HIDDEN);
+            lv_label_set_text(u->title, "Language");
+            for (int k = 0; k < 3; k++) {
+                lv_obj_set_style_bg_color(u->lang_btn[k],
+                    lv_color_hex(k == u->lang_sel ? 0x1976D2 : 0xF0F0F0), 0);
+            }
+        } else {
+            lv_obj_remove_flag(u->track, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_remove_flag(u->minus, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_remove_flag(u->plus, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_remove_flag(u->val, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_add_flag(u->lang_panel, LV_OBJ_FLAG_HIDDEN);
+            int mx = u->page ? 100 : 600;
+            int v = u->page ? u->vol_value : u->scr_value;
+            lv_obj_set_size(u->fill, u->track_w * v / mx, 26);
+            if (u->page) lv_label_set_text_fmt(u->val, "%d %%", v);
+            else if (v == 0) lv_label_set_text(u->val, "Never off");
+            else lv_label_set_text_fmt(u->val, "%d sec", v);
+            lv_label_set_text(u->title, u->page ? "Volume" : "Screen off (sec)");
+        }
+    };
+
+    // tap / drag on the track to set the value (pages 0 and 1 only)
     lv_obj_add_event_cb(g->track, [](lv_event_t* e) {
         SUI* u = (SUI*)lv_event_get_user_data(e);
+        if (u->page == 2) return;
         lv_indev_t* indev = lv_indev_active();
         if (!indev) return;
         lv_point_t p; lv_indev_get_point(indev, &p);
@@ -194,21 +270,19 @@
         } else {
             u->scr_value = v;
         }
-        lv_obj_set_size(u->fill, u->track_w * v / mx, 26);
-        if (u->page) lv_label_set_text_fmt(u->val, "%d %%", v);
-        else if (v == 0) lv_label_set_text(u->val, "Never off");
-        else lv_label_set_text_fmt(u->val, "%d sec", v);
+        apply(u);
     }, LV_EVENT_PRESSING, g);
 
     // - / + buttons (step 10s for screen, 5% for volume)
-    lv_obj_t* minus = lv_obj_create(g->cfg);
-    lv_obj_set_size(minus, 48, 38);
-    lv_obj_align(minus, LV_ALIGN_CENTER, -140, -8);
-    style_btn(minus);
-    lv_obj_add_flag(minus, LV_OBJ_FLAG_CLICKABLE);
-    lv_obj_t* ml = lv_label_create(minus); lv_label_set_text(ml, "-"); lv_obj_center(ml);
-    lv_obj_add_event_cb(minus, [](lv_event_t* e) {
+    g->minus = lv_obj_create(g->cfg);
+    lv_obj_set_size(g->minus, 48, 38);
+    lv_obj_align(g->minus, LV_ALIGN_CENTER, -140, -8);
+    style_btn(g->minus);
+    lv_obj_add_flag(g->minus, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_t* ml = lv_label_create(g->minus); lv_label_set_text(ml, "-"); lv_obj_center(ml);
+    lv_obj_add_event_cb(g->minus, [](lv_event_t* e) {
         SUI* u = (SUI*)lv_event_get_user_data(e);
+        if (u->page == 2) return;
         if (u->page) {
             u->vol_value -= 5; if (u->vol_value < 0) u->vol_value = 0;
             auto c = Board::GetInstance().GetAudioCodec();
@@ -216,22 +290,18 @@
         } else {
             u->scr_value -= 10; if (u->scr_value < 0) u->scr_value = 0;
         }
-        int mx = u->page ? 100 : 600;
-        int v = u->page ? u->vol_value : u->scr_value;
-        lv_obj_set_size(u->fill, u->track_w * v / mx, 26);
-        if (u->page) lv_label_set_text_fmt(u->val, "%d %%", v);
-        else if (v == 0) lv_label_set_text(u->val, "Never off");
-        else lv_label_set_text_fmt(u->val, "%d sec", v);
+        apply(u);
     }, LV_EVENT_CLICKED, g);
 
-    lv_obj_t* plus = lv_obj_create(g->cfg);
-    lv_obj_set_size(plus, 48, 38);
-    lv_obj_align(plus, LV_ALIGN_CENTER, 140, -8);
-    style_btn(plus);
-    lv_obj_add_flag(plus, LV_OBJ_FLAG_CLICKABLE);
-    lv_obj_t* pl = lv_label_create(plus); lv_label_set_text(pl, "+"); lv_obj_center(pl);
-    lv_obj_add_event_cb(plus, [](lv_event_t* e) {
+    g->plus = lv_obj_create(g->cfg);
+    lv_obj_set_size(g->plus, 48, 38);
+    lv_obj_align(g->plus, LV_ALIGN_CENTER, 140, -8);
+    style_btn(g->plus);
+    lv_obj_add_flag(g->plus, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_t* pl = lv_label_create(g->plus); lv_label_set_text(pl, "+"); lv_obj_center(pl);
+    lv_obj_add_event_cb(g->plus, [](lv_event_t* e) {
         SUI* u = (SUI*)lv_event_get_user_data(e);
+        if (u->page == 2) return;
         if (u->page) {
             u->vol_value += 5; if (u->vol_value > 100) u->vol_value = 100;
             auto c = Board::GetInstance().GetAudioCodec();
@@ -239,15 +309,10 @@
         } else {
             u->scr_value += 10; if (u->scr_value > 600) u->scr_value = 600;
         }
-        int mx = u->page ? 100 : 600;
-        int v = u->page ? u->vol_value : u->scr_value;
-        lv_obj_set_size(u->fill, u->track_w * v / mx, 26);
-        if (u->page) lv_label_set_text_fmt(u->val, "%d %%", v);
-        else if (v == 0) lv_label_set_text(u->val, "Never off");
-        else lv_label_set_text_fmt(u->val, "%d sec", v);
+        apply(u);
     }, LV_EVENT_CLICKED, g);
 
-    // Back / Next to flip pages
+    // Back / Next to flip pages (wraps 0 -> 1 -> 2 -> 0)
     lv_obj_t* back = lv_obj_create(g->cfg);
     lv_obj_set_size(back, 88, 34);
     lv_obj_align(back, LV_ALIGN_BOTTOM_LEFT, 12, -46);
@@ -256,14 +321,8 @@
     lv_obj_t* bkl = lv_label_create(back); lv_label_set_text(bkl, "< Back"); lv_obj_center(bkl);
     lv_obj_add_event_cb(back, [](lv_event_t* e) {
         SUI* u = (SUI*)lv_event_get_user_data(e);
-        u->page = u->page ? 0 : 1;
-        int mx = u->page ? 100 : 600;
-        int v = u->page ? u->vol_value : u->scr_value;
-        lv_obj_set_size(u->fill, u->track_w * v / mx, 26);
-        if (u->page) lv_label_set_text_fmt(u->val, "%d %%", v);
-        else if (v == 0) lv_label_set_text(u->val, "Never off");
-        else lv_label_set_text_fmt(u->val, "%d sec", v);
-        lv_label_set_text(u->title, u->page ? "Volume" : "Screen off (sec)");
+        u->page = (u->page + 2) % 3;
+        apply(u);
     }, LV_EVENT_CLICKED, g);
 
     lv_obj_t* next = lv_obj_create(g->cfg);
@@ -274,14 +333,8 @@
     lv_obj_t* nxl = lv_label_create(next); lv_label_set_text(nxl, "Next >"); lv_obj_center(nxl);
     lv_obj_add_event_cb(next, [](lv_event_t* e) {
         SUI* u = (SUI*)lv_event_get_user_data(e);
-        u->page = u->page ? 0 : 1;
-        int mx = u->page ? 100 : 600;
-        int v = u->page ? u->vol_value : u->scr_value;
-        lv_obj_set_size(u->fill, u->track_w * v / mx, 26);
-        if (u->page) lv_label_set_text_fmt(u->val, "%d %%", v);
-        else if (v == 0) lv_label_set_text(u->val, "Never off");
-        else lv_label_set_text_fmt(u->val, "%d sec", v);
-        lv_label_set_text(u->title, u->page ? "Volume" : "Screen off (sec)");
+        u->page = (u->page + 1) % 3;
+        apply(u);
     }, LV_EVENT_CLICKED, g);
 
     // Save / Close
@@ -296,6 +349,7 @@
         nvs_handle_t h;
         if (nvs_open("ruanqinghe", NVS_READWRITE, &h) == ESP_OK) {
             nvs_set_i32(h, "scr_off_s", u->scr_value);
+            nvs_set_i32(h, "lang_sel", u->lang_sel);
             nvs_commit(h);
             nvs_close(h);
         }
@@ -321,6 +375,8 @@
         g_settings_open = false;
     }, LV_EVENT_CLICKED, g);
 
+    apply(g);  // initial page 0 render
+
     // ---------- 3-tap bottom-right corner to open ----------
     lv_obj_t* corner = lv_obj_create(screen);
     lv_obj_set_size(corner, 56, 56);
@@ -339,6 +395,7 @@
             cnt = 0;
             u->blen = 0; u->buf[0] = 0;
             u->page = 0;
+            apply(u);
             lv_label_set_text(u->pdisp, "");
             lv_obj_remove_flag(u->pass, LV_OBJ_FLAG_HIDDEN);
             lv_obj_add_flag(u->cfg, LV_OBJ_FLAG_HIDDEN);
