@@ -95,8 +95,13 @@ jobs:
 
       - name: Add on-device settings screen (3-tap, password, screen-off slider)
         run: |
-          curl -fsSL https://raw.githubusercontent.com/ntvn2022/z-bee-duo/claude/esp32-s3-touch-screen-wwelt1/xiaozhi-ai/firmware/settings_ui.inc \
-            -o xz/main/display/settings_ui.inc
+          BASE=https://raw.githubusercontent.com/ntvn2022/z-bee-duo/claude/esp32-s3-touch-screen-wwelt1/xiaozhi-ai/firmware
+          curl -fsSL "$BASE/settings_ui.inc" -o xz/main/display/settings_ui.inc
+          # Topstar branding images (pre-generated LVGL RGB565) + the snippet that
+          # places them on the main screen.
+          curl -fsSL "$BASE/branding/topstar_logo.inc" -o xz/main/display/topstar_logo.inc
+          curl -fsSL "$BASE/branding/robot_img.inc"    -o xz/main/display/robot_img.inc
+          curl -fsSL "$BASE/branding/branding_ui.inc"  -o xz/main/display/branding_ui.inc
           python3 - <<'PY'
           import pathlib
           p = pathlib.Path("xz/main/display/lcd_display.cc")
@@ -113,13 +118,19 @@ jobs:
           if '#include "application.h"' not in s:
               s = s.replace('#include "audio/audio_codec.h"',
                             '#include "audio/audio_codec.h"\n#include "application.h"', 1)
+          # Branding image descriptors, defined at FILE scope so their storage
+          # outlives SetupUI (a function-local const dsc would dangle).
+          if 'topstar_logo.inc' not in s:
+              s = s.replace('#include "application.h"',
+                            '#include "application.h"\n#include "topstar_logo.inc"\n#include "robot_img.inc"', 1)
           # Unique anchor: the answer_label align line exists only in SetupUI
           # (the plain set_text appears twice, so we can't anchor on that).
           anchor = "lv_obj_align(answer_label_, LV_ALIGN_TOP_MID, 0, text_font->line_height * 2);"
           assert s.count(anchor) == 1
-          s = s.replace(anchor, anchor + '\n#include "settings_ui.inc"')
+          s = s.replace(anchor,
+                        anchor + '\n#include "settings_ui.inc"\n#include "branding_ui.inc"')
           p.write_text(s)
-          print("Patched: settings screen included into SetupUI")
+          print("Patched: settings screen + Topstar branding included into SetupUI")
           PY
 
       - name: Show weekday + date + time (Vietnamese) in the status bar
