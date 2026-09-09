@@ -1055,6 +1055,12 @@ class LLMProvider(GeminiLLM):
         return [{"role": "system", "content": sys_prompt}] + rebuilt
 
     def _maybe_enter(self, session_id, text):
+        # The robot-error lookup is a Vietnamese-only feature (Vietnamese tables
+        # and trigger words). In English/Chinese mode a word like "robot" must go
+        # to normal chat and be answered in that language, not enter this mode.
+        if self._get_lang() != "vi":
+            self._mode.discard(session_id)
+            return None
         n = _norm(text)
         if _EXIT.search(n):
             self._mode.discard(session_id)
