@@ -174,8 +174,8 @@
 
     // ---------- language panel (page 2) ----------
     g->lang_panel = lv_obj_create(g->cfg);
-    lv_obj_set_size(g->lang_panel, lv_pct(100), 150);
-    lv_obj_align(g->lang_panel, LV_ALIGN_TOP_MID, 0, 28);
+    lv_obj_set_size(g->lang_panel, lv_pct(100), 128);
+    lv_obj_align(g->lang_panel, LV_ALIGN_TOP_MID, 0, 26);
     lv_obj_set_style_pad_all(g->lang_panel, 0, 0);
     lv_obj_set_style_border_width(g->lang_panel, 0, 0);
     lv_obj_set_style_bg_opa(g->lang_panel, LV_OPA_TRANSP, 0);
@@ -185,8 +185,8 @@
         static const char* lang_lbl[3] = {"English", "Tieng Viet", "Tieng Trung"};
         for (int i = 0; i < 3; i++) {
             lv_obj_t* lb = lv_obj_create(g->lang_panel);
-            lv_obj_set_size(lb, 180, 40);
-            lv_obj_align(lb, LV_ALIGN_TOP_MID, 0, i * 48);
+            lv_obj_set_size(lb, 180, 34);
+            lv_obj_align(lb, LV_ALIGN_TOP_MID, 0, i * 40);
             lv_obj_set_style_pad_all(lb, 0, 0);
             style_btn(lb);
             lv_obj_add_flag(lb, LV_OBJ_FLAG_CLICKABLE);
