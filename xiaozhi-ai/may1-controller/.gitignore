@@ -1,0 +1,6 @@
+# Generated at build time from CI inputs — must never be committed (secrets).
+main/may1_secrets.h
+# ESP-IDF build output
+build/
+sdkconfig
+sdkconfig.old

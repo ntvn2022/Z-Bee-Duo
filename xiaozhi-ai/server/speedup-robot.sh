@@ -57,6 +57,10 @@ for m in reg:
         print(f"  (thieu file local cho {mid}: {rel})")
 PY
 
+echo "==> Cai paho-mqtt (dieu khien 'may 1' qua MQTT) ..."
+docker exec "$C" pip install -q -U paho-mqtt >/dev/null 2>&1 || \
+  docker exec "$C" pip3 install -q -U paho-mqtt >/dev/null 2>&1 || true
+
 echo "==> Nap gtts_tts.py (TTS doc theo ngon ngu da chon: vi/en/zh) ..."
 if [ -f "$GTTS" ]; then
   docker exec "$C" pip install -q -U gTTS >/dev/null 2>&1 || \

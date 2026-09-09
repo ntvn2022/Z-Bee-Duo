@@ -24,6 +24,7 @@ import datetime as _dt
 import json
 import os
 import re
+import threading
 import unicodedata
 
 import requests
@@ -237,6 +238,89 @@ _TR = {
 }
 
 
+# ---- "Máy 1": voice control of the 3-output ESP32 via MQTT --------------------
+# Enter the control loop with "lệnh máy 1"; leave it with "kết thúc máy 1".
+_M1_ENTER = re.compile(r"(lenh may 1|dieu khien may 1|vao may 1|control machine 1|机器1|控制机器1|一号机)")
+_M1_EXIT = re.compile(r"(ket thuc may 1|thoat may 1|dung may 1|exit machine 1|结束机器1|退出机器1)")
+_M1_ON = re.compile(r"\b(bat|mo|on|open|turn on|开|打开|开启)\b")
+_M1_OFF = re.compile(r"\b(tat|dong|off|close|turn off|关|关闭)\b")
+_M1_ALL = re.compile(r"(tat ca|het|toan bo|all|所有|全部)")
+_M1_STATUS = re.compile(r"(trang thai|tinh trang|the nao|bao lau|kiem tra|status|state|how long|状态|多久|情况)")
+_M1_SCHED = re.compile(r"(hen gio|dat lich|lich|schedule|定时|计划)")
+_M1_CLEAR = re.compile(r"(huy|bo|xoa|clear|cancel|取消|清除)")
+# output index from a number word/digit
+_NUMWORD = {"mot": 1, "1": 1, "hai": 2, "2": 2, "ba": 3, "3": 3,
+            "one": 1, "two": 2, "three": 3, "一": 1, "二": 2, "两": 2, "三": 3}
+
+
+def _m1_output_index(n):
+    """Return 1..3 if the text names an output, else 0."""
+    m = re.search(r"(?:dau ra|output|so|kenh|channel|out|号|路)\s*([0-9])", n)
+    if m:
+        v = int(m.group(1))
+        return v if 1 <= v <= 3 else 0
+    for w, v in _NUMWORD.items():
+        if re.search(r"\b" + re.escape(w) + r"\b", n) or (w in "一二两三" and w in n):
+            return v
+    return 0
+
+
+def _m1_time(seg):
+    """Parse an 'HH[:.h ]MM' time out of a text fragment -> 'HH:MM' or None."""
+    m = re.search(r"(\d{1,2})\s*(?:gio|h|:|点|時|时)\s*(\d{1,2})?", seg)
+    if not m:
+        m = re.search(r"\b(\d{1,2})\b", seg)
+        if not m:
+            return None
+        h, mn = int(m.group(1)), 0
+    else:
+        h, mn = int(m.group(1)), int(m.group(2) or 0)
+    if 0 <= h <= 23 and 0 <= mn <= 59:
+        return f"{h:02d}:{mn:02d}"
+    return None
+
+
+# Localized wording for the máy-1 replies.
+_M1 = {
+    "vi": {"enter": "Đã vào điều khiển máy 1. Bạn muốn bật, tắt, xem trạng thái hay hẹn giờ đầu ra nào?",
+           "exit": "Đã thoát điều khiển máy 1.",
+           "on": "Đã bật đầu ra {n}.", "off": "Đã tắt đầu ra {n}.",
+           "all_on": "Đã bật tất cả đầu ra.", "all_off": "Đã tắt tất cả đầu ra.",
+           "sched": "Đã hẹn đầu ra {n}{on}{off}.",
+           "sched_on": " bật lúc {t}", "sched_off": " tắt lúc {t}",
+           "cleared": "Đã hủy hẹn giờ đầu ra {n}.",
+           "offline": "Máy 1 chưa kết nối. Kiểm tra nguồn và Wi-Fi của máy 1 nhé.",
+           "ask": "Bạn muốn thao tác đầu ra nào (1, 2 hay 3)?",
+           "st_on": "Đầu ra {n} đang bật, được {d}", "st_off": "Đầu ra {n} đang tắt, được {d}",
+           "st_sched": ", hẹn bật {on} tắt {off}", "and": " và ",
+           "sec": "{s} giây", "min": "{m} phút", "hour": "{h} giờ {m} phút", "hour0": "{h} giờ"},
+    "en": {"enter": "Machine 1 control ready. Turn on, turn off, check status, or schedule which output?",
+           "exit": "Exited machine 1 control.",
+           "on": "Output {n} turned on.", "off": "Output {n} turned off.",
+           "all_on": "All outputs turned on.", "all_off": "All outputs turned off.",
+           "sched": "Scheduled output {n}{on}{off}.",
+           "sched_on": " on at {t}", "sched_off": " off at {t}",
+           "cleared": "Cleared the schedule for output {n}.",
+           "offline": "Machine 1 is not connected. Check its power and Wi-Fi.",
+           "ask": "Which output (1, 2 or 3)?",
+           "st_on": "Output {n} is on, for {d}", "st_off": "Output {n} is off, for {d}",
+           "st_sched": ", scheduled on {on} off {off}", "and": " and ",
+           "sec": "{s} sec", "min": "{m} min", "hour": "{h} h {m} min", "hour0": "{h} h"},
+    "zh": {"enter": "已进入机器1控制。要开、关、查看状态还是定时哪个输出？",
+           "exit": "已退出机器1控制。",
+           "on": "已打开输出{n}。", "off": "已关闭输出{n}。",
+           "all_on": "已打开所有输出。", "all_off": "已关闭所有输出。",
+           "sched": "已为输出{n}设定{on}{off}。",
+           "sched_on": "{t}开", "sched_off": " {t}关",
+           "cleared": "已取消输出{n}的定时。",
+           "offline": "机器1未连接，请检查它的电源和Wi-Fi。",
+           "ask": "要操作哪个输出（1、2还是3）？",
+           "st_on": "输出{n}开启中，已{d}", "st_off": "输出{n}关闭中，已{d}",
+           "st_sched": "，定时{on}开{off}关", "and": "；",
+           "sec": "{s}秒", "min": "{m}分钟", "hour": "{h}小时{m}分", "hour0": "{h}小时"},
+}
+
+
 def _norm(s):
     s = (s or "").lower()
     s = unicodedata.normalize("NFD", s)
@@ -264,6 +348,63 @@ class LLMProvider(GeminiLLM):
         self._tables = {}              # machine id -> cached rows
         self._mode = set()             # session_ids currently in robot mode
         self._lang_file = os.path.join(self._robot_dir, "lang.txt")
+        # ---- Máy 1 (MQTT) ----
+        self._mqtt_host = config.get("mqtt_host", "")
+        self._mqtt_port = int(config.get("mqtt_port", 1883) or 1883)
+        self._mqtt_user = config.get("mqtt_user", "")
+        self._mqtt_pass = config.get("mqtt_pass", "")
+        self._m1 = set()               # session_ids currently in máy-1 control
+        self._m1_status = None         # last parsed may1/status payload
+        self._m1_online = False        # from may1/online (LWT)
+        self._mqtt = None
+        self._mqtt_lock = threading.Lock()
+        if self._mqtt_host:
+            self._mqtt_connect()
+
+    # ---- MQTT (Máy 1) ----
+    def _mqtt_connect(self):
+        try:
+            import paho.mqtt.client as mqtt
+        except Exception as e:
+            logger.bind(tag=TAG).warning(f"paho-mqtt not installed, máy 1 disabled: {e}")
+            return
+        try:
+            cli = mqtt.Client()
+            if self._mqtt_user:
+                cli.username_pw_set(self._mqtt_user, self._mqtt_pass)
+
+            def on_connect(c, u, flags, rc):
+                c.subscribe("may1/status", 1)
+                c.subscribe("may1/online", 1)
+
+            def on_message(c, u, msg):
+                try:
+                    if msg.topic == "may1/online":
+                        self._m1_online = (msg.payload.decode().strip() == "1")
+                    elif msg.topic == "may1/status":
+                        self._m1_status = json.loads(msg.payload.decode() or "{}")
+                except Exception as ex:
+                    logger.bind(tag=TAG).error(f"mqtt msg err: {ex}")
+
+            cli.on_connect = on_connect
+            cli.on_message = on_message
+            cli.connect_async(self._mqtt_host, self._mqtt_port, keepalive=30)
+            cli.loop_start()
+            self._mqtt = cli
+            logger.bind(tag=TAG).info(
+                f"máy 1 MQTT connecting to {self._mqtt_host}:{self._mqtt_port}")
+        except Exception as e:
+            logger.bind(tag=TAG).error(f"mqtt connect failed: {e}")
+
+    def _m1_publish(self, payload):
+        if not self._mqtt:
+            return False
+        try:
+            self._mqtt.publish("may1/cmd", json.dumps(payload), qos=1)
+            return True
+        except Exception as e:
+            logger.bind(tag=TAG).error(f"mqtt publish failed: {e}")
+            return False
 
     # ---- language state (shared with the TTS provider via a small file) ----
     def _get_lang(self):
@@ -781,6 +922,101 @@ class LLMProvider(GeminiLLM):
             logger.bind(tag=TAG).error(f"gmaps error: {e}")
             return tr["nf"] + "."
 
+    # ---- Máy 1 control ----
+    def _m1_dur(self, sec, lang):
+        w = _M1[lang]
+        sec = int(sec or 0)
+        if sec < 60:
+            return w["sec"].format(s=sec)
+        m = sec // 60
+        if m < 60:
+            return w["min"].format(m=m)
+        h, mm = divmod(m, 60)
+        return w["hour"].format(h=h, m=mm) if mm else w["hour0"].format(h=h)
+
+    def _m1_status_line(self, lang, only=None):
+        w = _M1[lang]
+        st = self._m1_status or {}
+        outs = st.get("outs") or []
+        if not outs:
+            return w["offline"]
+        lines = []
+        for i, o in enumerate(outs[:3], start=1):
+            if only and i != only:
+                continue
+            d = self._m1_dur(o.get("since_s", 0), lang)
+            base = (w["st_on"] if o.get("on") else w["st_off"]).format(n=i, d=d)
+            on_t, off_t = o.get("on_time", ""), o.get("off_time", "")
+            if on_t or off_t:
+                base += w["st_sched"].format(on=on_t or "--:--", off=off_t or "--:--")
+            lines.append(base)
+        return (w["and"].join(lines) + ".") if lines else w["ask"]
+
+    def _m1_reply(self, session_id, text):
+        """Handle one utterance while in máy-1 control mode."""
+        n = _norm(text)
+        lang = self._get_lang()
+        w = _M1[lang]
+        if not self._mqtt:
+            return w["offline"]
+        idx = _m1_output_index(n)
+
+        # schedule: "hen gio dau ra 1 bat 18 gio tat 22 gio"
+        if _M1_SCHED.search(n):
+            if _M1_CLEAR.search(n):
+                if not idx:
+                    return w["ask"]
+                self._m1_publish({"cmd": "clear_schedule", "out": idx})
+                return w["cleared"].format(n=idx)
+            if not idx:
+                return w["ask"]
+            on_seg = re.split(r"\btat\b|\boff\b|关", n)[0]
+            on_part = on_seg.split("bat", 1)[1] if "bat" in on_seg else (
+                on_seg.split("on", 1)[1] if "on" in on_seg else "")
+            off_part = ""
+            m_off = re.split(r"\btat\b|\boff\b|关", n)
+            if len(m_off) > 1:
+                off_part = m_off[1]
+            on_t = _m1_time(on_part) if on_part else None
+            off_t = _m1_time(off_part) if off_part else None
+            payload = {"cmd": "schedule", "out": idx}
+            if on_t:
+                payload["on"] = on_t
+            if off_t:
+                payload["off"] = off_t
+            if "on" not in payload and "off" not in payload:
+                return w["ask"]
+            self._m1_publish(payload)
+            return w["sched"].format(
+                n=idx,
+                on=(w["sched_on"].format(t=on_t) if on_t else ""),
+                off=(w["sched_off"].format(t=off_t) if off_t else ""))
+
+        # status query (checked before on/off: a status question like "đang bật
+        # bao lâu" contains the word "bật", which must not trigger a switch).
+        if _M1_STATUS.search(n):
+            if not self._m1_online and not self._m1_status:
+                return w["offline"]
+            return self._m1_status_line(lang, only=idx or None)
+
+        # on / off (single or all). Remove the "all" phrase first so that
+        # "tắt tất cả" (contains "tat" twice) doesn't confuse on/off detection.
+        all_flag = bool(_M1_ALL.search(n))
+        n2 = _M1_ALL.sub(" ", n)
+        want_on = bool(_M1_ON.search(n2))
+        want_off = bool(_M1_OFF.search(n2))
+        if want_on or want_off:
+            on = want_on and not want_off
+            if all_flag:
+                self._m1_publish({"cmd": "set_all", "on": on})
+                return w["all_on"] if on else w["all_off"]
+            if not idx:
+                return w["ask"]
+            self._m1_publish({"cmd": "set", "out": idx, "on": on})
+            return (w["on"] if on else w["off"]).format(n=idx)
+
+        return w["ask"]
+
     def _maybe_setlang(self, text):
         """Return a confirmation string if the user (or the settings screen)
         asked to change language, else None."""
@@ -815,11 +1051,31 @@ class LLMProvider(GeminiLLM):
             self._mode.add(session_id)
         return "in" if session_id in self._mode else None
 
+    def _maybe_enter_m1(self, session_id, text):
+        n = _norm(text)
+        if _M1_EXIT.search(n):
+            self._m1.discard(session_id)
+            return "exit"
+        if session_id not in self._m1 and _M1_ENTER.search(n):
+            self._m1.add(session_id)
+            return "enter"
+        return "in" if session_id in self._m1 else None
+
     def response(self, session_id, dialogue, **kwargs):
         text = self._last_user(dialogue)
         sl = self._maybe_setlang(text)
         if sl is not None:
             yield sl
+            return
+        m1 = self._maybe_enter_m1(session_id, text)
+        if m1 == "exit":
+            yield _M1[self._get_lang()]["exit"]
+            return
+        if m1 == "enter":
+            yield _M1[self._get_lang()]["enter"]
+            return
+        if m1 == "in":
+            yield self._m1_reply(session_id, text)
             return
         state = self._maybe_enter(session_id, text)
         if state == "exit":
@@ -839,6 +1095,16 @@ class LLMProvider(GeminiLLM):
         sl = self._maybe_setlang(text)
         if sl is not None:
             yield sl, None
+            return
+        m1 = self._maybe_enter_m1(session_id, text)
+        if m1 == "exit":
+            yield _M1[self._get_lang()]["exit"], None
+            return
+        if m1 == "enter":
+            yield _M1[self._get_lang()]["enter"], None
+            return
+        if m1 == "in":
+            yield self._m1_reply(session_id, text), None
             return
         state = self._maybe_enter(session_id, text)
         if state == "exit":
