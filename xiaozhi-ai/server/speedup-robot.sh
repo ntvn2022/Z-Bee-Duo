@@ -20,6 +20,7 @@ ROOT="$(cd "$HERE/../.." && pwd)"         # repo root
 REG="$ROOT/xiaozhi-ai/machines/registry.json"
 BRIDGE="$ROOT/xiaozhi-ai/server/providers/robot_bridge.py"
 GTTS="$ROOT/xiaozhi-ai/server/providers/gtts_tts.py"
+ASR="$ROOT/xiaozhi-ai/server/providers/asr_openai.py"
 
 if [ ! -f "$REG" ] || [ ! -f "$BRIDGE" ]; then
   echo "LOI: khong tim thay file trong ban clone."
@@ -60,6 +61,14 @@ PY
 echo "==> Cai paho-mqtt (dieu khien 'may 1' qua MQTT) ..."
 docker exec "$C" pip install -q -U paho-mqtt >/dev/null 2>&1 || \
   docker exec "$C" pip3 install -q -U paho-mqtt >/dev/null 2>&1 || true
+
+echo "==> Nap ASR openai.py (nhan dang giong noi theo ngon ngu da chon: vi/en/zh) ..."
+if [ -f "$ASR" ]; then
+  docker cp "$ASR" "$C":/opt/xiaozhi-esp32-server/core/providers/asr/openai.py
+  echo "  asr/openai.py da cap nhat"
+else
+  echo "  (thieu asr_openai.py trong ban clone, bo qua)"
+fi
 
 echo "==> Nap gtts_tts.py (TTS doc theo ngon ngu da chon: vi/en/zh) ..."
 if [ -f "$GTTS" ]; then
