@@ -16,6 +16,16 @@ logger = setup_logging()
 _LANG_FILE = "/opt/xiaozhi-esp32-server/data/robot/lang.txt"
 _WHISPER_LANG = {"vi": "vi", "en": "en", "zh": "zh"}
 
+# A context "prompt" biases Whisper toward these words/spellings, which fixes
+# common Vietnamese place-name mistakes (e.g. "Hồ Chí Minh" heard as "Hồ Chân
+# Ninh"). Only used when transcribing Vietnamese.
+_VI_PROMPT = (
+    "Thành phố Hồ Chí Minh, Sài Gòn, Hà Nội, Bình Dương, Đồng Nai, Tây Ninh, "
+    "Bình Phước, Đà Lạt, Lâm Đồng, Buôn Ma Thuột, Đắk Lắk, Vũng Tàu, Cần Thơ, "
+    "Hải Phòng, Đà Nẵng, Nha Trang, Huế, Vinh, Quy Nhơn, Pleiku. "
+    "Hỏi thời tiết, giao thông, tra lỗi robot, máy một, bật tắt đầu ra."
+)
+
 
 def _selected_lang(default="vi"):
     try:
@@ -56,13 +66,17 @@ class ASRProvider(ASRProviderBase):
                 "Authorization": f"Bearer {self.api_key}",
             }
 
-            lang = self.forced_language or _selected_lang()
+            # Follow the language chosen on the settings screen (lang.txt) so ASR
+            # and the reply stay in sync; the config value is only a fallback.
+            lang = _selected_lang(default=self.forced_language or "vi")
             # Pass the language so Whisper transcribes in the selected language
             # (auto-detect was mis-hearing Chinese as Vietnamese).
             data = {
                 "model": self.model,
                 "language": lang,
             }
+            if lang == "vi":
+                data["prompt"] = _VI_PROMPT  # bias toward Vietnamese place names
             logger.bind(tag=TAG).info(f"ASR language: {lang}")
 
             with open(file_path, "rb") as audio_file:
