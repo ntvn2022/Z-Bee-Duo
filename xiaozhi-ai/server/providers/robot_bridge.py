@@ -1027,20 +1027,32 @@ class LLMProvider(GeminiLLM):
         return None
 
     def _lang_dialogue(self, dialogue):
-        """Copy the dialogue with a language instruction prepended to the last
-        user turn, so normal Gemini chat replies in the selected language."""
+        """Return a dialogue that makes normal Gemini chat reply in the selected
+        language. The server's persona system prompt is written in Vietnamese and
+        keeps answers Vietnamese, so for a non-Vietnamese language we REPLACE the
+        system prompt with a clean language-forcing one (keeping the user/assistant
+        turns for context) and reinforce the language on the last user turn."""
         lang = self._get_lang()
-        instr = f"Reply entirely in {_LANG_NAME[lang]}. "
-        out = []
-        injected = False
-        for msg in reversed(dialogue or []):
-            if not injected and msg.get("role") == "user":
-                msg = dict(msg)
-                msg["content"] = instr + (msg.get("content", "") or "")
-                injected = True
-            out.append(msg)
-        out.reverse()
-        return out
+        if lang == "vi":
+            return dialogue  # default persona is already Vietnamese
+        name = _LANG_NAME[lang]
+        sys_prompt = (
+            f"You are a friendly voice assistant. You MUST reply ONLY in {name}. "
+            f"Never use Vietnamese. Keep answers short and natural for speech, "
+            f"with no markdown or special symbols."
+        )
+        turns = [m for m in (dialogue or []) if m.get("role") != "system"]
+        # reinforce the language on the most recent user turn (recency helps)
+        rebuilt = []
+        tagged = False
+        for m in reversed(turns):
+            mm = dict(m)
+            if not tagged and mm.get("role") == "user":
+                mm["content"] = (mm.get("content", "") or "") + f"\n\n[Answer in {name} only.]"
+                tagged = True
+            rebuilt.append(mm)
+        rebuilt.reverse()
+        return [{"role": "system", "content": sys_prompt}] + rebuilt
 
     def _maybe_enter(self, session_id, text):
         n = _norm(text)
