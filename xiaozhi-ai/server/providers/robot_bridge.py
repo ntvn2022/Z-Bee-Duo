@@ -164,6 +164,9 @@ _LANG_CONFIRM = {
     "zh": "已切换到中文。",
 }
 _SETLANG_RE = re.compile(r"\bsetlang\s+(en|vi|zh)\b")
+_ROBOT_EXIT = {"vi": "Đã thoát chế độ tra cứu lỗi máy.",
+               "en": "Exited machine error lookup.",
+               "zh": "已退出故障查询模式。"}
 
 
 def _lang_from_text(n):
@@ -603,14 +606,9 @@ class LLMProvider(GeminiLLM):
         )
         return ("gemini", s + f"\n\nCâu hỏi: {text}", fallback)
 
-    # ---- streamed robot answer ----
-    def _robot_answer(self, session_id, text):
-        result = self._lookup(text)
-        if result[0] == "text":
-            yield result[1]
-            return
-        prompt, fallback = result[1], result[2]
-        prompt = f"Reply entirely in {_LANG_NAME[self._get_lang()]}. " + prompt
+    def _stream_gemini(self, session_id, prompt):
+        """Stream a single-user-message answer from Gemini; return whether any
+        chunk was produced (so callers can fall back)."""
         got = False
         try:
             for chunk in super().response(
@@ -622,6 +620,48 @@ class LLMProvider(GeminiLLM):
         except Exception as e:
             logger.bind(tag=TAG).error(f"robot gemini error: {e}")
         if not got:
+            yield None  # sentinel: nothing streamed
+
+    # ---- streamed robot answer (data from the local Topstar tables, phrased in
+    # the selected language) ----
+    def _robot_answer(self, session_id, text):
+        result = self._lookup(text)
+        lang = self._get_lang()
+        name = _LANG_NAME[lang]
+        if result[0] == "text":
+            msg = result[1]
+            if lang == "vi":
+                yield msg
+                return
+            # translate the short clarifying prompt to the selected language
+            tp = (f"Translate this to {name}. Output only the translation, "
+                  f"no quotes, no extra text:\n\n{msg}")
+            streamed = False
+            for ch in self._stream_gemini(session_id, tp):
+                if ch is None:
+                    break
+                streamed = True
+                yield ch
+            if not streamed:
+                yield msg
+            return
+        prompt, fallback = result[1], result[2]
+        # The prompt is built in Vietnamese and says "trả lời bằng tiếng Việt".
+        # For another language, override it strongly at the END (so Gemini
+        # translates the Vietnamese table data into the selected language).
+        if lang != "vi":
+            prompt = (
+                prompt
+                + f"\n\nIMPORTANT LANGUAGE RULE (overrides any instruction above): "
+                f"Write the ENTIRE answer ONLY in {name}. Translate the data as needed."
+            )
+        streamed = False
+        for ch in self._stream_gemini(session_id, prompt):
+            if ch is None:
+                break
+            streamed = True
+            yield ch
+        if not streamed:
             yield fallback
 
     def _wake_reply(self, text):
@@ -1055,12 +1095,6 @@ class LLMProvider(GeminiLLM):
         return [{"role": "system", "content": sys_prompt}] + rebuilt
 
     def _maybe_enter(self, session_id, text):
-        # The robot-error lookup is a Vietnamese-only feature (Vietnamese tables
-        # and trigger words). In English/Chinese mode a word like "robot" must go
-        # to normal chat and be answered in that language, not enter this mode.
-        if self._get_lang() != "vi":
-            self._mode.discard(session_id)
-            return None
         n = _norm(text)
         if _EXIT.search(n):
             self._mode.discard(session_id)
@@ -1097,7 +1131,7 @@ class LLMProvider(GeminiLLM):
             return
         state = self._maybe_enter(session_id, text)
         if state == "exit":
-            yield "Đã thoát chế độ tra cứu lỗi máy."
+            yield _ROBOT_EXIT[self._get_lang()]
             return
         if state == "in":
             yield from self._robot_answer(session_id, text)
@@ -1126,7 +1160,7 @@ class LLMProvider(GeminiLLM):
             return
         state = self._maybe_enter(session_id, text)
         if state == "exit":
-            yield "Đã thoát chế độ tra cứu lỗi máy.", None
+            yield _ROBOT_EXIT[self._get_lang()], None
             return
         if state == "in":
             for chunk in self._robot_answer(session_id, text):
