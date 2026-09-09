@@ -182,7 +182,11 @@
     lv_obj_remove_flag(g->lang_panel, LV_OBJ_FLAG_SCROLLABLE);
     lv_obj_add_flag(g->lang_panel, LV_OBJ_FLAG_HIDDEN);
     {
-        static const char* lang_lbl[3] = {"English", "Tieng Viet", "Tieng Trung"};
+        // This font carries Latin + full Vietnamese + ~3500 Hanzi, so the labels
+        // render properly (the overlay's default font has neither Vietnamese nor
+        // Chinese). It is the board's text font (see main/CMakeLists.txt).
+        LV_FONT_DECLARE(font_noto_sans_basic_20_4);
+        static const char* lang_lbl[3] = {"English", "Tiếng Việt", "中文"};
         for (int i = 0; i < 3; i++) {
             lv_obj_t* lb = lv_obj_create(g->lang_panel);
             lv_obj_set_size(lb, 180, 34);
@@ -193,6 +197,7 @@
             lv_obj_set_user_data(lb, (void*)(intptr_t)i);
             lv_obj_t* ll = lv_label_create(lb);
             lv_label_set_text(ll, lang_lbl[i]);
+            lv_obj_set_style_text_font(ll, &font_noto_sans_basic_20_4, 0);
             lv_obj_center(ll);
             g->lang_btn[i] = lb;
             lv_obj_add_event_cb(lb, [](lv_event_t* e) {
